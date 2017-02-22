@@ -20,22 +20,17 @@ class JobsController < ApplicationController
   # POST /jobs
   def create
     @job = Job.new(job_params)
-    current_user.jobs << @job
-
-    if @job.save
-      render json: @job, status: :created, location: @job
-    else
-      render json: @job.errors, status: :unprocessable_entity
+    Job.transaction do
+      current_user.jobs << @job
+      @job.save!
     end
+
+    render json: @job, status: :created, location: @job
   end
 
   # PATCH/PUT /jobs/1
   def update
-    if @job.update(job_params)
-      render json: @job
-    else
-      render json: @job.errors, status: :unprocessable_entity
-    end
+    render json: @job if @job.update!(job_params)
   end
 
   # DELETE /jobs/1
@@ -50,9 +45,7 @@ class JobsController < ApplicationController
   end
 
   def set_authenticated_job
-    @job = current_user.jobs.find(params[:id])
-    raise @job if @job.class == ActiveRecord::RecordNotFound
-    @job
+    @job = current_user.jobs.find_by!(id: params[:id])
   end
 
   # Only allow a trusted parameter "white list" through.
