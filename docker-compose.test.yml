@@ -1,0 +1,14 @@
+version: '2'
+services:
+  db:
+    image: postgres
+
+  sut:
+    build: .
+    command: /usr/local/bin/run-tests.sh
+    volumes:
+      - ./src:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
