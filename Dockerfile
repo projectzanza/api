@@ -1,7 +1,7 @@
 FROM ruby:2.4-alpine
 
 ENV BUILD_DEPENDENCIES build-base ruby-dev openssl-dev postgresql-dev libc-dev linux-headers tzdata
-ENV RUN_DEPENDENCIES postgresql
+ENV RUN_DEPENDENCIES bash postgresql
 ENV APP_HOME /app
 
 RUN mkdir $APP_HOME

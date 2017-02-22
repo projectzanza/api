@@ -5,7 +5,7 @@ services:
 
   sut:
     build: .
-    command: /usr/local/bin/run-tests.sh
+    command:  ["/usr/local/bin/wait-for-it.sh", "db:5432", "-s", "--", "/usr/local/bin/run-tests.sh"]
     volumes:
       - ./src:/app
     ports:
