@@ -21,7 +21,8 @@ RUN apk add --update \
     --no-cache \
     $RUN_DEPENDENCIES
 
+COPY ./scripts/container /usr/local/bin
 COPY ./src .
 
 EXPOSE 3000
-CMD bundle exec rails -b 0.0.0.0
+CMD /usr/local/bin/startup-dev.sh

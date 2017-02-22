@@ -13,6 +13,17 @@ docker-compose up
 curl 127.0.0.1:3000
 ```
 
+### To access the api container console
+```
+./scripts/api-console
+
+# run tests
+rake spec
+# start the server
+startup-dev.sh
+```
+
+
 ### Confirmation emails in development mode
 
 A mail server `mailcatcher` is set up under the `mail_server` container
