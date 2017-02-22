@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RepliesController, type: :controller do
   before(:each) do
     login_user
-    @job = create(:job)
+    @job = create(:job, user: @user)
   end
 
   describe 'get#index' do
