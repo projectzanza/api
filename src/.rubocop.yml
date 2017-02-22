@@ -1,4 +1,12 @@
+AllCops:
+  Excludes:
+    - db/schema.rb
+  DisplayCopNames: true
 Documentation:
     Enabled: false
 Metrics/LineLength:
   Max: 120
+Metrics/BlockLength:
+  CountComments: false
+  Max: 100000000
+  ExcludedMethods: []

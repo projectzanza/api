@@ -27,14 +27,18 @@ module App
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+    end
+
     # @TODO restrict origins
     config.middleware.use Rack::Cors do
       allow do
         origins '*'
         resource '*',
-          :headers => :any,
-          :expose  => %w(access-token expiry token-type uid client),
-          :methods => [:get, :post, :options, :delete, :put]
+                 headers: :any,
+                 expose: %w(access-token expiry token-type uid client),
+                 methods: [:get, :post, :options, :delete, :put]
       end
     end
   end

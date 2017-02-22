@@ -1,6 +1,14 @@
 class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.0]
   def change
-    create_table(:users) do |t|
+    enable_extension 'uuid-ossp'
+
+    create_users_table
+    create_indexes
+  end
+
+  # rubocop:disable  Metrics/AbcSize, Metrics/MethodLength
+  def create_users_table
+    create_table :users, id: :uuid do |t|
       ## Required
       t.string :provider, null: false, default: 'email'
       t.string :uid, null: false, default: ''
@@ -44,7 +52,10 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  def create_indexes
     add_index :users, :email,                unique: true
     add_index :users, [:uid, :provider],     unique: true
     add_index :users, :reset_password_token, unique: true

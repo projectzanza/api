@@ -1,0 +1,15 @@
+module Helpers
+  module Controllers
+    def json
+      JSON.parse(response.body)
+    end
+
+    def login_user
+      request.env['devise.mapping'] = Devise.mappings[:user]
+      @user = create(:user)
+      @user.confirm
+      sign_in(@user)
+      request.headers.merge!(@user.create_new_auth_token)
+    end
+  end
+end
