@@ -27,13 +27,13 @@ Rails.application.configure do
   end
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
 
   config.action_mailer.default_url_options = { host: '0.0.0.0', port: 3000 }
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { address: '0.0.0.0', port: 7025 }
+  config.action_mailer.smtp_settings = { address: 'mail_server', port: 7025 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

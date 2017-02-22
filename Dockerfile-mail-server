@@ -1,0 +1,20 @@
+FROM ruby:2.4-alpine
+
+ENV BUILD_DEPENDENCIES build-base ruby-dev openssl-dev sqlite-dev libc-dev linux-headers tzdata
+ENV RUN_DEPENDENCIES ruby-dev sqlite-dev
+
+RUN apk add --update \
+    --no-cache \
+    --virtual build-dependencies \
+    $BUILD_DEPENDENCIES && \
+    gem install mailcatcher && \
+    apk del build-dependencies
+
+RUN apk add --update \
+    --no-cache \
+    $RUN_DEPENDENCIES
+
+EXPOSE 7025 7080
+
+CMD mailcatcher --smtp-port 7025 --http-port 7080  --ip 0.0.0.0 --foreground
+

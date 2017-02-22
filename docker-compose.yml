@@ -3,7 +3,7 @@ services:
   db:
     image: postgres
 
-  mail-server:
+  mail_server:
     build:
       context: .
       dockerfile: Dockerfile-mail-server
@@ -20,4 +20,4 @@ services:
       - "3000:3000"
     depends_on:
       - db
-      - mail-server
+      - mail_server
