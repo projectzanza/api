@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20170222155022) do
     t.datetime "deleted_at"
   end
 
-  create_table "replies", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+  create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "text"
     t.string   "job_id"
     t.string   "user_id"

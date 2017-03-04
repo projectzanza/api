@@ -1,4 +1,4 @@
-class Reply < ApplicationRecord
+class Message < ApplicationRecord
   acts_as_paranoid
 
   belongs_to :job

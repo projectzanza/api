@@ -1,7 +1,7 @@
 FactoryGirl.define do
-  factory :reply do
+  factory :message do
     sequence :text do |n|
-      "reply-#{n}"
+      "message-#{n}"
     end
   end
 end
