@@ -41,5 +41,8 @@ module App
                  methods: [:get, :post, :options, :delete, :put]
       end
     end
+
+    # require confirmation for users to login
+    config.confirmation_required = true
   end
 end
