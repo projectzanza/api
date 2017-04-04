@@ -3,9 +3,14 @@ FactoryGirl.define do
     "job-#{n}"
   end
 
+  sequence :tag do |n|
+    "tag-#{n}"
+  end
+
   factory :job do
     title { generate(:title) }
     text { generate(:title) }
+    tag_list { (0...3).collect{ generate(:tag) }}
 
     trait :is_closed do
       closed_at { Time.zone.now }

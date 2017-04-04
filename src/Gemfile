@@ -21,14 +21,17 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'devise_token_auth'
 gem 'rack-cors'
 gem 'tzinfo-data'
+gem 'acts-as-taggable-on', '~> 4.0'
 
 group :development, :test do
-  gem 'ruby-debug-ide'
-  gem 'debase'
+  gem 'byebug'
+  # gem 'ruby-debug-ide'
+  # gem 'debase'
   gem 'factory_girl_rails'
   gem 'json_spec'
   gem 'rspec-rails'
   gem 'simplecov', require: false
+  gem 'awesome_print', require: 'ap'
 end
 
 group :development do

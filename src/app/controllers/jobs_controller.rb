@@ -1,9 +1,11 @@
 class JobsController < ApplicationController
   include Rescuable
+  include Taggable
 
   before_action :authenticate_user!
   before_action :set_job, only: [:show]
   before_action :set_authenticated_job, only: [:update, :destroy]
+  before_action :set_authenticated_item, only: [:add_tag, :remove_tag]
 
   # GET /jobs
   def index
@@ -30,7 +32,7 @@ class JobsController < ApplicationController
 
   # PATCH/PUT /jobs/1
   def update
-    render json: @job if @job.update!(job_params)
+    render json: @job.to_json if @job.update!(job_params)
   end
 
   # DELETE /jobs/1
@@ -48,8 +50,12 @@ class JobsController < ApplicationController
     @job = current_user.jobs.find_by!(id: params[:id])
   end
 
+  def set_authenticated_item
+    @item = set_authenticated_job
+  end
+
   # Only allow a trusted parameter "white list" through.
   def job_params
-    params.permit(:title, :text).to_h
+    params.permit(:title, :text, tag_list: []).to_h
   end
 end
