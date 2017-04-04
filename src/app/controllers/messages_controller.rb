@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
   # POST /messages
   def create
     job = Job.find_by!(id: params[:job_id])
-    message = Message.new(message_params)
+    message = Message.new(message_params.merge(user: current_user))
 
     Message.transaction do
       job.messages << message

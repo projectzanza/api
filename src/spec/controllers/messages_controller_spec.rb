@@ -8,7 +8,7 @@ RSpec.describe MessagesController, type: :controller do
 
   describe 'get#index' do
     it 'should return all messages to a job' do
-      3.times { create(:message, job: @job) }
+      3.times { create(:message, job: @job, user: @user) }
 
       get :index,
           params: { job_id: @job.id }
@@ -17,7 +17,7 @@ RSpec.describe MessagesController, type: :controller do
     end
 
     it 'should only return non-deleted messages' do
-      messages = (0...3).collect { create(:message, job: @job) }
+      messages = (0...3).collect { create(:message, job: @job, user: @user) }
       messages.first.destroy
 
       get :index,

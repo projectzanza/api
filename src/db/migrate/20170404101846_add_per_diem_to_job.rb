@@ -1,6 +1,8 @@
 class AddPerDiemToJob < ActiveRecord::Migration[5.0]
   def up
-    add_column :jobs, :per_diem, :integer
+    enable_extension 'citext'
+
+    add_column :jobs, :per_diem, :jsonb
   end
 
   def down

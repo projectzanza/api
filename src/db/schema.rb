@@ -15,23 +15,24 @@ ActiveRecord::Schema.define(version: 20170404101846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+  enable_extension "citext"
 
   create_table "jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "title"
     t.string   "text"
     t.string   "state"
-    t.string   "user_id"
-    t.datetime "state_at"
+    t.string   "user_id",    null: false
+    t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.integer  "per_diem"
+    t.jsonb    "per_diem"
   end
 
   create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "text"
-    t.string   "job_id"
-    t.string   "user_id"
+    t.string   "job_id",     null: false
+    t.string   "user_id",    null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
