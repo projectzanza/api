@@ -10,7 +10,7 @@ RSpec.describe Job, type: :model do
     it 'should add tags on update' do
       job = create(:job)
       job.update(tag_list: ['anotherTag'])
-      expect(job.tag_list.length).to eq(4)
+      expect(job.tag_list.length).to eq(1)
     end
   end
 end

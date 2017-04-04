@@ -5,7 +5,7 @@
   - docker ^1.13
   - docker-compose ^1.11
   
-### To run
+## To run for demo purposes
 
 ```
 docker-compose build
@@ -13,14 +13,32 @@ docker-compose up
 curl 127.0.0.1:3000
 ```
 
+## To run for development purposes
+
 ### To access the api container console
 ```
+cd zanza/app
 ./scripts/api-console
 
 # run tests
 rake spec
 # start the server
 startup-dev.sh
+```
+
+### Run the frontend app
+It's quicker to run the frontend from local machine instead of docker,
+as watching files change on a mounted docker volume is extremly slow (10x so)
+```
+cd zanza/app
+npm install
+
+# run tests
+npm run test
+# run standalone lint, and auto fix errors
+npm run lint
+# run frontend dev server 
+npm run build:watch
 ```
 
 

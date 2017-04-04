@@ -1,6 +1,5 @@
 class JobsController < ApplicationController
   include Rescuable
-  include Taggable
 
   before_action :authenticate_user!
   before_action :set_job, only: [:show]
@@ -56,6 +55,6 @@ class JobsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def job_params
-    params.permit(:title, :text, tag_list: []).to_h
+    params.permit(:title, :text, :per_diem, tag_list: []).to_h
   end
 end

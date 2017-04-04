@@ -56,6 +56,8 @@ RSpec.describe JobsController, type: :controller do
       expect(json['title']).to eq job_attr[:title]
       expect(json['text']).to eq job_attr[:text]
       expect(json['user_id']).to eq @user.id
+      expect(json['tag_list']).to eq job_attr[:tag_list]
+      expect(json['per_diem']).to eq job_attr[:per_diem]
       expect(json['closed_at']).to be_falsey
     end
 
@@ -82,6 +84,8 @@ RSpec.describe JobsController, type: :controller do
       expect(json['id']).to eq(job.id)
       expect(json['title']).to eq new_job_attr[:title]
       expect(json['text']).to eq new_job_attr[:text]
+      expect(json['tag_list']).to eq new_job_attr[:tag_list]
+      expect(json['per_diem']).to eq new_job_attr[:per_diem]
     end
 
     it 'should return an error if trying to update another users job' do
