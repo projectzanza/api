@@ -11,5 +11,6 @@ module Helpers
       sign_in(@user)
       request.headers.merge!(@user.create_new_auth_token)
     end
+    alias login_another_user login_user
   end
 end

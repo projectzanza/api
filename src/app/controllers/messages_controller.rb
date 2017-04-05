@@ -25,7 +25,6 @@ class MessagesController < ApplicationController
 
     Message.transaction do
       job.messages << message
-      current_user.messages << message
       message.save!
     end
 

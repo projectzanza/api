@@ -26,10 +26,24 @@ RSpec.describe JobsController, type: :controller do
   describe 'get#index' do
     it 'should return a list of all jobs' do
       3.times { create(:job, user: @user) }
-
       get :index
-
       expect(json.length).to eq 3
+    end
+
+    it 'should only return non-deleted jobs' do
+      jobs = (0...3).collect { create(:job, user: @user) }
+      jobs[0].destroy
+      get :index
+      expect(json.length).to eq 2
+    end
+
+    it 'should return a list of jobs created by a user when user_id is supplied' do
+      3.times { create(:job, user: @user) }
+      login_another_user
+      create(:job, user: @user)
+      get :index,
+          params: { user_id: @user.id }
+      expect(json.length).to eq 1
     end
   end
 
@@ -92,8 +106,7 @@ RSpec.describe JobsController, type: :controller do
 
     it 'should return an error if trying to update another users job' do
       job = create(:job, user: @user)
-      # login as a second user
-      login_user
+      login_another_user
       new_job_attr = attributes_for(:job)
 
       patch :update,

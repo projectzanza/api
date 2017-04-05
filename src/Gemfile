@@ -4,6 +4,8 @@ git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
+# tagging
+gem 'acts-as-taggable-on', '~> 4.0'
 # soft deletes models
 gem 'acts_as_paranoid'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -21,17 +23,14 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'devise_token_auth'
 gem 'rack-cors'
 gem 'tzinfo-data'
-gem 'acts-as-taggable-on', '~> 4.0'
 
 group :development, :test do
+  gem 'awesome_print', require: 'ap'
   gem 'byebug'
-  # gem 'ruby-debug-ide'
-  # gem 'debase'
   gem 'factory_girl_rails'
   gem 'json_spec'
   gem 'rspec-rails'
   gem 'simplecov', require: false
-  gem 'awesome_print', require: 'ap'
 end
 
 group :development do

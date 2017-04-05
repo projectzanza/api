@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :messages
 
   protected
+
   def confirmation_required?
     Rails.configuration.confirmation_required
   end
