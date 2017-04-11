@@ -27,14 +27,14 @@ RSpec.describe JobsController, type: :controller do
     it 'should return a list of all jobs' do
       3.times { create(:job, user: @user) }
       get :index
-      expect(json.length).to eq 3
+      expect(data.length).to eq 3
     end
 
     it 'should only return non-deleted jobs' do
       jobs = (0...3).collect { create(:job, user: @user) }
       jobs[0].destroy
       get :index
-      expect(json.length).to eq 2
+      expect(data.length).to eq 2
     end
 
     it 'should return a list of jobs created by a user when user_id is supplied' do
@@ -43,7 +43,7 @@ RSpec.describe JobsController, type: :controller do
       create(:job, user: @user)
       get :index,
           params: { user_id: @user.id }
-      expect(json.length).to eq 1
+      expect(data.length).to eq 1
     end
   end
 
@@ -54,7 +54,7 @@ RSpec.describe JobsController, type: :controller do
       get :show,
           params: { id: job.id }
 
-      expect(json['id']).to eq job.id
+      expect(data['id']).to eq job.id
     end
   end
 
@@ -66,14 +66,14 @@ RSpec.describe JobsController, type: :controller do
            params: job_attr
 
       expect(response).to have_http_status(:created)
-      expect(response.body).to have_json_path('id')
-      expect(json['title']).to eq job_attr[:title]
-      expect(json['text']).to eq job_attr[:text]
-      expect(json['user_id']).to eq @user.id
-      expect(json['tag_list']).to eq job_attr[:tag_list]
-      expect(json['per_diem']['min']).to eq job_attr[:per_diem][:min].to_s
-      expect(json['per_diem']['max']).to eq job_attr[:per_diem][:max].to_s
-      expect(json['closed_at']).to be_falsey
+      expect(data['id']).to be_truthy
+      expect(data['title']).to eq job_attr[:title]
+      expect(data['text']).to eq job_attr[:text]
+      expect(data['user_id']).to eq @user.id
+      expect(data['tag_list']).to eq job_attr[:tag_list]
+      expect(data['per_diem']['min']).to eq job_attr[:per_diem][:min].to_s
+      expect(data['per_diem']['max']).to eq job_attr[:per_diem][:max].to_s
+      expect(data['closed_at']).to be_falsey
     end
 
     it 'should require a title to be created' do
@@ -96,12 +96,12 @@ RSpec.describe JobsController, type: :controller do
             params: new_job_attr.merge(id: job.id)
 
       expect(response).to have_http_status(:ok)
-      expect(json['id']).to eq(job.id)
-      expect(json['title']).to eq new_job_attr[:title]
-      expect(json['text']).to eq new_job_attr[:text]
-      expect(json['tag_list']).to eq new_job_attr[:tag_list]
-      expect(json['per_diem']['min']).to eq new_job_attr[:per_diem][:min].to_s
-      expect(json['per_diem']['max']).to eq new_job_attr[:per_diem][:max].to_s
+      expect(data['id']).to eq(job.id)
+      expect(data['title']).to eq new_job_attr[:title]
+      expect(data['text']).to eq new_job_attr[:text]
+      expect(data['tag_list']).to eq new_job_attr[:tag_list]
+      expect(data['per_diem']['min']).to eq new_job_attr[:per_diem][:min].to_s
+      expect(data['per_diem']['max']).to eq new_job_attr[:per_diem][:max].to_s
     end
 
     it 'should return an error if trying to update another users job' do

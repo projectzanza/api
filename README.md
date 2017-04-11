@@ -22,13 +22,22 @@ cd zanza/app
 
 # run tests
 rake spec
-# start the server
+# drop everything then create db, tables and seed it with dev data, 
+# or reset the DB at any time
+rake db:reset
+# start the server, will not seed data into the DB on first run
 startup-dev.sh
 ```
 
+### Seed data
+Seed data is set in api/src/db/seeds/[environment].rb
+Your default login is dev@zanza.com/123123123, other users are set up
+with tags and jobs. Running `rake db:reset` will set the database back to
+the original schema and seed data
+
 ### Run the frontend app
 It's quicker to run the frontend from local machine instead of docker,
-as watching files change on a mounted docker volume is extremly slow (10x so)
+as watching files change on a mounted docker volume is extremely slow (10x so)
 ```
 cd zanza/app
 npm install
@@ -46,7 +55,7 @@ npm run build:watch
 
 A mail server `mailcatcher` is set up under the `mail_server` container
 Rails Development will send emails over smtp to `mail_server:7025`, 
-and they can be viewed by pointing your browser to `http://127.0.0.1:7080`
+and they can be viewed by pointing your browser to `http://0.0.0.0:7080`
 Useful for viewing signup emails
 In production, stmp settings will be set via ENV variables
 

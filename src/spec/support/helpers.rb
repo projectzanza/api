@@ -1,7 +1,11 @@
 module Helpers
   module Controllers
     def json
-      JSON.parse(response.body)
+      @json ||= JSON.parse(response.body)
+    end
+
+    def data
+      @tmp_data ||= JSON.parse(response.body)['data']
     end
 
     def login_user

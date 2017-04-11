@@ -10,12 +10,12 @@ class MessagesController < ApplicationController
     raise ActiveRecord::RecordNotFound unless params[:job_id]
     job = Job.find(params[:job_id])
 
-    render json: job.messages
+    render json: { data: job.messages }
   end
 
   # GET /messages/1
   def show
-    render json: @message
+    render json: { data: @message }
   end
 
   # POST /messages
@@ -28,12 +28,12 @@ class MessagesController < ApplicationController
       message.save!
     end
 
-    render json: message, status: :created, location: message
+    render json: { data: message }, status: :created, location: message
   end
 
   # PATCH/PUT /messages/1
   def update
-    render json: @message if @message.update!(message_params)
+    render json: { data: @message } if @message.update!(message_params)
   end
 
   # DELETE /messages/1

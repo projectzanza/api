@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170404101846) do
+ActiveRecord::Schema.define(version: 20170410145437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,9 +41,9 @@ ActiveRecord::Schema.define(version: 20170404101846) do
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"
     t.string   "taggable_type"
-    t.integer  "taggable_id"
+    t.uuid     "taggable_id"
     t.string   "tagger_type"
-    t.integer  "tagger_id"
+    t.uuid     "tagger_id"
     t.string   "context",       limit: 128
     t.datetime "created_at"
     t.index ["context"], name: "index_taggings_on_context", using: :btree
@@ -87,6 +87,8 @@ ActiveRecord::Schema.define(version: 20170404101846) do
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
     t.datetime "deleted_at"
+    t.text     "bio"
+    t.jsonb    "per_diem"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

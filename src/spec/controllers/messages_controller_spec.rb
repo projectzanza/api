@@ -13,7 +13,7 @@ RSpec.describe MessagesController, type: :controller do
       get :index,
           params: { job_id: @job.id }
 
-      expect(json.length).to eq(3)
+      expect(data.length).to eq(3)
     end
 
     it 'should only return non-deleted messages' do
@@ -23,7 +23,7 @@ RSpec.describe MessagesController, type: :controller do
       get :index,
           params: { job_id: @job.id }
 
-      expect(json.length).to eq(2)
+      expect(data.length).to eq(2)
     end
 
     it 'should return an error if no job_id is specified' do
@@ -40,7 +40,7 @@ RSpec.describe MessagesController, type: :controller do
       get :show,
           params: { id: message.id }
 
-      expect(json['id']).to eq(message.id)
+      expect(data['id']).to eq(message.id)
     end
   end
 
@@ -52,9 +52,9 @@ RSpec.describe MessagesController, type: :controller do
            params: message_attr
 
       expect(response).to have_http_status(:created)
-      expect(json['job_id']).to eq(@job.id)
-      expect(json['user_id']).to eq(@user.id)
-      expect(json['text']).to eq(message_attr[:text])
+      expect(data['job_id']).to eq(@job.id)
+      expect(data['user_id']).to eq(@user.id)
+      expect(data['text']).to eq(message_attr[:text])
     end
 
     it 'should require a job_id' do
@@ -95,8 +95,8 @@ RSpec.describe MessagesController, type: :controller do
             params: new_message_attr
 
       expect(response).to have_http_status(:ok)
-      expect(json['id']).to eq(message.id)
-      expect(json['text']).to eq(new_message_attr[:text])
+      expect(data['id']).to eq(message.id)
+      expect(data['text']).to eq(new_message_attr[:text])
     end
 
     it 'should not be able to update another users message' do
