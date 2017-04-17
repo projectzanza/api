@@ -4,20 +4,14 @@ services:
     image: postgres
 
   mail_server:
-    build:
-      context: .
-      dockerfile: Dockerfile-mail-server
-    ports:
-      - "7025:7025"
-      - "7080:7080"
+    extends:
+      file: docker-compose/common.yml
+      service: mail_server
 
   api:
-    build: .
-    volumes:
-      - ./src:/app
-    ports:
-      - "3000:3000"
-      - "1234:1234"
+    extends:
+      file: docker-compose/common.yml
+      service: api
     depends_on:
       - db
       - mail_server
