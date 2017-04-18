@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170410145437) do
+ActiveRecord::Schema.define(version: 20170418121332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,12 +21,15 @@ ActiveRecord::Schema.define(version: 20170410145437) do
     t.string   "title"
     t.string   "text"
     t.string   "state"
-    t.string   "user_id",    null: false
+    t.string   "user_id",                          null: false
     t.datetime "closed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.datetime "deleted_at"
     t.jsonb    "per_diem"
+    t.datetime "proposed_start_at"
+    t.datetime "proposed_end_at"
+    t.boolean  "allow_contact",     default: true
   end
 
   create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

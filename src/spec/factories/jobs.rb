@@ -17,6 +17,8 @@ FactoryGirl.define do
         max: rand(1000 + 500).round(-2)
       }
     end
+    proposed_start_at { Time.zone.now + 1.hour }
+    proposed_end_at { Time.zone.now + 1.day }
 
     trait :is_closed do
       closed_at { Time.zone.now }
