@@ -3,7 +3,7 @@ User.create([
                 name: 'dev dev',
                 email: 'dev@zanza.com',
                 bio: 'dev bio',
-                tag_list: %w(ruby javascript docker grunt webpack),
+                tag_list: %w(ruby javascript docker grunt webpack java),
                 password: '123123123',
                 confirmed_at: Time.zone.now
               },
@@ -98,6 +98,36 @@ Job.create([
                user: User.find_by(email: 'aiden.jones@zanza.com'),
                per_diem: { min: 100, max: 1000 },
                tag_list: %w(docker python javascript),
+               proposed_start_at: Time.zone.now + 10.day,
+               proposed_end_at: Time.zone.now + 13.day,
+               allow_contact: true
+             },
+             {
+               title: 'Java development',
+               text: 'You will need boxing gloves to type, and an editor to fix all your mistakes',
+               user: User.find_by(email: 'sophia.smith@zanza.com'),
+               per_diem: { min: 100, max: 1000 },
+               tag_list: %w(docker java),
+               proposed_start_at: Time.zone.now,
+               proposed_end_at: Time.zone.now + 3.day,
+               allow_contact: true
+             },
+             {
+               title: 'Just one small job',
+               text: 'It will not explode out into 100 more small jobs, promise',
+               user: User.find_by(email: 'sophia.smith@zanza.com'),
+               per_diem: { min: 100, max: 1000 },
+               tag_list: %w(webpack javascript),
+               proposed_start_at: Time.zone.now,
+               proposed_end_at: Time.zone.now + 3.day,
+               allow_contact: true
+             },
+             {
+               title: 'Sitting around doing nothing',
+               text: 'It is hard work but someone has gotta drag everyone else down',
+               user: User.find_by(email: 'sophia.smith@zanza.com'),
+               per_diem: { min: 100, max: 1000 },
+               tag_list: %w(docker javascript grunt),
                proposed_start_at: Time.zone.now + 10.day,
                proposed_end_at: Time.zone.now + 13.day,
                allow_contact: true

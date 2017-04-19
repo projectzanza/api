@@ -43,6 +43,15 @@ class JobsController < ApplicationController
     @job.destroy
   end
 
+  # GET /users/:user_id/jobs/match
+  def match
+    @user = User.find(params[:user_id])
+    @jobs = Job.where(allow_contact: true)
+               .where.not(user_id: params[:user_id])
+               .tagged_with(@user.tag_list)
+    render json: { data: @jobs }
+  end
+
   private
 
   def set_job
