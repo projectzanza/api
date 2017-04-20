@@ -138,4 +138,55 @@ RSpec.describe JobsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'get#match' do
+    it 'should return jobs which match the users' do
+      tag_list = %w(tag1 tag2)
+      3.times { create(:job, tag_list: tag_list, user: @user) }
+
+      login_user
+      @user.update_attributes(tag_list: tag_list)
+
+      get :match,
+          params: { user_id: @user.id }
+
+      expect(data.length).to eq 3
+    end
+
+    it 'should only return jobs where job creator has set allow_contact to true' do
+      tag_list = %w(tag1 tag2)
+      3.times { create(:job, tag_list: tag_list, user: @user) }
+      2.times { create(:job, tag_list: tag_list, allow_contact: false, user: @user) }
+
+      login_user
+      @user.update_attributes(tag_list: tag_list)
+
+      get :match,
+          params: { user_id: @user.id }
+
+      expect(data.length).to eq 3
+    end
+
+    it 'should not return jobs which the user is the creator of' do
+      tag_list = %w(tag1 tag2)
+      3.times { create(:job, tag_list: tag_list, user: @user) }
+
+      login_user
+
+      2.times { create(:job, tag_list: tag_list, user: @user) }
+      @user.update_attributes(tag_list: tag_list)
+
+      get :match,
+          params: { user_id: @user.id }
+
+      expect(data.length).to eq 3
+    end
+
+    it 'should return 404 if an invalid user_id is supplied' do
+      get :match,
+          params: { user_id: 'not-a-valid-user-id' }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
