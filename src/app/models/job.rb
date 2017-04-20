@@ -7,8 +7,8 @@ class Job < ApplicationRecord
 
   validates :title, presence: true
   validates :user, presence: true
-  validates :proposed_start_at, in_future: true
-  validates :proposed_end_at, in_future: true
+  validates :proposed_start_at, in_future: true, on: :create
+  validates :proposed_end_at, in_future: true, on: :create
   validate :proposed_end_at_after_proposed_start_at
 
   def as_json(options)

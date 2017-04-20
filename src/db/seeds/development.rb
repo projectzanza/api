@@ -107,7 +107,7 @@ Job.create([
                text: 'You will need boxing gloves to type, and an editor to fix all your mistakes',
                user: User.find_by(email: 'sophia.smith@zanza.com'),
                per_diem: { min: 100, max: 1000 },
-               tag_list: %w(docker java),
+               tag_list: %w(ruby javascript docker grunt webpack java),
                proposed_start_at: Time.zone.now,
                proposed_end_at: Time.zone.now + 3.day,
                allow_contact: true
