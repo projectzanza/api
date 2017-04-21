@@ -44,13 +44,17 @@ User.create([
 Job.create([
              {
                title: 'Ruby development',
-               text: 'Develop ruby to save the world',
+               text: 'Develop ruby to save the world. 2 invited users',
                user: User.find_by(email: 'dev@zanza.com'),
                per_diem: { min: 100, max: 1000 },
                tag_list: %w(ruby docker),
                proposed_start_at: Time.zone.now,
                proposed_end_at: Time.zone.now + 3.day,
-               allow_contact: true
+               allow_contact: true,
+               invited_users: [
+                 User.find_by(email: 'aiden.jones@zanza.com'),
+                 User.find_by(email: 'emma.williams@zanza.com')
+               ]
              },
              {
                title: 'Docker project',

@@ -17,6 +17,13 @@ ActiveRecord::Schema.define(version: 20170421110848) do
   enable_extension "uuid-ossp"
   enable_extension "citext"
 
+  create_table "invited_users_jobs", force: :cascade do |t|
+    t.uuid "user_id"
+    t.uuid "job_id"
+    t.index ["job_id"], name: "index_invited_users_jobs_on_job_id", using: :btree
+    t.index ["user_id"], name: "index_invited_users_jobs_on_user_id", using: :btree
+  end
+
   create_table "jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "title"
     t.string   "text"
@@ -39,13 +46,6 @@ ActiveRecord::Schema.define(version: 20170421110848) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "selected_users_jobs", force: :cascade do |t|
-    t.uuid "user_id"
-    t.uuid "job_id"
-    t.index ["job_id"], name: "index_selected_users_jobs_on_job_id", using: :btree
-    t.index ["user_id"], name: "index_selected_users_jobs_on_user_id", using: :btree
   end
 
   create_table "taggings", force: :cascade do |t|

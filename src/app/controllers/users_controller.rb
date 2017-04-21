@@ -27,21 +27,21 @@ class UsersController < ApplicationController
     render json: { data: User.tagged_with(@job.tag_list) }
   end
 
-  # PUT /users/:user_id/choose
+  # PUT /users/:user_id/invite
   # client to choose list of users who they would like to work on a job
-  def choose
+  def invite
     @user = User.find(params[:id])
     @job = current_user.jobs.find(params[:job_id])
-    @job.selected_users << @user
+    @job.invited_users << @user
 
-    render json: { data: @job.selected_users }
+    render json: { data: @job.invited_users }
   end
 
-  # GET /users/choosen
+  # GET /users/invited
   # list all users chosen for a job
-  def chosen
+  def invited
     @job = Job.find(params[:job_id])
-    render json: { data: @job.selected_users }
+    render json: { data: @job.invited_users }
   end
 
   private

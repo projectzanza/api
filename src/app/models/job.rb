@@ -4,8 +4,8 @@ class Job < ApplicationRecord
 
   belongs_to :user
   has_many :messages
-  has_and_belongs_to_many :selected_users,
-                          join_table: 'selected_users_jobs',
+  has_and_belongs_to_many :invited_users,
+                          join_table: 'invited_users_jobs',
                           class_name: 'User',
                           foreign_key: :user_id,
                           association_foreign_key: :job_id

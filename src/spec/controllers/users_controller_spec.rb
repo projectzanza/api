@@ -5,15 +5,15 @@ RSpec.describe UsersController, type: :controller do
     login_user
   end
 
-  describe 'post#choose' do
+  describe 'post#invite' do
     before(:each) do
       @job = create(:job, user: @user)
     end
 
-    it 'should mark the user as selected for a job' do
+    it 'should mark the user as invited to a job' do
       consultant = create(:user)
 
-      post :choose,
+      post :invite,
            params: {
              id: consultant.id,
              job_id: @job.id
@@ -21,15 +21,15 @@ RSpec.describe UsersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(data.first['id']).to eq(consultant.id)
-      expect(@job.selected_users).to include(consultant)
+      expect(@job.invited_users).to include(consultant)
     end
 
-    it 'should return an error if the owner is not the user selecting consultants for a job' do
+    it 'should return an error if the owner is not the user inviting consultants to a job' do
       consultant = create(:user)
 
       login_user
 
-      post :choose,
+      post :invite,
            params: {
              id: consultant.id,
              job_id: @job.id
@@ -39,16 +39,16 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe 'get#chosen' do
+  describe 'get#invited' do
     before(:each) do
       @job = create(:job, user: @user)
     end
 
     it 'should return all users chosen for a job' do
       consultant = create(:user)
-      @job.selected_users << consultant
+      @job.invited_users << consultant
 
-      get :chosen,
+      get :invited,
           params: {
             job_id: @job.id
           }

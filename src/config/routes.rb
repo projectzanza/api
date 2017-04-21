@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth'
 
-  resources :users, only: [:index, :show, :update, :choose, :chosen] do
+  resources :users, only: [:index, :show, :update, :invite, :invited] do
     member do
-      post :choose
+      post :invite
     end
     collection do
-      get :chosen
+      get :invited
     end
 
     resources :jobs, only: [:index, :match] do

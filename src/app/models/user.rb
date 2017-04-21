@@ -11,8 +11,8 @@ class User < ActiveRecord::Base
 
   has_many :jobs
   has_many :messages
-  has_and_belongs_to_many :selected_for_jobs,
-                          join_table: 'selected_users_jobs',
+  has_and_belongs_to_many :invited_to_jobs,
+                          join_table: 'invited_users_jobs',
                           class_name: 'Job',
                           foreign_key: :job_id,
                           association_foreign_key: :user_id
