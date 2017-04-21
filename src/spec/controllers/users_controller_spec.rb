@@ -38,4 +38,23 @@ RSpec.describe UsersController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'get#chosen' do
+    before(:each) do
+      @job = create(:job, user: @user)
+    end
+
+    it 'should return all users chosen for a job' do
+      consultant = create(:user)
+      @job.selected_users << consultant
+
+      get :chosen,
+          params: {
+            job_id: @job.id
+          }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['id']).to eq(consultant.id)
+    end
+  end
 end

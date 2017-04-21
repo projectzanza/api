@@ -37,6 +37,13 @@ class UsersController < ApplicationController
     render json: { data: @job.selected_users }
   end
 
+  # GET /users/choosen
+  # list all users chosen for a job
+  def chosen
+    @job = Job.find(params[:job_id])
+    render json: { data: @job.selected_users }
+  end
+
   private
 
   def set_user
