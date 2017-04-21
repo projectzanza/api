@@ -11,6 +11,11 @@ class User < ActiveRecord::Base
 
   has_many :jobs
   has_many :messages
+  has_and_belongs_to_many :selected_for_jobs,
+                          join_table: 'selected_users_jobs',
+                          class_name: 'Job',
+                          foreign_key: :job_id,
+                          association_foreign_key: :user_id
 
   def as_json(options = {})
     super(options).merge(tag_list: tag_list)

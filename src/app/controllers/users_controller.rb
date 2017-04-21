@@ -27,6 +27,16 @@ class UsersController < ApplicationController
     render json: { data: User.tagged_with(@job.tag_list) }
   end
 
+  # PUT /users/:user_id/choose
+  # client to choose list of users who they would like to work on a job
+  def choose
+    @user = User.find(params[:id])
+    @job = current_user.jobs.find(params[:job_id])
+    @job.selected_users << @user
+
+    render json: { data: @job.selected_users }
+  end
+
   private
 
   def set_user
