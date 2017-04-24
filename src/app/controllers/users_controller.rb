@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_user, only: [:show]
-  before_action :set_authenticated_job, only: [:update, :destroy]
+  before_action :set_authenticated_user, only: [:update, :destroy]
 
   # GET /users
   def index
@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def set_authenticated_job
+  def set_authenticated_user
     raise ActiveRecord::RecordNotFound unless current_user
     @user = current_user
   end
