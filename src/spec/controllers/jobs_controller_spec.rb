@@ -171,4 +171,17 @@ RSpec.describe JobsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'get#invited' do
+    it 'should return a list of jobs a user is invited to' do
+      jobs = (0...3).collect { create(:job, user: @user) }
+
+      @user.invited_to_jobs << jobs
+
+      get :invited,
+          params: { user_id: @user.id }
+
+      expect(data.length).to eq 3
+    end
+  end
 end

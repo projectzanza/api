@@ -9,9 +9,10 @@ Rails.application.routes.draw do
       get :invited
     end
 
-    resources :jobs, only: [:index, :match] do
+    resources :jobs, only: [:index, :match, :invited] do
       collection do
         get :match
+        get :invited
       end
     end
   end
