@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20170421110848) do
     t.uuid "user_id"
     t.uuid "job_id"
     t.index ["job_id"], name: "index_invited_users_jobs_on_job_id", using: :btree
+    t.index ["user_id", "job_id"], name: "index_invited_users_jobs_on_user_id_and_job_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_invited_users_jobs_on_user_id", using: :btree
   end
 
