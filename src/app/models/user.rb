@@ -11,6 +11,18 @@ class User < ActiveRecord::Base
 
   has_many :jobs
   has_many :messages
+  has_and_belongs_to_many :invited_to_jobs,
+                          join_table: 'invited_users_jobs',
+                          class_name: 'Job',
+                          foreign_key: :job_id,
+                          association_foreign_key: :user_id do
+    def <<(value)
+      # uniqueness constraint is in the db, but need to swallow it here
+      super value
+    rescue ActiveRecord::RecordNotUnique
+      Rails.logger.warn 'duplicate user being invited to job'
+    end
+  end
 
   def as_json(options = {})
     super(options).merge(tag_list: tag_list)

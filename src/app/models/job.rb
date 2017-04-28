@@ -4,6 +4,18 @@ class Job < ApplicationRecord
 
   belongs_to :user
   has_many :messages
+  has_and_belongs_to_many :invited_users,
+                          join_table: 'invited_users_jobs',
+                          class_name: 'User',
+                          foreign_key: :user_id,
+                          association_foreign_key: :job_id do
+    def <<(value)
+      # uniqueness constraint is in the db, but need to swallow it here
+      super value
+    rescue ActiveRecord::RecordNotUnique
+      Rails.logger.warn 'duplicate user being invited to job'
+    end
+  end
 
   validates :title, presence: true
   validates :user, presence: true

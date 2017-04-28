@@ -5,7 +5,8 @@ User.create([
                 bio: 'dev bio',
                 tag_list: %w(ruby javascript docker grunt webpack java),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 500 }
               },
               {
                 name: 'Sophia Smith',
@@ -13,7 +14,8 @@ User.create([
                 bio: 'Sophias bio',
                 tag_list: %w(ruby javascript docker grunt webpack),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 1000 }
               },
               {
                 name: 'Aiden Jones',
@@ -21,7 +23,8 @@ User.create([
                 bio: 'Aidens bio',
                 tag_list: %w(ruby javascript docker grunt),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 200, max: 500 }
               },
               {
                 name: 'Emma Williams',
@@ -29,7 +32,8 @@ User.create([
                 bio: 'Emmas bio',
                 tag_list: %w(ruby javascript docker),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 600 }
               },
               {
                 name: 'Jackson Taylor',
@@ -37,20 +41,25 @@ User.create([
                 bio: 'Jacksons bio',
                 tag_list: %w(docker grunt webpack),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 900 }
               }
             ])
 
 Job.create([
              {
                title: 'Ruby development',
-               text: 'Develop ruby to save the world',
+               text: 'Develop ruby to save the world. 2 invited users',
                user: User.find_by(email: 'dev@zanza.com'),
                per_diem: { min: 100, max: 1000 },
                tag_list: %w(ruby docker),
                proposed_start_at: Time.zone.now,
                proposed_end_at: Time.zone.now + 3.day,
-               allow_contact: true
+               allow_contact: true,
+               invited_users: [
+                 User.find_by(email: 'aiden.jones@zanza.com'),
+                 User.find_by(email: 'emma.williams@zanza.com')
+               ]
              },
              {
                title: 'Docker project',
