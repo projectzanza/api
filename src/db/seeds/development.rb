@@ -5,7 +5,8 @@ User.create([
                 bio: 'dev bio',
                 tag_list: %w(ruby javascript docker grunt webpack java),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 500 }
               },
               {
                 name: 'Sophia Smith',
@@ -13,7 +14,8 @@ User.create([
                 bio: 'Sophias bio',
                 tag_list: %w(ruby javascript docker grunt webpack),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 1000 }
               },
               {
                 name: 'Aiden Jones',
@@ -21,7 +23,8 @@ User.create([
                 bio: 'Aidens bio',
                 tag_list: %w(ruby javascript docker grunt),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 200, max: 500 }
               },
               {
                 name: 'Emma Williams',
@@ -29,7 +32,8 @@ User.create([
                 bio: 'Emmas bio',
                 tag_list: %w(ruby javascript docker),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 600 }
               },
               {
                 name: 'Jackson Taylor',
@@ -37,7 +41,8 @@ User.create([
                 bio: 'Jacksons bio',
                 tag_list: %w(docker grunt webpack),
                 password: '123123123',
-                confirmed_at: Time.zone.now
+                confirmed_at: Time.zone.now,
+                per_diem: { min: 400, max: 900 }
               }
             ])
 
