@@ -5,7 +5,7 @@ class CreateInvitedUsersJobs < ActiveRecord::Migration[5.0]
       t.belongs_to :job, type: :uuid
     end
 
-    add_index :invited_users_jobs, [ :user_id, :job_id ], unique: true
+    add_index :invited_users_jobs, [:user_id, :job_id], unique: true
   end
 
   def down

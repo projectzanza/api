@@ -5,7 +5,7 @@ RSpec.describe UsersController, type: :controller do
     login_user
   end
 
-  # TODO tests for /jobs/:job_id/users/match
+  # TODO: tests for /jobs/:job_id/users/match
   # should not return current user in match
   # should not return invited users in match
 

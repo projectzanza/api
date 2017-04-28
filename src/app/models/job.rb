@@ -9,9 +9,11 @@ class Job < ApplicationRecord
                           class_name: 'User',
                           foreign_key: :user_id,
                           association_foreign_key: :job_id do
-    def << (value)
+    def <<(value)
       # uniqueness constraint is in the db, but need to swallow it here
-      super value rescue ActiveRecord::RecordNotUnique
+      super value
+    rescue ActiveRecord::RecordNotUnique
+      Rails.logger.warn 'duplicate user being invited to job'
     end
   end
 
