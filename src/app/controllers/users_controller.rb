@@ -44,6 +44,11 @@ class UsersController < ApplicationController
     render json: { data: @job.invited_users }
   end
 
+  def interested
+    @job = Job.find(params[:job_id])
+    render json: { data: @job.interested_users }
+  end
+
   private
 
   def set_user

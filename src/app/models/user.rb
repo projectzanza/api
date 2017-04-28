@@ -24,6 +24,19 @@ class User < ActiveRecord::Base
     end
   end
 
+  has_and_belongs_to_many :interested_in_jobs,
+                          join_table: 'interested_users_jobs',
+                          class_name: 'Job',
+                          foreign_key: :job_id,
+                          association_foreign_key: :user_id do
+    def <<(value)
+      # uniqueness constraint is in the db, but need to swallow it here
+      super value
+    rescue ActiveRecord::RecordNotUnique
+      Rails.logger.warn 'duplicate user being interested to job'
+    end
+  end
+
   def as_json(options = {})
     super(options).merge(tag_list: tag_list)
   end
