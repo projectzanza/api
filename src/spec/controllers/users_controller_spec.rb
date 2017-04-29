@@ -22,7 +22,6 @@ RSpec.describe UsersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(data.first['id']).to eq(consultant.id)
-      expect(@job.invited_users).to include(consultant)
     end
 
     it 'should return an error if the owner is not the user inviting consultants to a job' do
@@ -43,7 +42,11 @@ RSpec.describe UsersController, type: :controller do
   describe 'get#invited' do
     it 'should return all users invited to a job' do
       consultant = create(:user)
-      @job.invited_users << consultant
+      post :invite,
+           params: {
+             id: consultant.id,
+             job_id: @job.id
+           }
 
       get :invited,
           params: {
@@ -57,8 +60,8 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'get#interested' do
     it 'should return all users who registered interest in a job' do
-      users = (0...3).collect { create(:user) }
-      @job.interested_users << users
+      collaborators = (0...3).collect { create(:user) }
+      @job.register_interested_users(collaborators)
 
       get :interested,
           params: {

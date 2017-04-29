@@ -4,37 +4,30 @@ class Job < ApplicationRecord
 
   belongs_to :user
   has_many :messages
-  has_and_belongs_to_many :invited_users,
-                          join_table: 'invited_users_jobs',
-                          class_name: 'User',
-                          foreign_key: :user_id,
-                          association_foreign_key: :job_id do
-    def <<(value)
-      # uniqueness constraint is in the db, but need to swallow it here
-      super value
-    rescue ActiveRecord::RecordNotUnique
-      Rails.logger.warn 'duplicate user being invited to job'
-    end
-  end
-
-  has_and_belongs_to_many :interested_users,
-                          join_table: 'interested_users_jobs',
-                          class_name: 'User',
-                          foreign_key: :user_id,
-                          association_foreign_key: :job_id do
-    def <<(value)
-      # uniqueness constraint is in the db, but need to swallow it here
-      super value
-    rescue ActiveRecord::RecordNotUnique
-      Rails.logger.warn 'duplicate user being invited to job'
-    end
-  end
+  has_many :collaborators
+  has_many :collaborating_users, through: :collaborators, source: :user
 
   validates :title, presence: true
   validates :user, presence: true
   validates :proposed_start_at, in_future: true, on: :create
   validates :proposed_end_at, in_future: true, on: :create
   validate :proposed_end_at_after_proposed_start_at
+
+  def invite_users(users)
+    add_collaborators(users, :invited_at)
+  end
+
+  def invited_users
+    collaborating_users.merge(Collaborator.invited)
+  end
+
+  def register_interested_users(users)
+    add_collaborators(users, :interested_at)
+  end
+
+  def interested_users
+    collaborating_users.merge(Collaborator.interested)
+  end
 
   def as_json(options)
     super(options).merge(tag_list: tag_list)
@@ -43,5 +36,16 @@ class Job < ApplicationRecord
   def proposed_end_at_after_proposed_start_at
     errors.add(:proposed_end_at, 'cannot be before proposed start date') unless
       proposed_start_at.nil? || (proposed_end_at > proposed_start_at)
+  end
+
+  private
+
+  def add_collaborators(users, state)
+    time = Time.zone.now
+    ary_users = Array(users)
+    ary_users.map! { |user| { user: user, state => time } }
+    collaborators.create(ary_users)
+  rescue ActiveRecord::RecordNotUnique
+    Rails.logger.info "trying to #{state} user #{user}"
   end
 end
