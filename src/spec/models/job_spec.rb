@@ -44,18 +44,17 @@ RSpec.describe Job, type: :model do
   describe 'invited_users' do
     it 'does not error on duplicate invited users' do
       job = create(:job, user: build(:user))
-      user = create(:user)
 
-      job.invited_users << user
-      expect(job.invited_users << user).to be_truthy
+      job.invite_users(create(:user))
+      expect(job.invite_users(create(:user))).to be_truthy
     end
 
     it 'does not record the second instance of duplicate invited users' do
       job = create(:job, user: build(:user))
       user = create(:user)
 
-      job.invited_users << user
-      job.invited_users << user
+      job.invite_users(user)
+      job.invite_users(user)
 
       expect(job.invited_users.count).to eq(1)
     end

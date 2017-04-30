@@ -10,19 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170421110848) do
+ActiveRecord::Schema.define(version: 20170429091053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
   enable_extension "citext"
 
-  create_table "invited_users_jobs", force: :cascade do |t|
-    t.uuid "user_id"
-    t.uuid "job_id"
-    t.index ["job_id"], name: "index_invited_users_jobs_on_job_id", using: :btree
-    t.index ["user_id", "job_id"], name: "index_invited_users_jobs_on_user_id_and_job_id", unique: true, using: :btree
-    t.index ["user_id"], name: "index_invited_users_jobs_on_user_id", using: :btree
+  create_table "collaborators", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid     "user_id"
+    t.uuid     "job_id"
+    t.datetime "invited_at"
+    t.datetime "interested_at"
+    t.datetime "awarded_at"
+    t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
+    t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree
   end
 
   create_table "jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

@@ -11,17 +11,23 @@ class User < ActiveRecord::Base
 
   has_many :jobs
   has_many :messages
-  has_and_belongs_to_many :invited_to_jobs,
-                          join_table: 'invited_users_jobs',
-                          class_name: 'Job',
-                          foreign_key: :job_id,
-                          association_foreign_key: :user_id do
-    def <<(value)
-      # uniqueness constraint is in the db, but need to swallow it here
-      super value
-    rescue ActiveRecord::RecordNotUnique
-      Rails.logger.warn 'duplicate user being invited to job'
-    end
+  has_many :collaborating_jobs, through: :collaborators, source: :job
+  has_many :collaborators
+
+  def invite_to_jobs(jobs)
+    add_collaborators(jobs, :invited_at)
+  end
+
+  def invited_to_jobs
+    collaborating_jobs.merge(Collaborator.invited)
+  end
+
+  def register_interest_in_jobs(jobs)
+    add_collaborators(jobs, :interested_at)
+  end
+
+  def interested_in_jobs
+    collaborating_jobs.merge(Collaborator.interested)
   end
 
   def as_json(options = {})
@@ -32,5 +38,14 @@ class User < ActiveRecord::Base
 
   def confirmation_required?
     Rails.configuration.confirmation_required
+  end
+
+  def add_collaborators(jobs, state)
+    time = Time.zone.now
+    ary_jobs = Array(jobs)
+    ary_jobs.map! { |job| { job: job, state => time } }
+    collaborators.create(ary_jobs)
+  rescue ActiveRecord::RecordNotUnique
+    Rails.logger.info "trying to #{state} user #{user}"
   end
 end

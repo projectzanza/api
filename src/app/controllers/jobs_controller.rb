@@ -59,6 +59,17 @@ class JobsController < ApplicationController
     render json: { data: @user.invited_to_jobs }
   end
 
+  def register_interest
+    @job = Job.find(params[:id])
+    @job.register_interested_users(current_user)
+
+    render json: { data: current_user.interested_in_jobs }
+  end
+
+  def interested
+    render json: { data: current_user.interested_in_jobs }
+  end
+
   private
 
   def set_job
