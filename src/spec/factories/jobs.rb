@@ -8,6 +8,7 @@ FactoryGirl.define do
   end
 
   factory :job do
+    user { build(:user) }
     title { generate(:title) }
     text { generate(:title) }
     tag_list { (0...3).collect { generate(:tag) } }

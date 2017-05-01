@@ -24,7 +24,7 @@ Rails.application.routes.draw do
       get :interested
     end
 
-    resources :users, only: [:match] do
+    resources :users, only: [:match, :show] do
       collection do
         get :match
         get :interested

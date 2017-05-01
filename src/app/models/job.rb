@@ -2,6 +2,8 @@ class Job < ApplicationRecord
   acts_as_paranoid
   acts_as_taggable
 
+  include HasCollaborator
+
   belongs_to :user
   has_many :messages
   has_many :collaborators
@@ -14,7 +16,7 @@ class Job < ApplicationRecord
   validate :proposed_end_at_after_proposed_start_at
 
   def invite_users(users)
-    add_collaborators(users, :invited_at)
+    add_collaborators(users, :user, :invited_at)
   end
 
   def invited_users
@@ -22,30 +24,37 @@ class Job < ApplicationRecord
   end
 
   def register_interested_users(users)
-    add_collaborators(users, :interested_at)
+    add_collaborators(users, :user, :interested_at)
   end
 
   def interested_users
     collaborating_users.merge(Collaborator.interested)
   end
 
+  def interested_and_invited_users
+    collaborating_users.merge(Collaborator.collaborator)
+  end
+
   def as_json(options)
-    super(options).merge(tag_list: tag_list)
+    meta = meta_as_json(options)
+    options.delete(:user)
+    super(options).merge(tag_list: tag_list, meta: meta)
+  end
+
+  def meta_as_json(options)
+    if options[:user] && (collaborator = collaborators.where(user: options[:user]).first)
+      {
+        current_user: {
+          collaboration_state: collaborator.state
+        }
+      }
+    else
+      {}
+    end
   end
 
   def proposed_end_at_after_proposed_start_at
     errors.add(:proposed_end_at, 'cannot be before proposed start date') unless
       proposed_start_at.nil? || (proposed_end_at > proposed_start_at)
-  end
-
-  private
-
-  def add_collaborators(users, state)
-    time = Time.zone.now
-    ary_users = Array(users)
-    ary_users.map! { |user| { user: user, state => time } }
-    collaborators.create(ary_users)
-  rescue ActiveRecord::RecordNotUnique
-    Rails.logger.info "trying to #{state} user #{user}"
   end
 end

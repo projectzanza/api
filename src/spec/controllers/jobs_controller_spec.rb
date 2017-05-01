@@ -174,7 +174,7 @@ RSpec.describe JobsController, type: :controller do
 
   describe 'get#invited' do
     it 'should return a list of jobs a user is invited to' do
-      jobs = (0...3).collect { create(:job, user: build(:user)) }
+      jobs = (0...3).collect { create(:job) }
       @user.invite_to_jobs(jobs)
 
       get :invited,
@@ -186,7 +186,7 @@ RSpec.describe JobsController, type: :controller do
 
   describe 'post#register_interest' do
     it 'should register a user as interested in a job' do
-      job = create(:job, user: build(:user))
+      job = create(:job)
 
       post :register_interest,
            params: { id: job.id }
@@ -198,7 +198,7 @@ RSpec.describe JobsController, type: :controller do
 
   describe 'get#interested' do
     it 'should list all jobs a user is interested in' do
-      jobs = (0...3).collect { create(:job, user: build(:user)) }
+      jobs = (0...3).collect { create(:job) }
       @user.register_interest_in_jobs(jobs)
 
       get :interested
