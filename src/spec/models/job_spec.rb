@@ -85,6 +85,26 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe 'award_to_user' do
+    it 'should award a job to a user' do
+      job = create(:job)
+      consultant = create(:user)
+
+      job.award_to_user(consultant)
+
+      expect(job.awarded_user).to eq(consultant)
+    end
+
+    it 'should only allow awarding of the job to one user at a time' do
+      job = create(:job)
+      consultant = create(:user)
+      consultant2 = create(:user)
+
+      job.award_to_user(consultant)
+      expect { job.award_to_user(consultant2) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
   describe 'as_json' do
     it 'returns meta data for the user supplied in the options' do
       job = create(:job)
@@ -97,6 +117,9 @@ RSpec.describe Job, type: :model do
       job.register_interested_users([user, user2])
       expect(JSON.parse(job.to_json(user: user))['meta']['current_user']['collaboration_state']).to eq('collaborator')
       expect(JSON.parse(job.to_json(user: user2))['meta']['current_user']['collaboration_state']).to eq('interested')
+
+      job.award_to_user(user)
+      expect(JSON.parse(job.to_json(user: user))['meta']['current_user']['collaboration_state']).to eq('awarded')
     end
 
     it 'does not return collaboration_state if the user is not a collaborator' do
