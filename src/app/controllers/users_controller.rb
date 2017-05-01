@@ -13,7 +13,8 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: { data: @user }
+    @job = Job.find(params[:job_id]) if params[:job_id]
+    render json: { data: @user.as_json(job: @job) }
   end
 
   # PATCH/PUT /users/1
@@ -24,7 +25,7 @@ class UsersController < ApplicationController
   # GET /jobs/:job_id/users/match
   def match
     @job = Job.find(params[:job_id])
-    render json: { data: User.tagged_with(@job.tag_list) }
+    render json: { data: User.tagged_with(@job.tag_list).as_json(job: @job) }
   end
 
   # PUT /users/:user_id/invite
@@ -41,12 +42,12 @@ class UsersController < ApplicationController
   # list all users chosen for a job
   def invited
     @job = Job.find(params[:job_id])
-    render json: { data: @job.invited_users }
+    render json: { data: @job.invited_users.as_json(job: @job) }
   end
 
   def interested
     @job = Job.find(params[:job_id])
-    render json: { data: @job.interested_users }
+    render json: { data: @job.interested_users.as_json(job: @job) }
   end
 
   private

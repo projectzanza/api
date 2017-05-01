@@ -19,7 +19,7 @@ class JobsController < ApplicationController
 
   # GET /jobs/1
   def show
-    render json: { data: @job }
+    render json: { data: @job.as_json(user: current_user) }
   end
 
   # POST /jobs
