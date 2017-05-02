@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170429091053) do
+ActiveRecord::Schema.define(version: 20170502143851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,17 @@ ActiveRecord::Schema.define(version: 20170429091053) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "scopes", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid     "job_id"
+    t.string   "title"
+    t.text     "description"
+    t.datetime "completed_at"
+    t.datetime "verified_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["job_id"], name: "index_scopes_on_job_id", using: :btree
   end
 
   create_table "taggings", force: :cascade do |t|
