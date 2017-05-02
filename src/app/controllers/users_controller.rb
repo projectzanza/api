@@ -28,7 +28,7 @@ class UsersController < ApplicationController
     render json: { data: User.tagged_with(@job.tag_list).as_json(job: @job) }
   end
 
-  # PUT /users/:user_id/invite
+  # POST /users/:user_id/invite
   # client to choose list of users who they would like to work on a job
   def invite
     @user = User.find(params[:id])
@@ -48,6 +48,21 @@ class UsersController < ApplicationController
   def interested
     @job = Job.find(params[:job_id])
     render json: { data: @job.interested_users.as_json(job: @job) }
+  end
+
+  #  POST /users/:id/award
+  def award
+    @user = User.find(params[:id])
+    @job = Job.find(params[:job_id])
+    @job.award_to_user(@user)
+
+    render json: { data: @user.as_json(job: @job) }
+  end
+
+  # GET /jobs/:job_id/users/awarded
+  def awarded
+    @job = Job.find(params[:job_id])
+    render json: { data: @job.awarded_user.as_json(job: @job) }
   end
 
   private

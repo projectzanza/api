@@ -133,6 +133,7 @@ job = Job.create(title: 'Bank physical security review',
 job.invite_users([
                    User.find_by(email: 'dev@zanza.com')
                  ])
+job.award_to_user(User.find_by(email: 'dev@zanza.com'))
 
 job = Job.create(title: 'Flash development',
                  text: 'for Internet Explorer 4',

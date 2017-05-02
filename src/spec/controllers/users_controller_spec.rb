@@ -72,4 +72,38 @@ RSpec.describe UsersController, type: :controller do
       expect(data.length).to eq(3)
     end
   end
+
+  describe 'post#award' do
+    it 'should award a job to a user, and return awarded in the collaboration_state' do
+      consultant = create(:user)
+
+      post :award,
+           params: {
+             job_id: @job.id,
+             id: consultant.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['meta']['job']['collaboration_state']).to eq('awarded')
+    end
+  end
+
+  describe 'get#awarded' do
+    it 'should return the awarded user for a job' do
+      consultant = create(:user)
+
+      post :award,
+           params: {
+             job_id: @job.id,
+             id: consultant.id
+           }
+
+      get :awarded,
+          params: {
+            job_id: @job.id
+          }
+
+      expect(data['id']).to eq(consultant.id)
+    end
+  end
 end

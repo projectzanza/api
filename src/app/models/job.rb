@@ -35,6 +35,14 @@ class Job < ApplicationRecord
     collaborating_users.merge(Collaborator.collaborator)
   end
 
+  def award_to_user(user)
+    add_collaborators(user, :user, :awarded_at)
+  end
+
+  def awarded_user
+    collaborating_users.merge(Collaborator.awarded).first
+  end
+
   def as_json(options)
     meta = meta_as_json(options)
     options.delete(:user)

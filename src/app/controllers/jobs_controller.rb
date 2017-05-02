@@ -70,6 +70,10 @@ class JobsController < ApplicationController
     render json: { data: current_user.interested_in_jobs }
   end
 
+  def awarded
+    render json: { data: current_user.awarded_jobs }
+  end
+
   private
 
   def set_job
