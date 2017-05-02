@@ -21,11 +21,13 @@ Rails.application.routes.draw do
     member do
       post :register_interest
     end
+
     collection do
       get :interested
+      get :awarded
     end
 
-    resources :users, only: [:match, :show] do
+    resources :users, only: [:match, :show, :awarded] do
       collection do
         get :match
         get :interested

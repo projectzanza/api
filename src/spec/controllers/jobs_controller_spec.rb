@@ -207,4 +207,15 @@ RSpec.describe JobsController, type: :controller do
       expect(data.length).to eq(3)
     end
   end
+
+  describe 'get#awarded' do
+    it 'should list all jobs awarded to a user' do
+      (0...3).collect { create(:job).award_to_user(@user) }
+
+      get :awarded
+
+      expect(response).to have_http_status(:ok)
+      expect(data.length).to eq(3)
+    end
+  end
 end
