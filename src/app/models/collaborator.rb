@@ -2,7 +2,10 @@ class Collaborator < ApplicationRecord
   belongs_to :user
   belongs_to :job
 
-  scope :invited, -> { where.not(collaborators: { invited_at: nil }) }
+  scope :invited, lambda {
+    where(collaborators: { awarded_at: nil, accepted_at: nil })
+      .where.not(collaborators: { invited_at: nil })
+  }
   scope :interested, lambda {
     where(collaborators: { invited_at: nil })
       .where.not(collaborators: { interested_at: nil })
@@ -11,7 +14,10 @@ class Collaborator < ApplicationRecord
     where.not(collaborators: { invited_at: nil })
          .where.not(collaborators: { interested_at: nil })
   }
-  scope :awarded, -> { where.not(collaborators: { awarded_at: nil }) }
+  scope :awarded, lambda {
+    where(collaborators: { accepted_at: nil })
+      .where.not(collaborators: { awarded_at: nil })
+  }
   scope :accepted, -> { where.not(collaborators: { accepted_at: nil }) }
 
   validate :collaborator_state_present

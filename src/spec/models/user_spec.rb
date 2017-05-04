@@ -42,4 +42,23 @@ RSpec.describe User, type: :model do
       expect(JSON.parse(@job.to_json(user: @user))['meta']).to eq({})
     end
   end
+
+  describe 'awarded_jobs' do
+    it 'returns all jobs which are awarded but not accepted' do
+      user = create(:user)
+      consultant = create(:user)
+      create(:job, user: user)
+
+      j2 = create(:job, user: user)
+      j2.award_to_user(consultant)
+
+      j3 = create(:job, user: user)
+      j3.award_to_user(consultant)
+      consultant.accept_job(j3)
+
+      jobs = consultant.awarded_jobs
+      expect(jobs.count).to eq(1)
+      expect(jobs.first.id).to eq(j2.id)
+    end
+  end
 end
