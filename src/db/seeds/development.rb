@@ -65,13 +65,25 @@ User.create([
             ])
 
 job = Job.create(title: 'Ruby development',
-                 text: 'Develop ruby to save the world. 2 invited users',
+                 text: 'Develop ruby to save the world.
+2 invited users, 2 interested users and 2 scopes',
                  user: User.find_by(email: 'dev@zanza.com'),
                  per_diem: { min: 100, max: 1000 },
                  tag_list: %w(ruby docker),
                  proposed_start_at: Time.zone.now,
                  proposed_end_at: Time.zone.now + 3.day,
-                 allow_contact: true)
+                 allow_contact: true,
+                 scopes: [
+                   Scope.create(
+                     title: 'start ruby on rails project',
+                     description: 'like a train wreck'
+                   ),
+                   Scope.create(
+                      title: 'save the world',
+                      description: 'its a 2 step job only'
+                   )
+                 ]
+)
 job.invite_users([
                    User.find_by(email: 'aiden.jones@zanza.com'),
                    User.find_by(email: 'emma.williams@zanza.com')
@@ -122,13 +134,24 @@ job.invite_users([
                  ])
 
 job = Job.create(title: 'Bank physical security review',
-                 text: 'physical review of security for unicorns',
+                 text: 'physical review of security for unicorns
+has scopes. invited and awarded to dev@zanza.com',
                  user: User.find_by(email: 'taylor.swift@zanza.com'),
                  per_diem: { min: 100, max: 1000 },
                  tag_list: %w(security physical camera),
                  proposed_start_at: Time.zone.now + 10.day,
                  proposed_end_at: Time.zone.now + 13.day,
-                 allow_contact: true)
+                 allow_contact: true,
+                 scopes: [
+                   Scope.create(
+                     title: 'find a bank to break into',
+                     description: 'there are loads of them around'
+                   ),
+                   Scope.create(
+                     title: 'take them for all they are worth',
+                     description: '1 million dollars (approx)'
+                   )
+                 ])
 
 job.invite_users([
                    User.find_by(email: 'dev@zanza.com')

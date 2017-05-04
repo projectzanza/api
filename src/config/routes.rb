@@ -34,6 +34,9 @@ Rails.application.routes.draw do
         get :awarded
       end
     end
+
+    resources :scopes, only: [:index, :create]
   end
   resources :messages
+  resources :scopes, only: [:update, :destroy]
 end

@@ -8,6 +8,10 @@ FactoryGirl.define do
   end
 
   factory :job do
+    transient do
+      scope_count 0
+    end
+
     user { build(:user) }
     title { generate(:title) }
     text { generate(:title) }
@@ -23,6 +27,12 @@ FactoryGirl.define do
 
     trait :is_closed do
       closed_at { Time.zone.now }
+    end
+
+    after(:create) do |job, evaluator|
+      evaluator.scope_count.times do
+        create(:scope, job: job)
+      end
     end
   end
 end

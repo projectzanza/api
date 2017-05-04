@@ -8,6 +8,7 @@ class Job < ApplicationRecord
   has_many :messages
   has_many :collaborators
   has_many :collaborating_users, through: :collaborators, source: :user
+  has_many :scopes
 
   validates :title, presence: true
   validates :user, presence: true
