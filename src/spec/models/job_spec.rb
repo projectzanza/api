@@ -81,7 +81,7 @@ RSpec.describe Job, type: :model do
       job.invite_users(consultant)
 
       expect(job.collaborating_users.count).to eq(1)
-      expect(job.interested_and_invited_users.count).to eq(1)
+      expect(job.prospective_users.count).to eq(1)
     end
   end
 
@@ -106,26 +106,44 @@ RSpec.describe Job, type: :model do
   end
 
   describe 'as_json' do
-    it 'returns meta data for the user supplied in the options' do
-      job = create(:job)
-      user = create(:user)
+    before(:each) do
+      @job = create(:job)
+      @user = create(:user)
+    end
 
-      job.invite_users(user)
-      expect(JSON.parse(job.to_json(user: user))['meta']['current_user']['collaboration_state']).to eq('invited')
+    def collaboration_state_json
+      JSON.parse(@job.to_json(user: @user))['meta']['current_user']['collaboration_state']
+    end
 
-      user2 = create(:user)
-      job.register_interested_users([user, user2])
-      expect(JSON.parse(job.to_json(user: user))['meta']['current_user']['collaboration_state']).to eq('collaborator')
-      expect(JSON.parse(job.to_json(user: user2))['meta']['current_user']['collaboration_state']).to eq('interested')
+    it 'returns collaboration state as "interested" when a user is invited to a project' do
+      @job.register_interested_users(@user)
+      expect(collaboration_state_json).to eq 'interested'
+    end
 
-      job.award_to_user(user)
-      expect(JSON.parse(job.to_json(user: user))['meta']['current_user']['collaboration_state']).to eq('awarded')
+    it 'returns collaboration state as "invited" when a user is invited to a project' do
+      @job.invite_users(@user)
+      expect(collaboration_state_json).to eq 'invited'
+    end
+
+    it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
+      @job.register_interested_users(@user)
+      @job.invite_users(@user)
+      expect(collaboration_state_json).to eq 'prospective'
+    end
+
+    it 'returns collaboration state as "awarded" when a user is awarded a project' do
+      @job.award_to_user(@user)
+      expect(collaboration_state_json).to eq 'awarded'
+    end
+
+    it 'returns collaboration state as "participant" when a user is awarded and accepts the project' do
+      @job.award_to_user(@user)
+      @user.accept_job(@job)
+      expect(collaboration_state_json).to eq 'participant'
     end
 
     it 'does not return collaboration_state if the user is not a collaborator' do
-      job = create(:job)
-      user = create(:user)
-      expect(JSON.parse(job.to_json(user: user))['meta']).to eq({})
+      expect(JSON.parse(@job.to_json(user: @user))['meta']).to eq({})
     end
   end
 end

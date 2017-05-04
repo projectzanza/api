@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   resources :jobs do
     member do
       post :register_interest
+      post :accept
     end
 
     collection do

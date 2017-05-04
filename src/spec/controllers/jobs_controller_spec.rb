@@ -218,4 +218,26 @@ RSpec.describe JobsController, type: :controller do
       expect(data.length).to eq(3)
     end
   end
+
+  describe 'post#accept' do
+    it 'should accept the job for the user then return all accepted jobs for that user' do
+      job = create(:job)
+      job.award_to_user(@user)
+
+      post :accept,
+           params: { id: job.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['id']).to eq(job.id)
+    end
+
+    it 'should only allow acceptance of jobs the user has been awarded' do
+      job = create(:job)
+
+      post :accept,
+           params: { id: job.id }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
 end

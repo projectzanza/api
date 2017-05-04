@@ -74,6 +74,13 @@ class JobsController < ApplicationController
     render json: { data: current_user.awarded_jobs }
   end
 
+  def accept
+    @job = Job.find(params[:id])
+    current_user.accept_job(@job)
+
+    render json: { data: current_user.accepted_jobs }
+  end
+
   private
 
   def set_job
