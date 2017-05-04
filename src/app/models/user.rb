@@ -35,6 +35,14 @@ class User < ActiveRecord::Base
     collaborating_jobs.merge(Collaborator.awarded)
   end
 
+  def accepted_jobs
+    collaborating_jobs.merge(Collaborator.accepted)
+  end
+
+  def accept_job(job)
+    add_collaborators(job, :job, :accepted_at)
+  end
+
   def as_json(options = {})
     meta = meta_as_json(options)
     options.delete(:job)

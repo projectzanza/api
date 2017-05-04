@@ -79,11 +79,10 @@ job = Job.create(title: 'Ruby development',
                      description: 'like a train wreck'
                    ),
                    Scope.create(
-                      title: 'save the world',
-                      description: 'its a 2 step job only'
+                     title: 'save the world',
+                     description: 'its a 2 step job only'
                    )
-                 ]
-)
+                 ])
 job.invite_users([
                    User.find_by(email: 'aiden.jones@zanza.com'),
                    User.find_by(email: 'emma.williams@zanza.com')

@@ -32,8 +32,8 @@ class Job < ApplicationRecord
     collaborating_users.merge(Collaborator.interested)
   end
 
-  def interested_and_invited_users
-    collaborating_users.merge(Collaborator.collaborator)
+  def prospective_users
+    collaborating_users.merge(Collaborator.prospective)
   end
 
   def award_to_user(user)
