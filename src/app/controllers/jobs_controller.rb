@@ -52,6 +52,13 @@ class JobsController < ApplicationController
     render json: { data: @jobs }
   end
 
+  # GET /jobs/collaborating
+  def collaborating
+    @jobs = current_user.find_collaborating_jobs(collaborating_filter_params)
+
+    render json: { data: @jobs.as_json(user: current_user) }
+  end
+
   # GET /users/:user_id/jobs/invited
   # a list a jobs the user_id is invited to
   def invited
@@ -101,6 +108,13 @@ class JobsController < ApplicationController
       :allow_contact,
       per_diem: [:min, :max],
       tag_list: []
+    ).to_h
+  end
+
+  def collaborating_filter_params
+    params.permit(
+      :filter,
+      :limit
     ).to_h
   end
 end

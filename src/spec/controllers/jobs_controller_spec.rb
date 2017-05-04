@@ -240,4 +240,50 @@ RSpec.describe JobsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe 'get#collaborating' do
+    it 'without a filter, it should return max 5 jobs from each "interested,invited,prospective,awarded,participant"' do
+      6.times { create(:job) }
+      6.times { @user.register_interest_in_jobs(create(:job)) }
+      6.times { create(:job).invite_users(@user) }
+      6.times do
+        job = create(:job)
+        job.invite_users(@user)
+        @user.register_interest_in_jobs(job)
+      end
+      6.times { create(:job).award_to_user(@user) }
+      6.times do
+        job = create(:job)
+        job.award_to_user(@user)
+        @user.accept_job(job)
+      end
+
+      get :collaborating
+
+      expect(response).to have_http_status(:ok)
+      expect(data.length).to eq(25)
+
+      states = data.map { |job| job['meta']['current_user']['collaboration_state'] }
+      expect(states.count('interested')).to eq(5)
+      expect(states.count('invited')).to eq(5)
+      expect(states.count('prospective')).to eq(5)
+      expect(states.count('awarded')).to eq(5)
+      expect(states.count('participant')).to eq(5)
+    end
+
+    it 'should return only the filter requested when supplied' do
+      6.times { create(:job) }
+      6.times { @user.register_interest_in_jobs(create(:job)) }
+
+      get :collaborating,
+          params: {
+            filter: :interested,
+            limit: 3
+          }
+
+      expect(data.length).to eq(3)
+      states = data.map { |job| job['meta']['current_user']['collaboration_state'] }
+      expect(states.count('interested')).to eq(3)
+    end
+  end
 end

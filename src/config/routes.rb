@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     collection do
       get :interested
       get :awarded
+      get :collaborating
     end
 
     resources :users, only: [:match, :show, :awarded] do
