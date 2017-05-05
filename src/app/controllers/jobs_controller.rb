@@ -52,31 +52,27 @@ class JobsController < ApplicationController
     render json: { data: @jobs }
   end
 
-  # GET /users/:user_id/jobs/invited
-  # a list a jobs the user_id is invited to
-  def invited
-    @user = User.find(params[:user_id])
-    render json: { data: @user.invited_to_jobs.as_json(user: current_user) }
+  # GET /jobs/collaborating
+  def collaborating
+    @jobs = current_user.find_collaborating_jobs(collaborating_filter_params)
+
+    render json: { data: @jobs.as_json(user: current_user) }
   end
 
+  # POST /jobs/:id/register_interest
   def register_interest
     @job = Job.find(params[:id])
     @job.register_interested_users(current_user)
+    current_user.reload
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
   end
 
-  def interested
-    render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
-  end
-
-  def awarded
-    render json: { data: current_user.awarded_jobs.as_json(user: current_user) }
-  end
-
+  # POST /jobs/:id/accept
   def accept
     @job = Job.find(params[:id])
     current_user.accept_job(@job)
+    current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }
   end
@@ -101,6 +97,13 @@ class JobsController < ApplicationController
       :allow_contact,
       per_diem: [:min, :max],
       tag_list: []
+    ).to_h
+  end
+
+  def collaborating_filter_params
+    params.permit(
+      :filter,
+      :limit
     ).to_h
   end
 end

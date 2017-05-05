@@ -41,7 +41,30 @@ class Job < ApplicationRecord
   end
 
   def awarded_user
-    collaborating_users.merge(Collaborator.awarded).first
+    collaborating_users.merge(Collaborator.awarded).limit(1)
+  end
+
+  def participant_users
+    collaborating_users.merge(Collaborator.participant)
+  end
+
+  def default_collaborating_users
+    invited_users.limit(5)
+                 .union_all(interested_users.limit(5))
+                 .union_all(prospective_users.limit(5))
+                 .union_all(awarded_user)
+                 .union_all(participant_users.limit(5))
+  end
+
+  def find_collaborating_users(options = {})
+    opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
+    filter = opts[:filter] && Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
+
+    if filter
+      collaborating_users.merge(Collaborator.send(filter)).limit(opts[:limit])
+    else
+      default_collaborating_users
+    end
   end
 
   def as_json(options)

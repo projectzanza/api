@@ -39,40 +39,6 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe 'get#invited' do
-    it 'should return all users invited to a job' do
-      consultant = create(:user)
-      post :invite,
-           params: {
-             id: consultant.id,
-             job_id: @job.id
-           }
-
-      get :invited,
-          params: {
-            job_id: @job.id
-          }
-
-      expect(response).to have_http_status(:ok)
-      expect(data.first['id']).to eq(consultant.id)
-    end
-  end
-
-  describe 'get#interested' do
-    it 'should return all users who registered interest in a job' do
-      collaborators = (0...3).collect { create(:user) }
-      @job.register_interested_users(collaborators)
-
-      get :interested,
-          params: {
-            job_id: @job.id
-          }
-
-      expect(response).to have_http_status(:ok)
-      expect(data.length).to eq(3)
-    end
-  end
-
   describe 'post#award' do
     it 'should award a job to a user, and return awarded in the collaboration_state' do
       consultant = create(:user)
@@ -88,22 +54,48 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe 'get#awarded' do
-    it 'should return the awarded user for a job' do
-      consultant = create(:user)
+  describe 'get#collaborating' do
+    it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,participant"' do
+      6.times { create(:user) }
+      6.times { create(:user).register_interest_in_jobs(@job) }
+      6.times { @job.invite_users(create(:user)) }
+      6.times do
+        user = create(:user)
+        @job.invite_users(user)
+        user.register_interest_in_jobs(@job)
+      end
+      @job.award_to_user(create(:user))
 
-      post :award,
-           params: {
-             job_id: @job.id,
-             id: consultant.id
-           }
-
-      get :awarded,
+      get :collaborating,
           params: {
             job_id: @job.id
           }
 
-      expect(data['id']).to eq(consultant.id)
+      expect(response).to have_http_status(:ok)
+      expect(data.length).to eq(16)
+
+      states = data.map { |job| job['meta']['job']['collaboration_state'] }
+      expect(states.count('interested')).to eq(5)
+      expect(states.count('invited')).to eq(5)
+      expect(states.count('prospective')).to eq(5)
+      expect(states.count('awarded')).to eq(1)
+      expect(states.count('participant')).to eq(0)
+    end
+
+    it 'should only return the filter requested when supplied' do
+      6.times { create(:user) }
+      6.times { @job.invite_users(create(:user)) }
+
+      get :collaborating,
+          params: {
+            job_id: @job.id,
+            filter: :invited,
+            limit: 3
+          }
+
+      expect(data.length).to eq(3)
+      states = data.map { |job| job['meta']['job']['collaboration_state'] }
+      expect(states.count('invited')).to eq(3)
     end
   end
 end

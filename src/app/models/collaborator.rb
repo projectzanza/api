@@ -3,22 +3,24 @@ class Collaborator < ApplicationRecord
   belongs_to :job
 
   scope :invited, lambda {
-    where(collaborators: { awarded_at: nil, accepted_at: nil })
+    where(collaborators: { awarded_at: nil, accepted_at: nil, interested_at: nil })
       .where.not(collaborators: { invited_at: nil })
   }
   scope :interested, lambda {
-    where(collaborators: { invited_at: nil })
+    where(collaborators: { invited_at: nil, awarded_at: nil, accepted_at: nil })
       .where.not(collaborators: { interested_at: nil })
   }
   scope :prospective, lambda {
-    where.not(collaborators: { invited_at: nil })
-         .where.not(collaborators: { interested_at: nil })
+    where.not(collaborators: { invited_at: nil, interested_at: nil })
   }
   scope :awarded, lambda {
     where(collaborators: { accepted_at: nil })
       .where.not(collaborators: { awarded_at: nil })
   }
   scope :accepted, -> { where.not(collaborators: { accepted_at: nil }) }
+  scope :participant, lambda {
+    where.not(collaborators: { accepted_at: nil, awarded_at: nil })
+  }
 
   validate :collaborator_state_present
   validate :one_awarded_user_per_job
@@ -38,8 +40,8 @@ class Collaborator < ApplicationRecord
   end
 
   def one_awarded_user_per_job
-    errors.add(:awarded_at, 'can only award to one user at a time') unless
-      !awarded_at_was.nil? || Collaborator.where(job: job).where.not(awarded_at: nil).count.zero?
+    errors.add(:awarded_at, 'can only award to one user at a time') if
+      awarded_at && (Collaborator.where(job: job).where.not(awarded_at: nil).count.nonzero? && awarded_at_was.nil?)
   end
 
   def can_only_accept_awarded_job

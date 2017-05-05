@@ -92,7 +92,7 @@ RSpec.describe Job, type: :model do
 
       job.award_to_user(consultant)
 
-      expect(job.awarded_user).to eq(consultant)
+      expect(job.awarded_user.first).to eq(consultant)
     end
 
     it 'should only allow awarding of the job to one user at a time' do
@@ -102,6 +102,16 @@ RSpec.describe Job, type: :model do
 
       job.award_to_user(consultant)
       expect { job.award_to_user(consultant2) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'should allow collaborator actions after awarding a job to a user' do
+      job = create(:job)
+      consultant1 = create(:user)
+      consultant2 = create(:user)
+
+      job.award_to_user(consultant1)
+      job.invite_users(consultant2)
+      expect(job.invited_users).to include(consultant2)
     end
   end
 
