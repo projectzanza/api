@@ -59,31 +59,20 @@ class JobsController < ApplicationController
     render json: { data: @jobs.as_json(user: current_user) }
   end
 
-  # GET /users/:user_id/jobs/invited
-  # a list a jobs the user_id is invited to
-  def invited
-    @user = User.find(params[:user_id])
-    render json: { data: @user.invited_to_jobs.as_json(user: current_user) }
-  end
-
+  # POST /jobs/:id/register_interest
   def register_interest
     @job = Job.find(params[:id])
     @job.register_interested_users(current_user)
+    current_user.reload
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
   end
 
-  def interested
-    render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
-  end
-
-  def awarded
-    render json: { data: current_user.awarded_jobs.as_json(user: current_user) }
-  end
-
+  # POST /jobs/:id/accept
   def accept
     @job = Job.find(params[:id])
     current_user.accept_job(@job)
+    current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }
   end

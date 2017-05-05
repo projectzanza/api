@@ -6,13 +6,10 @@ Rails.application.routes.draw do
       post :invite
       post :award
     end
-    collection do
-      get :invited
-    end
-    resources :jobs, only: [:index, :match, :invited] do
+
+    resources :jobs, only: [:index, :match] do
       collection do
         get :match
-        get :invited
       end
     end
   end
@@ -24,16 +21,13 @@ Rails.application.routes.draw do
     end
 
     collection do
-      get :interested
-      get :awarded
       get :collaborating
     end
 
-    resources :users, only: [:match, :show, :awarded] do
+    resources :users, only: [:match, :show] do
       collection do
         get :match
-        get :interested
-        get :awarded
+        get :collaborating
       end
     end
 

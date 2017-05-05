@@ -52,16 +52,16 @@ class User < ActiveRecord::Base
   end
 
   def default_collaborating_jobs
-    job_results = invited_to_jobs.limit(5)
-    job_results += interested_in_jobs.limit(5)
-    job_results += prospective_jobs.limit(5)
-    job_results += awarded_jobs.limit(5)
-    job_results + participant_jobs.limit(5)
+    invited_to_jobs.limit(5)
+                   .union_all(interested_in_jobs.limit(5))
+                   .union_all(prospective_jobs.limit(5))
+                   .union_all(awarded_jobs.limit(5))
+                   .union_all(participant_jobs.limit(5))
   end
 
   def find_collaborating_jobs(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    filter = Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
+    filter = opts[:filter] && Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
 
     if filter
       collaborating_jobs.merge(Collaborator.send(filter)).limit(opts[:limit])

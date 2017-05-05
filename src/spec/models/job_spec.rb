@@ -92,7 +92,7 @@ RSpec.describe Job, type: :model do
 
       job.award_to_user(consultant)
 
-      expect(job.awarded_user).to eq(consultant)
+      expect(job.awarded_user.first).to eq(consultant)
     end
 
     it 'should only allow awarding of the job to one user at a time' do
