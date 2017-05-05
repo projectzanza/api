@@ -9,7 +9,6 @@ RSpec.describe UsersController, type: :controller do
   # TODO: tests for /jobs/:job_id/users/match
   # should not return current user in match
   # should not return invited users in match
-  # TODO: error inviting user to job after awarding
 
   describe 'post#invite' do
     it 'should mark the user as invited to a job' do

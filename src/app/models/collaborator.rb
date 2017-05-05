@@ -40,8 +40,8 @@ class Collaborator < ApplicationRecord
   end
 
   def one_awarded_user_per_job
-    errors.add(:awarded_at, 'can only award to one user at a time') unless
-      !awarded_at_was.nil? || Collaborator.where(job: job).where.not(awarded_at: nil).count.zero?
+    errors.add(:awarded_at, 'can only award to one user at a time') if
+      awarded_at && (Collaborator.where(job: job).where.not(awarded_at: nil).count.nonzero? && awarded_at_was.nil?)
   end
 
   def can_only_accept_awarded_job
