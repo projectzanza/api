@@ -18,6 +18,30 @@ class ScopesController < ApplicationController
     render json: { data: @job.scopes }
   end
 
+  # POST /scopes/:id/complete
+  def complete
+    @scope = Scope.find(params[:id])
+    @scope.complete!(current_user)
+
+    render json: { data: @scope.job.scopes }
+  end
+
+  # POST /scopes/:id/reject
+  def reject
+    @scope = Scope.find(params[:id])
+    @scope.reject!(current_user)
+
+    render json: { data: @scope.job.scopes }
+  end
+
+  # POST /scopes/:id/complete
+  def verify
+    @scope = Scope.find(params[:id])
+    @scope.verify!(current_user)
+
+    render json: { data: @scope.reload.job.scopes }
+  end
+
   def scope_params
     params.permit(
       :title,
