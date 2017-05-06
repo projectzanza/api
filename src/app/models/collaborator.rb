@@ -58,4 +58,10 @@ class Collaborator < ApplicationRecord
     nil
   end
   # rubocop:enable all
+
+  def reject
+    update_attributes!(awarded_at: nil, invited_at: nil)
+  rescue ActiveRecord::RecordInvalid
+    destroy
+  end
 end

@@ -48,6 +48,10 @@ class Job < ApplicationRecord
     collaborating_users.merge(Collaborator.participant)
   end
 
+  def reject_user(user)
+    collaborators.find_by(user: user).reject
+  end
+
   def default_collaborating_users
     invited_users.limit(5)
                  .union_all(interested_users.limit(5))
