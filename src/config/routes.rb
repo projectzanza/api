@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       post :invite
       post :award
+      post :reject
     end
 
     resources :jobs, only: [:index, :match] do

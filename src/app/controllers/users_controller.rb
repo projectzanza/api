@@ -49,11 +49,19 @@ class UsersController < ApplicationController
   #  POST /users/:id/award
   def award
     @user = User.find(params[:id])
-    @job = Job.find(params[:job_id])
+    @job = current_user.jobs.find(params[:job_id])
     @job.award_to_user(@user)
-    @job.reload
 
-    render json: { data: @user.as_json(job: @job) }
+    render json: { data: @user.as_json(job: @job.reload) }
+  end
+
+  # POST /users/:id/reject
+  def reject
+    @user = User.find(params[:id])
+    @job = current_user.jobs.find(params[:job_id])
+    @job.reject_user(@user)
+
+    render json: { data: @user.as_json(job: @job.reload) }
   end
 
   private

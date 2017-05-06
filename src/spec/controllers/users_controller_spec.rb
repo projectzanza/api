@@ -54,6 +54,27 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe 'post#reject' do
+    it 'should remove a user from being a collaborator of invited or awarded' do
+      consultant = create(:user)
+
+      post :award,
+           params: {
+             job_id: @job.id,
+             id: consultant.id
+           }
+
+      post :reject,
+           params: {
+             job_id: @job.id,
+             id: consultant.id
+           }
+      
+      expect(response).to have_http_status(:ok)
+      expect(data['meta']).to eq({})
+    end
+  end
+
   describe 'get#collaborating' do
     it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,participant"' do
       6.times { create(:user) }
