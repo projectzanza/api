@@ -251,4 +251,37 @@ RSpec.describe JobsController, type: :controller do
       expect(states.count('interested')).to eq(3)
     end
   end
+
+  describe 'put#estimate' do
+    it 'sets an estimate for a user on a job' do
+      job = create(:job)
+      estimate = attributes_for(:estimate)
+
+      put :estimate,
+          params: {
+            id: job.id
+          }.merge(estimate)
+
+      expect(response).to have_http_status(:ok)
+      expect(data['id']).to eq(job.id)
+      expect(data['meta']['current_user']['estimate']['days']).to eq(estimate[:days])
+      expect(Time.parse(data['meta']['current_user']['estimate']['start_date'])).to eq(estimate[:start_date])
+      expect(Time.parse(data['meta']['current_user']['estimate']['end_date'])).to eq(estimate[:end_date])
+      expect(data['meta']['current_user']['estimate']['per_diem']).to match(/^\$\d+,?\d+?\.\d+/)
+      expect(data['meta']['current_user']['estimate']['total']).to match(/^\$\d+,?\d+?\.\d+/)
+    end
+
+    it 'automatically sets the user as interested in the job' do
+      job = create(:job)
+      estimate = attributes_for(:estimate)
+
+      put :estimate,
+          params: {
+            id: job.id
+          }.merge(estimate)
+
+      expect(response).to have_http_status(:ok)
+      expect(data['meta']['current_user']['collaboration_state']).to eq('interested')
+    end
+  end
 end

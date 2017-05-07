@@ -4,7 +4,8 @@ module HasCollaborator
   def add_collaborators(entities, type, state)
     time = Time.zone.now
     Array(entities).each do |entity|
-      collaborators.find_or_initialize_by(type => entity).update_attributes!(state => time)
+      collabs = collaborators.find_or_initialize_by(type => entity)
+      collabs.update_attributes!(state => time) unless collabs[state.to_sym]
     end
   end
 end

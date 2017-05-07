@@ -1,4 +1,7 @@
 class Collaborator < ApplicationRecord
+  monetize :total_cents
+  monetize :per_diem_cents
+
   belongs_to :user
   belongs_to :job
 

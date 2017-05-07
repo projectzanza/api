@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170504143938) do
+ActiveRecord::Schema.define(version: 20170507153109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,13 @@ ActiveRecord::Schema.define(version: 20170504143938) do
     t.datetime "interested_at"
     t.datetime "awarded_at"
     t.datetime "accepted_at"
+    t.integer  "days"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer  "per_diem_cents",    default: 0,     null: false
+    t.string   "per_diem_currency", default: "USD", null: false
+    t.integer  "total_cents",       default: 0,     null: false
+    t.string   "total_currency",    default: "USD", null: false
     t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
     t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree

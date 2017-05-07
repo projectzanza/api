@@ -52,6 +52,10 @@ class Job < ApplicationRecord
     collaborators.find_by(user: user).reject
   end
 
+  def estimate(user, estimate)
+    collaborators.find_by(user: user).update_attributes!(estimate)
+  end
+
   def default_collaborating_users
     invited_users.limit(5)
                  .union_all(interested_users.limit(5))
@@ -81,12 +85,23 @@ class Job < ApplicationRecord
     if options[:user] && (collaborator = collaborators.where(user: options[:user]).first)
       {
         current_user: {
-          collaboration_state: collaborator.state
+          collaboration_state: collaborator.state,
+          estimate: estimate_as_json(collaborator)
         }
       }
     else
       {}
     end
+  end
+
+  def estimate_as_json(collaborator)
+    {
+      days: collaborator.days,
+      start_date: collaborator.start_date,
+      end_date: collaborator.end_date,
+      per_diem: collaborator.per_diem.format,
+      total: collaborator.total.format
+    }
   end
 
   def proposed_end_at_after_proposed_start_at
