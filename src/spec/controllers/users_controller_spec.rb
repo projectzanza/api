@@ -69,7 +69,7 @@ RSpec.describe UsersController, type: :controller do
              job_id: @job.id,
              id: consultant.id
            }
-      
+
       expect(response).to have_http_status(:ok)
       expect(data['meta']).to eq({})
     end

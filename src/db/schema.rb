@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20170504143938) do
     t.text     "description"
     t.datetime "completed_at"
     t.datetime "verified_at"
+    t.datetime "rejected_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
     t.index ["job_id"], name: "index_scopes_on_job_id", using: :btree

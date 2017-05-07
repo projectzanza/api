@@ -6,6 +6,7 @@ class CreateScopes < ActiveRecord::Migration[5.0]
       t.text :description
       t.datetime :completed_at
       t.datetime :verified_at
+      t.datetime :rejected_at
       t.timestamps
     end
   end

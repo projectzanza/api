@@ -46,4 +46,147 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.length).to eq(3)
     end
   end
+
+  describe 'post#complete' do
+    before(:each) do
+      @job = create(:job, scope_count: 1, user: @user)
+      @scope = @job.scopes.first
+    end
+
+    it 'should let the job owner complete a scope' do
+      post :complete,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('completed')
+    end
+
+    it 'should let the awarded consultant complete a scope' do
+      consultant = create(:user)
+      @job.award_to_user(consultant)
+
+      login_user(consultant)
+
+      post :complete,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('completed')
+    end
+
+    it 'should not let other users complete the scope' do
+      consultant = create(:user)
+      @job.award_to_user(consultant)
+
+      login_user
+
+      post :complete,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'post#verify' do
+    before(:each) do
+      @job = create(:job, scope_count: 1, user: @user)
+      @scope = @job.scopes.first
+    end
+
+    it 'should let the job owner verify the scope' do
+      post :verify,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('verified')
+    end
+
+    it 'should not let the awarded user verify the scope' do
+      consultant = create(:user)
+      @job.award_to_user(consultant)
+
+      login_user(consultant)
+
+      post :verify,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'post#reject' do
+    before(:each) do
+      @job = create(:job, scope_count: 1, user: @user)
+      @scope = @job.scopes.first
+    end
+
+    it 'should let the job owner reject a completed scope' do
+      post :complete,
+           params: {
+             id: @scope.id
+           }
+
+      post :reject,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('rejected')
+    end
+
+    it 'should let the job owner reject a verified scope' do
+      post :verify,
+           params: {
+             id: @scope.id
+           }
+
+      post :reject,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('rejected')
+    end
+
+    it 'should not let the job owner reject an open scope' do
+      post :reject,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'should not the let the awarded consultant reject a scope' do
+      consultant = create(:user)
+      @job.award_to_user(consultant)
+
+      post :complete,
+           params: {
+             id: @scope.id
+           }
+
+      login_user(consultant)
+
+      post :reject,
+           params: {
+             id: @scope.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data.first['state']).to eq('rejected')
+    end
+  end
 end

@@ -35,5 +35,12 @@ Rails.application.routes.draw do
     resources :scopes, only: [:index, :create]
   end
   resources :messages
-  resources :scopes, only: [:update, :destroy]
+
+  resources :scopes, only: [:complete] do
+    member do
+      post :complete
+      post :verify
+      post :reject
+    end
+  end
 end
