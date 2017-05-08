@@ -1,9 +1,7 @@
 class Collaborator < ApplicationRecord
-  monetize :total_cents
-  monetize :per_diem_cents
-
   belongs_to :user
   belongs_to :job
+  belongs_to :estimate
 
   scope :invited, lambda {
     where(collaborators: { awarded_at: nil, accepted_at: nil, interested_at: nil })

@@ -8,6 +8,7 @@ class Job < ApplicationRecord
   has_many :messages
   has_many :collaborators
   has_many :collaborating_users, through: :collaborators, source: :user
+  has_many :estimates, through: :collaborators
   has_many :scopes
 
   validates :title, presence: true
@@ -86,22 +87,12 @@ class Job < ApplicationRecord
       {
         current_user: {
           collaboration_state: collaborator.state,
-          estimate: estimate_as_json(collaborator)
+          estimate: collaborator.estimate.as_json
         }
       }
     else
       {}
     end
-  end
-
-  def estimate_as_json(collaborator)
-    {
-      days: collaborator.days,
-      start_date: collaborator.start_date,
-      end_date: collaborator.end_date,
-      per_diem: collaborator.per_diem.format,
-      total: collaborator.total.format
-    }
   end
 
   def proposed_end_at_after_proposed_start_at

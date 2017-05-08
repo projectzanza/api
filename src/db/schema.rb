@@ -24,16 +24,22 @@ ActiveRecord::Schema.define(version: 20170507153109) do
     t.datetime "interested_at"
     t.datetime "awarded_at"
     t.datetime "accepted_at"
+    t.uuid     "estimate_id"
+    t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
+    t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree
+  end
+
+  create_table "estimates", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.integer  "days"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.datetime "start_at"
+    t.datetime "end_at"
     t.integer  "per_diem_cents",    default: 0,     null: false
     t.string   "per_diem_currency", default: "USD", null: false
     t.integer  "total_cents",       default: 0,     null: false
     t.string   "total_currency",    default: "USD", null: false
-    t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
-    t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
-    t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
   create_table "jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

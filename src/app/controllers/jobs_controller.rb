@@ -77,15 +77,6 @@ class JobsController < ApplicationController
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }
   end
 
-  # POST /jobs/:id/estimate
-  def estimate
-    @job = Job.find(params[:id])
-    @job.register_interested_users(current_user)
-    @job.estimate(current_user, estimate_params)
-
-    render json: { data: @job.reload.as_json(user: current_user) }
-  end
-
   private
 
   def set_job
@@ -113,16 +104,6 @@ class JobsController < ApplicationController
     params.permit(
       :filter,
       :limit
-    ).to_h
-  end
-
-  def estimate_params
-    params.permit(
-      :days,
-      :start_date,
-      :end_date,
-      :per_diem,
-      :total
     ).to_h
   end
 end

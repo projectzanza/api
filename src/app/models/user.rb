@@ -12,8 +12,9 @@ class User < ActiveRecord::Base
 
   has_many :jobs
   has_many :messages
-  has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :collaborators
+  has_many :collaborating_jobs, through: :collaborators, source: :job
+  has_many :estimates, through: :collaborators
 
   def invite_to_jobs(jobs)
     add_collaborators(jobs, :job, :invited_at)
@@ -80,7 +81,8 @@ class User < ActiveRecord::Base
     if options[:job] && (collaborator = collaborators.where(job: options[:job]).first)
       {
         job: {
-          collaboration_state: collaborator.state
+          collaboration_state: collaborator.state,
+          estimate: collaborator.estimate
         }
       }
     else

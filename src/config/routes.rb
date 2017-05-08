@@ -19,7 +19,6 @@ Rails.application.routes.draw do
     member do
       post :register_interest
       post :accept
-      post :estimate
     end
 
     collection do
@@ -33,9 +32,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :estimates, only: [:create]
+
     resources :scopes, only: [:index, :create]
   end
   resources :messages
+
+  resources :estimates, only: [:update]
 
   resources :scopes, only: [:complete] do
     member do
