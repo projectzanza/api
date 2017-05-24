@@ -4,6 +4,7 @@ module Rescuable
   included do
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     rescue_from ActiveRecord::RecordInvalid, with: :render_invalid
+    rescue_from ActiveRecord::RecordNotSaved, with: :render_invalid
     rescue_from Zanza::AuthorizationException, with: :render_unauthorized
     rescue_from Zanza::ForbiddenException, with: :render_forbidden
   end

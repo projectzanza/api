@@ -41,6 +41,13 @@ RSpec.describe User, type: :model do
     it 'does not return collaboration_state if the user is not a collaborator' do
       expect(JSON.parse(@job.to_json(user: @user))['meta']).to eq({})
     end
+
+    it 'should show the estimate in the meta of the user' do
+      estimate = Estimate.create(attributes_for(:estimate))
+      @user.collaborators.create(job: @job, estimate: estimate, interested_at: Time.zone.now)
+
+      expect(JSON.parse(@user.to_json(job: @job))['meta']['job']['estimate']).to be_truthy
+    end
   end
 
   describe 'awarded_jobs' do
