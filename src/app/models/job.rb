@@ -76,6 +76,13 @@ class Job < ApplicationRecord
     end
   end
 
+  def verify(options)
+    raise Zanza::AuthorizationException,
+          'User does not have permission to verify job' unless options[:user] == user
+    update_attributes(verified_at: Time.zone.now)
+    scopes.each{ |s| s.verify!(options[:user])} if(options[:scopes])
+  end
+
   def as_json(options)
     meta = meta_as_json(options)
     options.delete(:user)

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     member do
       post :register_interest
       post :accept
+      post :verify
     end
 
     collection do

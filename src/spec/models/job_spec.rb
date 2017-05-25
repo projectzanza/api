@@ -115,6 +115,30 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe 'verify' do
+    before(:each) do
+      @user = create(:user)
+      @job = create(:job, user: @user, scope_count: 3)
+    end
+
+    it 'should allow the job owner to verify the job' do
+      @job.verify(user: @user)
+      expect(@job.verified_at).to be_truthy
+    end
+
+    it 'should raise an exception if the user is not the owner of the job' do
+      consultant = create(:user)
+      expect { @job.verify(user: consultant) }.to raise_error Zanza::AuthorizationException
+    end
+
+    it 'should verify the scopes belonging to a job if scopes param set' do
+      @job.verify(user: @user, scopes: true)
+      verified = @job.scopes.collect(&:verified_at)
+      expect(verified.length).to eq(verified.compact.length)
+      expect(verified.first).to be_truthy
+    end
+  end
+
   describe 'as_json' do
     before(:each) do
       @job = create(:job)
