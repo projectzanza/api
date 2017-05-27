@@ -9,6 +9,8 @@ Documentation:
     Enabled: false
 Metrics/LineLength:
   Max: 120
+ClassLength:
+  Max: 250
 Metrics/BlockLength:
   CountComments: false
   Max: 100000000

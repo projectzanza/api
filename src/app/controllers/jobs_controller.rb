@@ -3,7 +3,7 @@ class JobsController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_job, only: [:show]
-  before_action :set_authenticated_job, only: [:update, :destroy]
+  before_action :set_authenticated_job, only: [:update, :destroy, :verify]
 
   # GET /jobs
   def index
@@ -75,6 +75,13 @@ class JobsController < ApplicationController
     current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }
+  end
+
+  # POST /jobs/:id/verify
+  def verify
+    @job.verify(scopes: params[:scopes], user: current_user)
+
+    render json: { data: @job.reload }
   end
 
   private
