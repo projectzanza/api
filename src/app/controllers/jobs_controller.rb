@@ -79,7 +79,7 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/verify
   def verify
-    @job.verify(scopes: params[:verify_scopes], user: current_user)
+    @job.verify(scopes: params[:scopes], user: current_user)
 
     render json: { data: @job.reload }
   end

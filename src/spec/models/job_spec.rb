@@ -139,6 +139,17 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe 'state' do
+    it 'should return open state if the job is new' do
+      expect(create(:job).state).to eq('open')
+    end
+
+    it 'should return complete state if the job has been verified' do
+      job = create(:job)
+      job.verify(user: job.user)
+      expect(job.state).to eq('completed')
+    end
+  end
   describe 'as_json' do
     before(:each) do
       @job = create(:job)

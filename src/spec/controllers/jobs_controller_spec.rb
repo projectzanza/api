@@ -273,11 +273,11 @@ RSpec.describe JobsController, type: :controller do
       post :verify,
            params: {
              id: job.id,
-             verify_scopes: true
+             scopes: true
            }
 
       expect(response).to have_http_status(200)
-      scope_states = job.scopes.collect{ |s| !s.verified_at.nil? }
+      scope_states = job.scopes.collect { |s| !s.verified_at.nil? }
       expect(scope_states.uniq.length).to eq(1)
       expect(scope_states.uniq.first).to be_truthy
     end
