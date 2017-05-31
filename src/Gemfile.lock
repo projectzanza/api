@@ -144,6 +144,7 @@ GEM
       ffi (>= 0.5.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
+    rocketchat (0.1.4)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -222,6 +223,7 @@ DEPENDENCIES
   puma (~> 3.0)
   rack-cors
   rails (~> 5.0.1)
+  rocketchat
   rspec-rails
   rubocop
   simplecov
@@ -230,4 +232,4 @@ DEPENDENCIES
   tzinfo-data
 
 BUNDLED WITH
-   1.14.6
+   1.15.0
