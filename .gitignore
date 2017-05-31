@@ -1,3 +1,7 @@
 .idea
 src/spec/examples.txt
 src/coverage
+data/db/*
+data/uploads/*
+!data/db/.keep
+!data/uploads/.keep
