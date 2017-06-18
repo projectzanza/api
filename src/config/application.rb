@@ -11,6 +11,8 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 # require "sprockets/railtie"
 require 'rails/test_unit/railtie'
+require 'securerandom'
+require 'net/http'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -42,7 +44,13 @@ module App
       end
     end
 
+    config.autoload_paths << Rails.root.join('lib')
+
     # require confirmation for users to login
     config.confirmation_required = true
+
+    config.after_initialize do
+      Zanza::RocketChat.update_settings
+    end
   end
 end

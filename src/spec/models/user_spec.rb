@@ -68,4 +68,35 @@ RSpec.describe User, type: :model do
       expect(jobs.first.id).to eq(j2.id)
     end
   end
+
+  describe 'before_validation_on_create' do
+    it 'should set name, nickname and rc_password' do
+      user = User.create(email: 'abc@abc.com')
+
+      expect(user.name).to eq('abc')
+      expect(user.nickname).to match(/abc\d{3}/)
+      expect(user.rc_password).to be_truthy
+    end
+
+    it 'should not override name,nickname or rc_password' do
+      user = User.create(
+        email: 'abc@abc.com',
+        name: 'name',
+        nickname: 'nickname',
+        rc_password: '12345'
+      )
+
+      expect(user.name).to eq('name')
+      expect(user.nickname).to eq('nickname')
+      expect(user.rc_password).to eq('12345')
+    end
+
+    it 'validated that name,nickname,email is present' do
+      user = User.create
+
+      expect(user.errors[:email]).to be_truthy
+      expect(user.errors[:name]).to be_truthy
+      expect(user.errors[:nickname]).to be_truthy
+    end
+  end
 end

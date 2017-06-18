@@ -48,4 +48,10 @@ Rails.application.routes.draw do
       post :reject
     end
   end
+
+  resources :rocket_chat do
+    collection do
+      post :login
+    end
+  end
 end

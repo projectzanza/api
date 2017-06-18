@@ -16,6 +16,22 @@ class User < ActiveRecord::Base
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates, through: :collaborators
 
+  before_validation(on: :create) do
+    if email && email.split('@')[0]
+      email_identifier = email.split('@')[0]
+
+      self.name ||= email_identifier
+      self.nickname ||= "#{email_identifier}#{rand(1000)}"
+    end
+
+    self.rc_password ||= SecureRandom.hex
+  end
+
+  validates :name, presence: true
+  validates :nickname, presence: true
+  validates :email, presence: true
+  validates :rc_password, presence: true
+
   def invite_to_jobs(jobs)
     add_collaborators(jobs, :job, :invited_at)
   end
