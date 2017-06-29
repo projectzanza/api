@@ -16,6 +16,12 @@ class User < ActiveRecord::Base
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates, through: :collaborators
 
+  scope :filter, lambda { |string|
+    where('email ILIKE ?', "%#{string}%")
+      .or(where('nickname ILIKE ?', "%#{string}%"))
+      .or(where('name ILIKE ?', "%#{string}%"))
+  }
+
   before_validation(on: :create) do
     if email && email.split('@')[0]
       email_identifier = email.split('@')[0]

@@ -6,9 +6,26 @@ RSpec.describe UsersController, type: :controller do
     @job = create(:job, user: @user)
   end
 
-  # TODO: tests for /jobs/:job_id/users/match
+  # TODO: tests for /jobs/:job_id/users/match (without filter)
   # should not return current user in match
   # should not return invited users in match
+
+  describe 'get#match' do
+    it 'should filter on email address with the filter parameter' do
+      job = create(:job)
+      3.times { create(:user) }
+      consultant = create(:user, email: 'filter.match@user.com')
+
+      get :match,
+          params: {
+            job_id: job.id,
+            filter: 'filter'
+          }
+
+      expect(response).to have_http_status(:ok)
+      expect(data[0]['id']).to eq consultant.id
+    end
+  end
 
   describe 'post#invite' do
     it 'should mark the user as invited to a job' do
