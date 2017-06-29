@@ -99,4 +99,30 @@ RSpec.describe User, type: :model do
       expect(user.errors[:nickname]).to be_truthy
     end
   end
+
+  describe 'filter' do
+    before(:each) do
+      2.times { create(:user) }
+    end
+
+    it 'should search for a user by email address' do
+      user = create(:user, email: 'filter.match@user.com')
+      expect(User.filter('filter').first.id).to eq user.id
+    end
+
+    it 'should search for a user by nickname' do
+      user = create(:user, nickname: 'filter.match897')
+      expect(User.filter('filter').first.id).to eq user.id
+    end
+
+    it 'should search for a user by name' do
+      user = create(:user, name: 'filter match')
+      expect(User.filter('filter').first.id).to eq user.id
+    end
+
+    it 'should search for a user disregarding case' do
+      user = create(:user, name: 'Filter Match')
+      expect(User.filter('filter').first.id).to eq user.id
+    end
+  end
 end

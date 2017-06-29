@@ -25,13 +25,20 @@ class UsersController < ApplicationController
   # GET /jobs/:job_id/users/match
   def match
     @job = Job.find(params[:job_id])
-    render json: { data: User.tagged_with(@job.tag_list).as_json(job: @job) }
+    users =
+      if params[:filter]
+        User.filter(params[:filter])
+      else
+        User.tagged_with(@job.tag_list)
+      end
+    render json: { data: users.as_json(job: @job) }
   end
 
   # GET /jobs/:job_id/users/collaborating
   def collaborating
     @job = Job.find(params[:job_id])
     @users = @job.find_collaborating_users(collaborating_filter_params)
+    @users = @users.filter(params[:filter]) if params[:filter]
     render json: { data: @users.as_json(job: @job) }
   end
 
