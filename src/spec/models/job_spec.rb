@@ -150,6 +150,29 @@ RSpec.describe Job, type: :model do
       expect(job.state).to eq('completed')
     end
   end
+
+  describe 'has_one payment_token' do
+    before(:each) do
+      @job = create(:job)
+      # @payment_token = create(:payment_provider_token)
+    end
+
+    it 'should associated a payment token with a job' do
+      payment_token = attributes_for(:payment_token)
+      @job.create_payment_token(payment_token)
+      expect(@job.payment_token).to be_truthy
+    end
+
+    it 'should overwrite the old token with a new token' do
+      payment_token = attributes_for(:payment_token)
+      @job.create_payment_token(payment_token)
+      token = @job.payment_token
+      new_payment_token = attributes_for(:payment_token)
+      @job.create_payment_token(new_payment_token)
+      expect(token).not_to eq @job.payment_token
+    end
+  end
+
   describe 'as_json' do
     before(:each) do
       @job = create(:job)

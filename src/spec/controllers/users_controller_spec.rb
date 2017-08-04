@@ -127,7 +127,7 @@ RSpec.describe UsersController, type: :controller do
       get :collaborating,
           params: {
             job_id: @job.id,
-            filter: :invited,
+            state: :invited,
             limit: 3
           }
 

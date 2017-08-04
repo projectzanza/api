@@ -89,7 +89,7 @@ class UsersController < ApplicationController
 
   def collaborating_filter_params
     params.permit(
-      :filter,
+      :state,
       :limit
     ).to_h
   end

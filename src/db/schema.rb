@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170530120535) do
+ActiveRecord::Schema.define(version: 20170731192823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,28 @@ ActiveRecord::Schema.define(version: 20170530120535) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "payment_tokens", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid  "user_id"
+    t.uuid  "job_id"
+    t.jsonb "token"
+    t.index ["job_id"], name: "index_payment_tokens_on_job_id", using: :btree
+    t.index ["user_id"], name: "index_payment_tokens_on_user_id", using: :btree
+  end
+
+  create_table "payments", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.jsonb    "charge"
+    t.uuid     "job_id"
+    t.uuid     "estimate_id"
+    t.uuid     "recipient_id"
+    t.uuid     "chargee_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["chargee_id"], name: "index_payments_on_chargee_id", using: :btree
+    t.index ["estimate_id"], name: "index_payments_on_estimate_id", using: :btree
+    t.index ["job_id"], name: "index_payments_on_job_id", using: :btree
+    t.index ["recipient_id"], name: "index_payments_on_recipient_id", using: :btree
   end
 
   create_table "scopes", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

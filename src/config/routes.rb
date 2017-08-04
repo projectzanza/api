@@ -36,7 +36,15 @@ Rails.application.routes.draw do
     resources :estimates, only: [:create]
 
     resources :scopes, only: [:index, :create]
+
+    resources :payments do
+      collection do
+        post :token
+        post :complete
+      end
+    end
   end
+
   resources :messages
 
   resources :estimates, only: [:update, :create]

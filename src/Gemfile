@@ -4,6 +4,8 @@ git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
+# load any env variables before other gems are loaded
+gem 'dotenv-rails', require: 'dotenv/rails-now'
 # tagging
 gem 'acts-as-taggable-on', '~> 4.0'
 # soft deletes models
@@ -27,6 +29,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'devise_token_auth'
 gem 'rack-cors'
 gem 'rocketchat'
+gem 'stripe'
 gem 'tzinfo-data'
 
 group :development, :test do

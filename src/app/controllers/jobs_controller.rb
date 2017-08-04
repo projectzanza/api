@@ -79,6 +79,7 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/verify
   def verify
+    Payment.complete(@job)
     @job.verify(scopes: params[:scopes], user: current_user)
 
     render json: { data: @job.reload }
@@ -109,7 +110,7 @@ class JobsController < ApplicationController
 
   def collaborating_filter_params
     params.permit(
-      :filter,
+      :state,
       :limit
     ).to_h
   end

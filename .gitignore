@@ -1,4 +1,5 @@
 .idea
+src/.env.development
 src/spec/examples.txt
 src/coverage
 data/db/*

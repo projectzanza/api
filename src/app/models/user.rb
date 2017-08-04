@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates, through: :collaborators
+  has_many :payment_tokens
 
   scope :filter, lambda { |string|
     where('email ILIKE ?', "%#{string}%")
@@ -84,10 +85,10 @@ class User < ActiveRecord::Base
 
   def find_collaborating_jobs(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    filter = opts[:filter] && Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
+    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
 
-    if filter
-      collaborating_jobs.merge(Collaborator.send(filter)).limit(opts[:limit])
+    if state
+      collaborating_jobs.merge(Collaborator.send(state)).limit(opts[:limit])
     else
       default_collaborating_jobs
     end
