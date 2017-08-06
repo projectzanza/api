@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates, through: :collaborators
-  has_many :payment_tokens
+  has_one :payment_account
 
   scope :filter, lambda { |string|
     where('email ILIKE ?', "%#{string}%")
@@ -92,6 +92,18 @@ class User < ActiveRecord::Base
     else
       default_collaborating_jobs
     end
+  end
+
+  def add_card(token)
+    customer =
+      if payment_account
+        Stripe::Customer.retrieve(payment_account.customer['id'])
+      else
+        cust = Stripe::Customer.create(email: email)
+        create_payment_account(customer: cust)
+        cust
+      end
+    customer.sources.create(source: token['id'])
   end
 
   def as_json(options = {})

@@ -6,8 +6,11 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   describe 'post#token' do
+    before { StripeMock.start }
+    after { StripeMock.stop }
+
     it 'should create a payment token' do
-      token = attributes_for(:payment_provider_token)
+      token = StripeMock.generate_card_token
       job = create(:job, user: @user)
       post :token,
            params: {
@@ -16,8 +19,7 @@ RSpec.describe PaymentsController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data['id']).to be_truthy
-      expect(PaymentToken.find(data['id']).token['id']).to eq token[:id]
+      expect(response.body['success']).to be_truthy
     end
   end
 end

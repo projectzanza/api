@@ -10,8 +10,6 @@ module Rescuable
     rescue_from Zanza::ForbiddenException, with: :render_forbidden
     rescue_from Zanza::PaymentException, with: :render_payment_unsuccessful
     rescue_from Zanza::PaymentPreConditionsNotMet, with: :render_payment_preconditions_not_met
-    rescue_from Stripe::PermissionError, with: :render_payment_connection_error
-    rescue_from Stripe::InvalidRequestError, with: :render_payment_connection_error
   end
 
   def render_not_found(exception)
@@ -37,9 +35,5 @@ module Rescuable
 
   def render_payment_preconditions_not_met(exception)
     render json: { error: exception.message }, status: :unprocessable_entity
-  end
-
-  def render_payment_connection_error
-    render json: { error: 'Error connecting to payment provider, try again later' }, status: :service_unavailable
   end
 end

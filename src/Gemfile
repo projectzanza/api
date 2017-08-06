@@ -39,6 +39,7 @@ group :development, :test do
   gem 'json_spec'
   gem 'rspec-rails'
   gem 'simplecov', require: false
+  gem 'stripe-ruby-mock', '~> 2.4.1', require: 'stripe_mock'
 end
 
 group :development do

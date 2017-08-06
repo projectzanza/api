@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20170731192823) do
     t.datetime "proposed_end_at"
     t.boolean  "allow_contact",     default: true
     t.datetime "verified_at"
+    t.string   "payment_card_id"
   end
 
   create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -67,12 +68,10 @@ ActiveRecord::Schema.define(version: 20170731192823) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "payment_tokens", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+  create_table "payment_accounts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid  "user_id"
-    t.uuid  "job_id"
-    t.jsonb "token"
-    t.index ["job_id"], name: "index_payment_tokens_on_job_id", using: :btree
-    t.index ["user_id"], name: "index_payment_tokens_on_user_id", using: :btree
+    t.jsonb "customer"
+    t.index ["user_id"], name: "index_payment_accounts_on_user_id", using: :btree
   end
 
   create_table "payments", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

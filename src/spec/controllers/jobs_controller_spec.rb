@@ -123,7 +123,7 @@ RSpec.describe JobsController, type: :controller do
 
   describe 'get#match' do
     it 'should return jobs which match the users' do
-      tag_list = %w(tag1 tag2)
+      tag_list = %w[tag1 tag2]
       3.times { create(:job, tag_list: tag_list, user: @user) }
 
       login_user
@@ -136,7 +136,7 @@ RSpec.describe JobsController, type: :controller do
     end
 
     it 'should only return jobs where job creator has set allow_contact to true' do
-      tag_list = %w(tag1 tag2)
+      tag_list = %w[tag1 tag2]
       3.times { create(:job, tag_list: tag_list, user: @user) }
       2.times { create(:job, tag_list: tag_list, allow_contact: false, user: @user) }
 
@@ -150,7 +150,7 @@ RSpec.describe JobsController, type: :controller do
     end
 
     it 'should not return jobs which the user is the creator of' do
-      tag_list = %w(tag1 tag2)
+      tag_list = %w[tag1 tag2]
       3.times { create(:job, tag_list: tag_list, user: @user) }
 
       login_user

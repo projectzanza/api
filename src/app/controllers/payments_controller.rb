@@ -5,17 +5,15 @@ class PaymentsController < ApplicationController
 
   def token
     job = current_user.jobs.find(params[:job_id])
-    job.create_payment_token(
-      user: current_user,
-      token: params[:token]
-    )
+    card = current_user.add_card(params[:token])
+    job.update_attributes!(payment_card_id: card['id'])
 
-    render json: { data: job.reload.payment_token }
+    render json: { success: true }
   end
 
   def complete
     job = current_user.jobs.find(params[:job_id])
-    payment = Payment.complete(job)
-    render json: { data: payment }
+    Payment.complete(job)
+    render json: { success: true }
   end
 end

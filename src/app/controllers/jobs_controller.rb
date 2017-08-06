@@ -3,7 +3,7 @@ class JobsController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_job, only: [:show]
-  before_action :set_authenticated_job, only: [:update, :destroy, :verify]
+  before_action :set_authenticated_job, only: %i[update destroy verify]
 
   # GET /jobs
   def index
@@ -103,7 +103,7 @@ class JobsController < ApplicationController
       :proposed_start_at,
       :proposed_end_at,
       :allow_contact,
-      per_diem: [:min, :max],
+      per_diem: %i[min max],
       tag_list: []
     ).to_h
   end

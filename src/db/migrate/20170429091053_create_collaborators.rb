@@ -8,7 +8,7 @@ class CreateCollaborators < ActiveRecord::Migration[5.0]
       t.datetime :awarded_at
     end
 
-    add_index :collaborators, [:user_id, :job_id], unique: true
+    add_index :collaborators, %i[user_id job_id], unique: true
   end
 
   def down

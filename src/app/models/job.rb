@@ -10,7 +10,6 @@ class Job < ApplicationRecord
   has_many :collaborating_users, through: :collaborators, source: :user
   has_many :estimates, through: :collaborators
   has_many :scopes
-  has_one :payment_token
 
   validates :title, presence: true
   validates :user, presence: true
