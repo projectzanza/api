@@ -106,6 +106,30 @@ class User < ActiveRecord::Base
     customer.sources.create(source: token['id'])
   end
 
+  def card?(card_id)
+    return false unless payment_account && payment_account.customer['id']
+    begin
+      customer = Stripe::Customer.retrieve(payment_account.customer['id'])
+      true if customer.sources.retrieve(card_id)
+    rescue Stripe::InvalidRequestError
+      return false
+    end
+  end
+
+  def cards
+    return [] unless payment_account
+    customer = Stripe::Customer.retrieve(payment_account.customer['id'])
+    cards = customer.sources.all(object: :card)
+    cards.data.collect do |details|
+      {
+        id: details['id'],
+        brand: details['brand'],
+        last4: details['last4'],
+        exp_year: details['exp_year']
+      }
+    end
+  end
+
   def as_json(options = {})
     meta = meta_as_json(options)
     options.delete(:job)

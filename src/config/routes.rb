@@ -57,6 +57,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :payments do
+    collection do
+      get :cards
+    end
+  end
+
   resources :rocket_chat do
     collection do
       post :login

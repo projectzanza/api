@@ -125,4 +125,56 @@ RSpec.describe User, type: :model do
       expect(User.filter('filter').first.id).to eq user.id
     end
   end
+
+  describe 'add_card' do
+    before { StripeMock.start }
+    after { StripeMock.stop }
+
+    before(:each) do
+      @user = create(:user)
+    end
+
+    it 'should create a payment account if one does not already exist' do
+      expect(@user.payment_account).to be_falsey
+      @user.add_card(StripeMock.generate_card_token)
+      expect(@user.payment_account.customer).to be_truthy
+    end
+
+    it 'should not create a new payment account if an account already exists' do
+      @user.add_card(StripeMock.generate_card_token)
+      customer_id = @user.payment_account.customer['id']
+      @user.add_card(StripeMock.generate_card_token)
+      expect(@user.payment_account.customer['id']).to eq customer_id
+    end
+
+    it 'should create a new card as a payment source' do
+      card = @user.add_card(StripeMock.generate_card_token)
+      expect(Stripe::Customer
+        .retrieve(@user.payment_account.customer['id'])
+        .sources.retrieve(card['id'])).to be_truthy
+    end
+  end
+
+  describe 'has_card' do
+    before { StripeMock.start }
+    after { StripeMock.stop }
+
+    before(:each) do
+      @user = create(:user)
+    end
+
+    it 'should return true if the user has the card id as a payment source' do
+      card = @user.add_card(StripeMock.generate_card_token)
+      expect(@user.card?(card['id'])).to be_truthy
+    end
+
+    it 'should return false if the user does not have a payment account' do
+      expect(@user.card?('123123123123')).to be_falsey
+    end
+
+    it 'should return false if the user does not have a card as a payment source' do
+      @user.add_card(StripeMock.generate_card_token)
+      expect(@user.card?('123123123123')).to be_falsey
+    end
+  end
 end
