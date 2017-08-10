@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_user, only: [:show]
-  before_action :set_authenticated_user, only: [:update, :destroy]
+  before_action :set_authenticated_user, only: %i[update destroy]
 
   # GET /users
   def index
@@ -84,12 +84,12 @@ class UsersController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def user_params
-    params.permit(:name, :bio, per_diem: [:min, :max], tag_list: []).to_h
+    params.permit(:name, :bio, per_diem: %i[min max], tag_list: []).to_h
   end
 
   def collaborating_filter_params
     params.permit(
-      :filter,
+      :state,
       :limit
     ).to_h
   end

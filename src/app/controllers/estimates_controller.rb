@@ -1,6 +1,7 @@
 class EstimatesController < ApplicationController
   include Rescuable
 
+  # TODO: no authorizathion here! fix me.
   def create
     @job = Job.find(params[:job_id])
     @user = User.find(params[:user_id])

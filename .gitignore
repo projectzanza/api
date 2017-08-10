@@ -1,4 +1,6 @@
 .idea
+src/.env.development
+src/.env.test
 src/spec/examples.txt
 src/coverage
 data/db/*

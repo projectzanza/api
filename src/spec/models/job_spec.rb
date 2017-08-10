@@ -150,6 +150,7 @@ RSpec.describe Job, type: :model do
       expect(job.state).to eq('completed')
     end
   end
+
   describe 'as_json' do
     before(:each) do
       @job = create(:job)

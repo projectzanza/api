@@ -79,10 +79,10 @@ class Job < ApplicationRecord
 
   def find_collaborating_users(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    filter = opts[:filter] && Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
+    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
 
-    if filter
-      collaborating_users.merge(Collaborator.send(filter)).limit(opts[:limit])
+    if state
+      collaborating_users.merge(Collaborator.send(state)).limit(opts[:limit])
     else
       default_collaborating_users
     end

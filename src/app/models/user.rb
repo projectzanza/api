@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates, through: :collaborators
+  has_one :payment_account
 
   scope :filter, lambda { |string|
     where('email ILIKE ?', "%#{string}%")
@@ -84,12 +85,48 @@ class User < ActiveRecord::Base
 
   def find_collaborating_jobs(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    filter = opts[:filter] && Collaborator::STATES[opts[:filter].to_sym] ? opts[:filter] : nil
+    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
 
-    if filter
-      collaborating_jobs.merge(Collaborator.send(filter)).limit(opts[:limit])
+    if state
+      collaborating_jobs.merge(Collaborator.send(state)).limit(opts[:limit])
     else
       default_collaborating_jobs
+    end
+  end
+
+  def add_card(token)
+    customer =
+      if payment_account
+        Stripe::Customer.retrieve(payment_account.customer['id'])
+      else
+        cust = Stripe::Customer.create(email: email)
+        create_payment_account(customer: cust)
+        cust
+      end
+    customer.sources.create(source: token['id'])
+  end
+
+  def card?(card_id)
+    return false unless payment_account && payment_account.customer['id']
+    begin
+      customer = Stripe::Customer.retrieve(payment_account.customer['id'])
+      true if customer.sources.retrieve(card_id)
+    rescue Stripe::InvalidRequestError
+      return false
+    end
+  end
+
+  def cards
+    return [] unless payment_account
+    customer = Stripe::Customer.retrieve(payment_account.customer['id'])
+    cards = customer.sources.all(object: :card)
+    cards.data.collect do |details|
+      {
+        id: details['id'],
+        brand: details['brand'],
+        last4: details['last4'],
+        exp_year: details['exp_year']
+      }
     end
   end
 

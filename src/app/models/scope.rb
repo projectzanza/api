@@ -22,9 +22,8 @@ class Scope < ApplicationRecord
   end
 
   def can_complete!(user)
-    unless user == job.user || user == job.awarded_user.first
-      raise Zanza::AuthorizationException, 'User does not have permission to complete scope'
-    end
+    raise Zanza::AuthorizationException, 'User does not have permission to complete scope' unless
+      [job.user, job.awarded_user.first].include? user
     true
   end
 

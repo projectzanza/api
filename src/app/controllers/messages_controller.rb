@@ -3,7 +3,7 @@ class MessagesController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_message, only: [:show]
-  before_action :set_authenticated_message, only: [:update, :destroy]
+  before_action :set_authenticated_message, only: %i[update destroy]
 
   # GET /messages
   def index

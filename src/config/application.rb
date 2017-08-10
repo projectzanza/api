@@ -39,8 +39,8 @@ module App
         origins '*'
         resource '*',
                  headers: :any,
-                 expose: %w(access-token expiry token-type uid client),
-                 methods: [:get, :post, :options, :delete, :put]
+                 expose: %w[access-token expiry token-type uid client],
+                 methods: %i[get post options delete put]
       end
     end
 

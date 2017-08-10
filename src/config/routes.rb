@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       post :reject
     end
 
-    resources :jobs, only: [:index, :match] do
+    resources :jobs, only: %i[index match] do
       collection do
         get :match
       end
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
       get :collaborating
     end
 
-    resources :users, only: [:match, :show] do
+    resources :users, only: %i[match show] do
       collection do
         get :match
         get :collaborating
@@ -35,17 +35,31 @@ Rails.application.routes.draw do
 
     resources :estimates, only: [:create]
 
-    resources :scopes, only: [:index, :create]
+    resources :scopes, only: %i[index create]
+
+    resources :payments do
+      collection do
+        post :token
+        post :complete
+      end
+    end
   end
+
   resources :messages
 
-  resources :estimates, only: [:update, :create]
+  resources :estimates, only: %i[update create]
 
   resources :scopes, only: [:complete] do
     member do
       post :complete
       post :verify
       post :reject
+    end
+  end
+
+  resources :payments do
+    collection do
+      get :cards
     end
   end
 

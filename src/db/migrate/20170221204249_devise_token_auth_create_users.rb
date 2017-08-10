@@ -6,7 +6,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.0]
     create_indexes
   end
 
-  # rubocop:disable  Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   def create_users_table
     create_table :users, id: :uuid do |t|
       ## Required
@@ -56,8 +56,8 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.0]
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def create_indexes
-    add_index :users, :email,                unique: true
-    add_index :users, [:uid, :provider],     unique: true
+    add_index :users, :email, unique: true
+    add_index :users, %i[uid provider], unique: true
     add_index :users, :reset_password_token, unique: true
     add_index :users, :confirmation_token,   unique: true
     # add_index :users, :unlock_token,       unique: true
