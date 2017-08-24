@@ -5,12 +5,6 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show]
   before_action :set_authenticated_user, only: %i[update destroy]
 
-  # GET /users
-  def index
-    @users = User.all
-    render json: { data: @users }
-  end
-
   # GET /users/1
   def show
     @job = Job.find(params[:job_id]) if params[:job_id]
@@ -19,7 +13,7 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   def update
-    render json: { data: @user } if @user.update!(user_params)
+    render json: { data: @user.reload } if @user.update!(user_params)
   end
 
   # GET /jobs/:job_id/users/match
@@ -78,13 +72,13 @@ class UsersController < ApplicationController
   end
 
   def set_authenticated_user
-    raise ActiveRecord::RecordNotFound unless current_user
+    fail Zanza::AuthorizationException if current_user.id != params[:id]
     @user = current_user
   end
 
   # Only allow a trusted parameter "white list" through.
   def user_params
-    params.permit(:name, :bio, per_diem: %i[min max], tag_list: []).to_h
+    params.permit(:name, :email, :bio, per_diem: %i[min max], tag_list: []).to_h
   end
 
   def collaborating_filter_params

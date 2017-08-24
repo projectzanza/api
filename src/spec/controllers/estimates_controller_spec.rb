@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe EstimatesController, type: :controller do
+  before(:each) do
+    login_user
+    @job = create(:job, user: @user)
+  end
+
   describe 'post#estimate' do
     it 'sets an estimate for a user on a job' do
-      job = create(:job)
-      consultant = create(:user)
-      estimate = attributes_for(:estimate)
+      estimate = attributes_for(:estimate, job_id: @job.id)
 
       post :create,
-           params: {
-             job_id: job.id,
-             user_id: consultant.id
-           }.merge(estimate)
+           params: estimate
 
       expect(response).to have_http_status(:ok)
-      expect(data['job_id']).to eq(job.id)
-      expect(data['user_id']).to eq(consultant.id)
+      expect(data['job_id']).to eq(@job.id)
+      expect(data['user_id']).to eq(@user.id)
       expect(data['days']).to eq(estimate[:days])
       expect(Time.parse(data['start_at'])).to eq(estimate[:start_at])
       expect(Time.parse(data['end_at'])).to eq(estimate[:end_at])
@@ -24,64 +24,87 @@ RSpec.describe EstimatesController, type: :controller do
     end
 
     it 'automatically sets the user as interested in the job' do
-      job = create(:job)
-      estimate = attributes_for(:estimate)
-      consultant = create(:user)
+      estimate = attributes_for(:estimate, job_id: @job.id)
 
       post :create,
-           params: {
-             job_id: job.id,
-             user_id: consultant.id
-           }.merge(estimate)
+           params: estimate
 
-      expect(job.interested_users).to include(consultant)
+      expect(@job.interested_users).to include(@user)
     end
 
-    it 'can only create one estimate per user/job combination' do
-      job = create(:job)
-      consultant = create(:user)
-      estimate = attributes_for(:estimate)
+    it 'can create multiple estimates per user/job combination' do
+      estimate = attributes_for(:estimate, job_id: @job.id)
 
       post :create,
-           params: {
-             job_id: job.id,
-             user_id: consultant.id
-           }.merge(estimate)
+           params: estimate
 
-      estimate2 = attributes_for(:estimate)
+      estimate2 = attributes_for(:estimate, job_id: @job.id)
       post :create,
-           params: {
-             job_id: job.id,
-             user_id: consultant.id
-           }.merge(estimate2)
+           params: estimate2
 
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(consultant.estimates.count).to eq(1)
+      expect(response).to have_http_status(:ok)
+      expect(@user.reload.estimates.count).to eq(2)
     end
   end
 
   describe 'put#estimate' do
     it 'updates the estimate with new parameters' do
-      job = create(:job)
-      consultant = create(:user)
-      estimate = attributes_for(:estimate)
+      estimate = attributes_for(:estimate, job_id: @job.id)
 
       post :create,
-           params: {
-             job_id: job.id,
-             user_id: consultant.id
-           }.merge(estimate)
+           params: estimate
 
       expect(data['days']).to eq(estimate[:days])
       estimate_id = data['id']
       new_estimate = estimate.merge(days: estimate[:days] + 1)
 
       put :update,
-          params: {
-            id: estimate_id
-          }.merge(new_estimate)
+          params: new_estimate.merge(id: estimate_id)
 
+      expect(response).to have_http_status(:ok)
       expect(data['days']).to eq(new_estimate[:days])
+    end
+
+    it 'cannot update an accepted estimate' do
+      estimate = attributes_for(:estimate, job_id: @job.id)
+
+      post :create,
+           params: estimate
+
+      estimate_id = data['id']
+      Estimate.find(estimate_id).accept
+
+      new_estimate = estimate.merge(days: estimate[:days] + 1)
+      put :update,
+          params: new_estimate.merge(id: estimate_id)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  describe 'delete#estimate' do
+    it 'should respond success if user is allowed to delete the estimate' do
+      estimate = create(:estimate, job: create(:job), user: @user)
+
+      delete :destroy,
+             params: {
+               id: estimate.id
+             }
+
+      expect(response).to have_http_status(:ok)
+      expect(estimate.reload.deleted_at).to be_truthy
+    end
+
+    it 'should respond with a 404 if user is not authorized to delete the estimate' do
+      estimate = create(:estimate, job: create(:job), user: create(:user))
+
+      delete :destroy,
+             params: {
+               id: estimate.id
+             }
+
+      expect(response).to have_http_status(:not_found)
+      expect(estimate.deleted_at).to be_falsey
     end
   end
 end

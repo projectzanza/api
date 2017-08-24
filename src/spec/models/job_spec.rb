@@ -193,10 +193,10 @@ RSpec.describe Job, type: :model do
     end
 
     it 'should show the estimate in the meta of the job' do
-      estimate = Estimate.create(attributes_for(:estimate))
-      @job.collaborators.create(user: @user, estimate: estimate, interested_at: Time.zone.now)
+      @job.collaborators.create(user: @user, interested_at: Time.zone.now)
+      create(:estimate, job: @job, user: @user)
 
-      expect(JSON.parse(@job.to_json(user: @user))['meta']['current_user']['estimate']).to be_truthy
+      expect(JSON.parse(@job.to_json(user: @user))['meta']['current_user']['estimates'].length).to eq 1
     end
   end
 end

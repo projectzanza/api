@@ -8,7 +8,7 @@ class Payment < ApplicationRecord
     awarded_user = job.awarded_user.first
     raise Zanza::PaymentPreConditionsNotMet, 'No one has been awarded the job' unless awarded_user
 
-    estimate = job.collaborators.find_by(user: awarded_user).estimate
+    estimate = job.awarded_estimate
     raise Zanza::PaymentPreConditionsNotMet, 'No estimate associated with job' unless estimate
 
     raise Zanza::PaymentPreConditionsNotMet, 'A payment card should be set before paying' unless job.payment_card_id
