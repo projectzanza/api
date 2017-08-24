@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   has_many :messages
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job
-  has_many :estimates, through: :collaborators
+  has_many :estimates
   has_one :payment_account
 
   scope :filter, lambda { |string|
@@ -141,7 +141,7 @@ class User < ActiveRecord::Base
       {
         job: {
           collaboration_state: collaborator.state,
-          estimate: collaborator.estimate
+          estimates: estimates.where(job: options[:job])
         }
       }
     else

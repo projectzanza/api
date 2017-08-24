@@ -7,7 +7,7 @@ RSpec.describe Payment, type: :model do
     after { StripeMock.stop }
     before(:each) do
       @job = create(:job)
-      @estimate = create(:estimate)
+      @estimate = create(:estimate, job: @job, user: create(:user))
       @charge = Stripe::Charge.create(
         source: StripeMock.generate_card_token,
         amount: 100,
@@ -40,21 +40,19 @@ RSpec.describe Payment, type: :model do
 
     it 'should raise an error if the payment token is not available' do
       @job.award_to_user(@user)
-      @estimate = create(:estimate, user: @user)
-      collaborator = @job.reload.collaborators.find_by(user: @user)
-      collaborator.update_attributes!(estimate: @estimate)
+      @estimate = create(:estimate, user: @user, job: @job)
+      @estimate.accept
 
       expect { Payment.complete(@job) }.to raise_error(Zanza::PaymentPreConditionsNotMet)
     end
 
     it 'should save the charge response, when all valid conditions are met' do
-      card_token = StripeMock.generate_card_token
+      @estimate = create(:estimate, user: @user, job: @job)
       @job.award_to_user(@user)
+      @estimate.accept
+      card_token = StripeMock.generate_card_token
       card = @job.user.add_card(card_token)
-      @estimate = create(:estimate, user: @user)
-      collaborator = @job.reload.collaborators.find_by(user: @user)
-      collaborator.update_attributes!(estimate: @estimate)
-      @job.update_attributes!(payment_card_id: card['id'])
+      @job.update!(payment_card_id: card['id'])
 
       expect(Payment.complete(@job)).to be_truthy
     end
@@ -63,9 +61,8 @@ RSpec.describe Payment, type: :model do
       card_token = StripeMock.generate_card_token
       @job.award_to_user(@user)
       card = @job.user.add_card(card_token)
-      @estimate = create(:estimate, user: @user)
-      collaborator = @job.reload.collaborators.find_by(user: @user)
-      collaborator.update_attributes!(estimate: @estimate)
+      @estimate = create(:estimate, user: @user, job: @job)
+      @estimate.accept
       @job.update_attributes!(payment_card_id: card['id'])
 
       StripeMock.prepare_card_error(:card_declined)

@@ -8,7 +8,7 @@ class Job < ApplicationRecord
   has_many :messages
   has_many :collaborators
   has_many :collaborating_users, through: :collaborators, source: :user
-  has_many :estimates, through: :collaborators
+  has_many :estimates
   has_many :scopes
 
   validates :title, presence: true
@@ -65,8 +65,8 @@ class Job < ApplicationRecord
     collaborators.find_by(user: user).reject
   end
 
-  def estimate(user, estimate)
-    collaborators.find_by(user: user).update_attributes!(estimate)
+  def awarded_estimate
+    estimates.where(user: awarded_user).select { |estimate| estimate.state == Estimate::STATES[:accepted] }.first
   end
 
   def default_collaborating_users
@@ -112,7 +112,7 @@ class Job < ApplicationRecord
       {
         current_user: {
           collaboration_state: collaborator.state,
-          estimate: collaborator.estimate.as_json
+          estimates: estimates.where(user: options[:user])
         }
       }
     else

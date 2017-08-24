@@ -91,23 +91,34 @@ job.register_interested_users([
                                 User.find_by(email: 'jackson.taylorh@zanza.com'),
                                 User.find_by(email: 'sophia.smith@zanza.com')
                               ])
-jackson_estimate = Estimate.create(days: 2,
-                                   start_at: Time.zone.now + 5.days,
-                                   end_at: Time.zone.now + 7.days,
-                                   per_diem: 200,
-                                   total: 400)
-job.collaborators
-   .find_by(user: User.find_by(email: 'jackson.taylorh@zanza.com'))
-   .update_attributes(estimate: jackson_estimate)
+Estimate.create(
+  days: 2,
+  start_at: Time.zone.now + 5.days,
+  end_at: Time.zone.now + 7.days,
+  per_diem: 200,
+  total: 400,
+  job_id: job.id,
+  user_id: User.find_by(email: 'jackson.taylorh@zanza.com').id
+)
 
-sophia_estimate = Estimate.create(days: 4,
-                                  start_at: Time.zone.now + 9.days,
-                                  end_at: Time.zone.now + 11.days,
-                                  per_diem: 300,
-                                  total: 1200)
-job.collaborators
-   .find_by(user: User.find_by(email: 'sophia.smith@zanza.com'))
-   .update_attributes(estimate: sophia_estimate)
+Estimate.create(
+  days: 4,
+  start_at: Time.zone.now + 9.days,
+  end_at: Time.zone.now + 11.days,
+  per_diem: 300,
+  total: 1200,
+  job_id: job.id,
+  user_id: User.find_by(email: 'sophia.smith@zanza.com').id
+)
+Estimate.create(
+  days: 5,
+  start_at: Time.zone.now + 9.days,
+  end_at: Time.zone.now + 12.days,
+  per_diem: 300,
+  total: 1500,
+  job_id: job.id,
+  user_id: User.find_by(email: 'sophia.smith@zanza.com').id
+)
 
 job = Job.create(title: 'Docker project',
                  text: 'Develop docker to make pigs fly',
@@ -122,6 +133,15 @@ job.register_interested_users([
                                 User.find_by(email: 'jackson.taylorh@zanza.com'),
                                 User.find_by(email: 'sophia.smith@zanza.com')
                               ])
+Estimate.create(
+  days: 4,
+  start_at: Time.zone.now + 9.days,
+  end_at: Time.zone.now + 11.days,
+  per_diem: 300,
+  total: 1200,
+  job_id: job.id,
+  user_id: User.find_by(email: 'sophia.smith@zanza.com').id
+)
 
 job = Job.create(title: 'Javascript fluff',
                  text: 'Copy and paste javascript from stackoverflow until it works',
@@ -136,6 +156,15 @@ job.register_interested_users([
                                 User.find_by(email: 'jackson.taylorh@zanza.com'),
                                 User.find_by(email: 'sophia.smith@zanza.com')
                               ])
+Estimate.create(
+  days: 2,
+  start_at: Time.zone.now + 5.days,
+  end_at: Time.zone.now + 7.days,
+  per_diem: 200,
+  total: 400,
+  job_id: job.id,
+  user_id: User.find_by(email: 'jackson.taylorh@zanza.com').id
+)
 
 job = Job.create(title: 'Apache Security Consulting',
                  text: 'security consulting for apache server',
@@ -173,6 +202,15 @@ job.invite_users([
                    User.find_by(email: 'dev@zanza.com')
                  ])
 job.award_to_user(User.find_by(email: 'dev@zanza.com'))
+Estimate.create(
+  days: 4,
+  start_at: Time.zone.now + 9.days,
+  end_at: Time.zone.now + 11.days,
+  per_diem: 300,
+  total: 1600,
+  job_id: job.id,
+  user_id: User.find_by(email: 'dev@zanza.com').id
+)
 
 job = Job.create(title: 'Flash development',
                  text: 'for Internet Explorer 4',

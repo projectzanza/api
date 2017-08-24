@@ -6,6 +6,30 @@ RSpec.describe UsersController, type: :controller do
     @job = create(:job, user: @user)
   end
 
+
+  describe 'put#update' do
+    it 'should return updated user information is successful' do
+      user = attributes_for(:user)
+      expect(user['email']).not_to eq(@user.name)
+
+      put :update,
+          params: user.merge(id: @user.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(data['email']).to eq user[:email]
+    end
+
+    it 'should only allow a user to update their own information' do
+      user = attributes_for(:user)
+      another_user = create(:user)
+
+      put :update,
+          params: user.merge(id: another_user.id)
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   # TODO: tests for /jobs/:job_id/users/match (without filter)
   # should not return current user in match
   # should not return invited users in match
