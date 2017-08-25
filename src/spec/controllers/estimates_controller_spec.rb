@@ -107,4 +107,59 @@ RSpec.describe EstimatesController, type: :controller do
       expect(estimate.deleted_at).to be_falsey
     end
   end
+
+  describe 'accept#estimate' do
+    before(:each) do
+      @estimate = create(:estimate, job: @job, user: create(:user))
+    end
+
+    it 'should respond with the accepted estimate if successful' do
+      post :accept,
+           params: {
+             id: @estimate.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['state']).to eq 'accepted'
+    end
+
+    it 'should respond with an error if the estimate does not belong to the users jobs' do
+      login_user
+
+      post :accept,
+           params: {
+             id: @estimate.id
+           }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'reject#estimate' do
+    before(:each) do
+      @estimate = create(:estimate, job: @job, user: create(:user))
+      @estimate.accept
+    end
+
+    it 'should respond with the rejected estimate if successful' do
+      post :reject,
+           params: {
+             id: @estimate.id
+           }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['state']).to eq 'rejected'
+    end
+
+    it 'should respond with an error if the estimate does not belong to the users jobs' do
+      login_user
+
+      post :reject,
+           params: {
+             id: @estimate.id
+           }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
 end

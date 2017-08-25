@@ -22,6 +22,25 @@ class EstimatesController < ApplicationController
     render json: { success: true }
   end
 
+  # POST /estimates/:id/accept
+  def accept
+    estimate = Estimate.find(params[:id])
+    raise Zanza::AuthorizationException, 'cannot accept an estimate for another persons job' unless
+      current_user.jobs.include? estimate.job
+    estimate.accept
+
+    render json: { data: estimate }
+  end
+
+  def reject
+    estimate = Estimate.find(params[:id])
+    raise Zanza::AuthorizationException, 'cannot reject an estimate for another persons job' unless
+      current_user.jobs.include? estimate.job
+    estimate.reject
+
+    render json: { data: estimate }
+  end
+
   private
 
   def set_authenticated_estimate

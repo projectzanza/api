@@ -47,7 +47,12 @@ Rails.application.routes.draw do
 
   resources :messages
 
-  resources :estimates, only: %i[update create destroy]
+  resources :estimates, only: %i[update create destroy] do
+    member do
+      post :accept
+      post :reject
+    end
+  end
 
   resources :scopes, only: [:complete] do
     member do
