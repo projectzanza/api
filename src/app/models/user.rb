@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
       email_identifier = email.split('@')[0]
 
       self.name ||= email_identifier
-      self.nickname ||= "#{email_identifier}#{rand(1000)}"
+      self.nickname ||= "#{email_identifier}#{rand(100..999)}"
     end
 
     self.rc_password ||= SecureRandom.hex

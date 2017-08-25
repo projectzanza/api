@@ -18,6 +18,15 @@ class ScopesController < ApplicationController
     render json: { data: @job.scopes }
   end
 
+  # PUT /scopes/:id
+  def update
+    @scope = Scope.find(params[:id])
+    raise Zanza::AuthorizationException unless @scope.job.user == current_user
+
+    @scope.update(scope_params)
+    render json: { data: @scope.reload }
+  end
+
   # POST /scopes/:id/complete
   def complete
     @scope = Scope.find(params[:id])
@@ -34,7 +43,7 @@ class ScopesController < ApplicationController
     render json: { data: @scope.job.scopes }
   end
 
-  # POST /scopes/:id/complete
+  # POST /scopes/:id/verify
   def verify
     @scope = Scope.find(params[:id])
     @scope.verify!(current_user)
