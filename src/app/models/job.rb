@@ -66,7 +66,7 @@ class Job < ApplicationRecord
   end
 
   def awarded_estimate
-    estimates.where(user: awarded_user).select { |estimate| estimate.state == Estimate::STATES[:accepted] }.first
+    estimates.where(user: awarded_user).find { |estimate| estimate.state == Estimate::STATES[:accepted] }
   end
 
   def default_collaborating_users
