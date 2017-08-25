@@ -29,7 +29,7 @@ class EstimatesController < ApplicationController
       current_user.jobs.include? estimate.job
     estimate.accept
 
-    render json: { data: estimate }
+    render json: { data: Estimate.where(job: estimate.job, user: estimate.user) }
   end
 
   def reject
@@ -38,7 +38,7 @@ class EstimatesController < ApplicationController
       current_user.jobs.include? estimate.job
     estimate.reject
 
-    render json: { data: estimate }
+    render json: { data: Estimate.where(job: estimate.job, user: estimate.user) }
   end
 
   private

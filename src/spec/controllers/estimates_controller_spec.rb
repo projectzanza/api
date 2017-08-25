@@ -120,7 +120,8 @@ RSpec.describe EstimatesController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data['state']).to eq 'accepted'
+      estimate = data.find{ |estimate| estimate['id'] == @estimate.id }
+      expect(estimate['state']).to eq 'accepted'
     end
 
     it 'should respond with an error if the estimate does not belong to the users jobs' do
@@ -148,7 +149,8 @@ RSpec.describe EstimatesController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data['state']).to eq 'rejected'
+      estimate = data.find{ |estimate| estimate['id'] == @estimate.id }
+      expect(estimate['state']).to eq 'rejected'
     end
 
     it 'should respond with an error if the estimate does not belong to the users jobs' do
