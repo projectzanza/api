@@ -72,7 +72,7 @@ class UsersController < ApplicationController
   end
 
   def set_authenticated_user
-    fail Zanza::AuthorizationException if current_user.id != params[:id]
+    raise Zanza::AuthorizationException if current_user.id != params[:id]
     @user = current_user
   end
 

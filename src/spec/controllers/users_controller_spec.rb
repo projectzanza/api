@@ -6,7 +6,6 @@ RSpec.describe UsersController, type: :controller do
     @job = create(:job, user: @user)
   end
 
-
   describe 'put#update' do
     it 'should return updated user information is successful' do
       user = attributes_for(:user)
