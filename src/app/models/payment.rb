@@ -9,7 +9,7 @@ class Payment < ApplicationRecord
     raise Zanza::PaymentPreConditionsNotMet, 'No one has been awarded the job' unless awarded_user
 
     estimate = job.awarded_estimate
-    raise Zanza::PaymentPreConditionsNotMet, 'No estimate associated with job' unless estimate
+    raise Zanza::PaymentPreConditionsNotMet, 'No accepted estimate associated with job' unless estimate
 
     raise Zanza::PaymentPreConditionsNotMet, 'A payment card should be set before paying' unless job.payment_card_id
     charge = charge_job(job, estimate)
