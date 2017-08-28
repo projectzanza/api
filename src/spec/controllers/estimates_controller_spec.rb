@@ -120,7 +120,7 @@ RSpec.describe EstimatesController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      estimate = data.find{ |estimate| estimate['id'] == @estimate.id }
+      estimate = data.find { |est| est['id'] == @estimate.id }
       expect(estimate['state']).to eq 'accepted'
     end
 
@@ -149,7 +149,7 @@ RSpec.describe EstimatesController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      estimate = data.find{ |estimate| estimate['id'] == @estimate.id }
+      estimate = data.find { |est| est['id'] == @estimate.id }
       expect(estimate['state']).to eq 'rejected'
     end
 

@@ -47,6 +47,29 @@ RSpec.describe ScopesController, type: :controller do
     end
   end
 
+  describe 'put#update' do
+    it 'should update the scope if the user is allowed to' do
+      job = create(:job, scope_count: 1, user: @user)
+      scope = attributes_for(:scope)
+
+      put :update,
+          params: scope.merge(id: job.scopes.first.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(data['title']).to eq(scope[:title])
+    end
+
+    it 'should not allow update if the user does not own the job' do
+      job = create(:job, scope_count: 1, user: create(:user))
+      scope = attributes_for(:scope)
+
+      put :update,
+          params: scope.merge(id: job.scopes.first.id)
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe 'post#complete' do
     before(:each) do
       @job = create(:job, scope_count: 1, user: @user)
