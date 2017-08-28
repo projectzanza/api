@@ -212,4 +212,31 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('rejected')
     end
   end
+
+  describe 'delete#destroy' do
+    before(:each) do
+      @job = create(:job, scope_count: 2, user: @user)
+      @scope = @job.scopes.first
+    end
+
+    it 'should allow the job owner to delete a scope' do
+      delete :destroy,
+             params: { id: @scope.id }
+
+      expect(response).to have_http_status(:ok)
+
+      expect(@job.reload.scopes.count).to eq(1)
+    end
+
+    it 'should not allow non owners to delete a scope' do
+      consultant = create(:user)
+
+      login_user(consultant)
+      delete :destroy,
+             params: { id: @scope.id }
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(@job.reload.scopes.count).to eq(2)
+    end
+  end
 end
