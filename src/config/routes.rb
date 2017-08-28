@@ -54,7 +54,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :scopes, only: [:update] do
+  resources :scopes, only: %i[update destroy] do
     member do
       post :complete
       post :verify

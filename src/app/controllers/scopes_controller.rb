@@ -2,6 +2,7 @@ class ScopesController < ApplicationController
   include Rescuable
 
   before_action :authenticate_user!
+  before_action :set_authenticated_scope, only: %i[update reject verify destroy]
 
   # GET /jobs/:job_id/scopes
   def index
@@ -20,9 +21,6 @@ class ScopesController < ApplicationController
 
   # PUT /scopes/:id
   def update
-    @scope = Scope.find(params[:id])
-    raise Zanza::AuthorizationException unless @scope.job.user == current_user
-
     @scope.update(scope_params)
     render json: { data: @scope.reload }
   end
@@ -37,7 +35,6 @@ class ScopesController < ApplicationController
 
   # POST /scopes/:id/reject
   def reject
-    @scope = Scope.find(params[:id])
     @scope.reject!(current_user)
 
     render json: { data: @scope.job.scopes }
@@ -45,10 +42,23 @@ class ScopesController < ApplicationController
 
   # POST /scopes/:id/verify
   def verify
-    @scope = Scope.find(params[:id])
     @scope.verify!(current_user)
 
     render json: { data: @scope.reload.job.scopes }
+  end
+
+  # DELETE /scopes/:id
+  def destroy
+    @scope.destroy
+    render json: { success: true }
+  end
+
+  private
+
+  def set_authenticated_scope
+    @scope = Scope.find(params[:id])
+    raise Zanza::AuthorizationException unless @scope.job.user == current_user
+    @scope
   end
 
   def scope_params
