@@ -23,7 +23,7 @@ class UsersController < ApplicationController
       if params[:filter]
         User.filter(params[:filter])
       else
-        User.tagged_with(@job.tag_list)
+        User.tagged_with(@job.tag_list) - @job.find_collaborating_users
       end
     render json: { data: users.as_json(job: @job) }
   end

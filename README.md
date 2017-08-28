@@ -20,6 +20,11 @@ curl 127.0.0.1:3000
 ./scripts/clean-docker.sh
 ```
 
+### Set up .env file before starting container
+An environment file exists so that variables can be inserted into the service without storing them in Git.
+A file should exist at `~/api/src/.env.[development|test|production]`
+ 
+There is an .env.example to show the current key names being used
 
 ### To access the api container console
 ```
