@@ -183,15 +183,6 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('rejected')
     end
 
-    it 'should not let the job owner reject an open scope' do
-      post :reject,
-           params: {
-             id: @scope.id
-           }
-
-      expect(response).to have_http_status(:forbidden)
-    end
-
     it 'should not the let the awarded consultant reject a scope' do
       consultant = create(:user)
       @job.award_to_user(consultant)

@@ -49,8 +49,7 @@ class Collaborator < ApplicationRecord
   end
 
   def one_awarded_user_per_job
-    if Collaborator.where(job: job, state: :awarded).count > 1
-      errors.add(:state, 'can only award to one user at a time')
-    end
+    errors.add(:state, 'can only award to one user at a time') if
+      Collaborator.where(job: job, state: :awarded).count > 1
   end
 end
