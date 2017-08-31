@@ -11,33 +11,31 @@ class Estimate < ApplicationRecord
   validates :user, presence: true
   validate :readonly_policy
 
-  STATES = {
-    submitted: 'submitted',
-    accepted: 'accepted',
-    rejected: 'rejected'
-  }.freeze
+  state_machine :state, initial: :submitted do
+    before_transition any => any do |estimate, transition|
+      case transition.event
+      when :accept
+        job_estimates = estimate.job.estimates.to_a.delete_if { |e| e == estimate }
+        job_estimates.each(&:reject)
+        estimate.accepted_at = Time.zone.now
+      when :reject
+        estimate.rejected_at = Time.zone.now
+      end
+    end
 
-  def state
-    return STATES[:accepted] if accepted_at
-    return STATES[:rejected] if rejected_at
-    STATES[:submitted]
+    event :accept do
+      transition %i[submitted rejected] => :accepted
+    end
+
+    event :reject do
+      transition %i[submitted accepted] => :rejected
+    end
   end
 
   def readonly_policy
-    allow_change = %w[accepted_at rejected_at]
-    errors.add(:base, 'cannot update estimate once accepted') if
-      state == STATES[:accepted] &&
-      (allow_change.length - changed.length) != (allow_change - changed).length
-  end
-
-  def accept
-    job_estimates = job.estimates.where(user: user)
-    job_estimates.each(&:reject)
-    update!(accepted_at: Time.zone.now, rejected_at: nil)
-  end
-
-  def reject
-    update!(accepted_at: nil, rejected_at: Time.zone.now) if state != STATES[:rejected]
+    allow_change = %w[accepted_at rejected_at state]
+    return true if (allow_change | changed).length == allow_change.length
+    errors.add(:state, 'cannot update state once accepted') if state_was == 'accepted'
   end
 
   def as_json(options = {})

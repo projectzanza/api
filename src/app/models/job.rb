@@ -78,7 +78,7 @@ class Job < ApplicationRecord
   end
 
   def awarded_estimate
-    estimates.where(user: awarded_user).find { |estimate| estimate.state == Estimate::STATES[:accepted] }
+    estimates.where(user: awarded_user).find { |estimate| estimate.state == 'accepted' }
   end
 
   def default_collaborating_users

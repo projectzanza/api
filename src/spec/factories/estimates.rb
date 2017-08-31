@@ -5,5 +5,7 @@ FactoryGirl.define do
     end_at { (Time.zone.now + days.day).change(usec: 0) }
     per_diem { rand(1000).round(-2) }
     total { per_diem * days }
+    job { create(:job) }
+    user { create(:user) }
   end
 end

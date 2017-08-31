@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170831133831) do
+ActiveRecord::Schema.define(version: 20170831144201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20170831133831) do
     t.datetime "accepted_at"
     t.datetime "rejected_at"
     t.datetime "deleted_at"
+    t.string   "state"
     t.index ["deleted_at"], name: "index_estimates_on_deleted_at", using: :btree
   end
 
