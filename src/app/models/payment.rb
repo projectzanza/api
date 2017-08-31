@@ -5,7 +5,7 @@ class Payment < ApplicationRecord
   belongs_to :chargee, foreign_key: :chargee_id, class_name: 'User'
 
   def self.complete(job)
-    awarded_user = job.awarded_user.first
+    awarded_user = job.awarded_user
     raise Zanza::PaymentPreConditionsNotMet, 'No one has been awarded the job' unless awarded_user
 
     estimate = job.awarded_estimate
@@ -36,7 +36,7 @@ class Payment < ApplicationRecord
       job: job,
       estimate: estimate,
       chargee: job.user,
-      recipient: job.awarded_user.first
+      recipient: job.awarded_user
     )
   end
 end

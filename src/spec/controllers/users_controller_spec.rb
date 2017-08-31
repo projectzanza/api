@@ -111,19 +111,19 @@ RSpec.describe UsersController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data['meta']).to eq({})
+      expect(data['meta']['job']['collaboration_state']).to eq('rejected')
     end
   end
 
   describe 'get#collaborating' do
     it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,participant"' do
       6.times { create(:user) }
-      6.times { create(:user).register_interest_in_jobs(@job) }
-      6.times { @job.invite_users(create(:user)) }
+      6.times { create(:user).register_interest_in_job(@job) }
+      6.times { @job.invite_user(create(:user)) }
       6.times do
         user = create(:user)
-        @job.invite_users(user)
-        user.register_interest_in_jobs(@job)
+        @job.invite_user(user)
+        user.register_interest_in_job(@job)
       end
       @job.award_to_user(create(:user))
 
@@ -145,7 +145,7 @@ RSpec.describe UsersController, type: :controller do
 
     it 'should only return the filter requested when supplied' do
       6.times { create(:user) }
-      6.times { @job.invite_users(create(:user)) }
+      6.times { @job.invite_user(create(:user)) }
 
       get :collaborating,
           params: {

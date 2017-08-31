@@ -209,12 +209,12 @@ RSpec.describe JobsController, type: :controller do
   describe 'get#collaborating' do
     it 'without a filter, it should return max 5 jobs from each "interested,invited,prospective,awarded,participant"' do
       6.times { create(:job) }
-      6.times { @user.register_interest_in_jobs(create(:job)) }
-      6.times { create(:job).invite_users(@user) }
+      6.times { @user.register_interest_in_job(create(:job)) }
+      6.times { create(:job).invite_user(@user) }
       6.times do
         job = create(:job)
-        job.invite_users(@user)
-        @user.register_interest_in_jobs(job)
+        job.invite_user(@user)
+        @user.register_interest_in_job(job)
       end
       6.times { create(:job).award_to_user(@user) }
       6.times do
@@ -238,7 +238,7 @@ RSpec.describe JobsController, type: :controller do
 
     it 'should return only the filter requested when supplied' do
       6.times { create(:job) }
-      6.times { @user.register_interest_in_jobs(create(:job)) }
+      6.times { @user.register_interest_in_job(create(:job)) }
 
       get :collaborating,
           params: {

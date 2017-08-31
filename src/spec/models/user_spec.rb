@@ -12,18 +12,18 @@ RSpec.describe User, type: :model do
     end
 
     it 'returns collaboration state as "interested" when a user is invited to a project' do
-      @user.register_interest_in_jobs(@job)
+      @user.register_interest_in_job(@job)
       expect(collaboration_state_json).to eq 'interested'
     end
 
     it 'returns collaboration state as "invited" when a user is invited to a project' do
-      @job.invite_users(@user)
+      @job.invite_user(@user)
       expect(collaboration_state_json).to eq 'invited'
     end
 
     it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
-      @user.register_interest_in_jobs(@job)
-      @job.invite_users(@user)
+      @user.register_interest_in_job(@job)
+      @job.invite_user(@user)
       expect(collaboration_state_json).to eq 'prospective'
     end
 

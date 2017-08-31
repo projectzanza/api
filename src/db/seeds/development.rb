@@ -83,10 +83,10 @@ job = Job.create(title: 'Ruby development',
                      description: 'its a 2 step job only'
                    )
                  ])
-job.invite_users([
-                   User.find_by(email: 'aiden.jones@zanza.com'),
-                   User.find_by(email: 'emma.williams@zanza.com')
-                 ])
+job.invite_user([
+                  User.find_by(email: 'aiden.jones@zanza.com'),
+                  User.find_by(email: 'emma.williams@zanza.com')
+                ])
 job.register_interested_users([
                                 User.find_by(email: 'jackson.taylorh@zanza.com'),
                                 User.find_by(email: 'sophia.smith@zanza.com')
@@ -174,9 +174,9 @@ job = Job.create(title: 'Apache Security Consulting',
                  proposed_start_at: Time.zone.now + 10.day,
                  proposed_end_at: Time.zone.now + 13.day,
                  allow_contact: true)
-job.invite_users([
-                   User.find_by(email: 'dev@zanza.com')
-                 ])
+job.invite_user([
+                  User.find_by(email: 'dev@zanza.com')
+                ])
 
 job = Job.create(title: 'Bank physical security review',
                  text: 'physical review of security for unicorns
@@ -198,9 +198,9 @@ has scopes. invited and awarded to dev@zanza.com',
                    )
                  ])
 
-job.invite_users([
-                   User.find_by(email: 'dev@zanza.com')
-                 ])
+job.invite_user([
+                  User.find_by(email: 'dev@zanza.com')
+                ])
 job.award_to_user(User.find_by(email: 'dev@zanza.com'))
 Estimate.create(
   days: 4,

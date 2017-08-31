@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def invite
     @user = User.find(params[:id])
     @job = current_user.jobs.find(params[:job_id])
-    @job.invite_users(@user)
+    @job.invite_user(@user)
     @job.reload
 
     render json: { data: @job.invited_users.as_json(job: @job) }

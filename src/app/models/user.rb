@@ -39,40 +39,40 @@ class User < ActiveRecord::Base
   validates :email, presence: true
   validates :rc_password, presence: true
 
-  def invite_to_jobs(jobs)
-    add_collaborators(jobs, :job, :invited_at)
+  def invite_to_job(job)
+    add_collaborator(:invite, job: job)
   end
 
   def invited_to_jobs
-    collaborating_jobs.merge(Collaborator.invited)
+    collaborating_jobs.merge(Collaborator.with_state(:invited))
   end
 
-  def register_interest_in_jobs(jobs)
-    add_collaborators(jobs, :job, :interested_at)
+  def register_interest_in_job(job)
+    add_collaborator(:interested, job: job)
   end
 
   def interested_in_jobs
-    collaborating_jobs.merge(Collaborator.interested)
+    collaborating_jobs.merge(Collaborator.with_state(:interested))
   end
 
   def prospective_jobs
-    collaborating_jobs.merge(Collaborator.prospective)
+    collaborating_jobs.merge(Collaborator.with_state(:prospective))
   end
 
   def awarded_jobs
-    collaborating_jobs.merge(Collaborator.awarded)
+    collaborating_jobs.merge(Collaborator.with_state(:awarded))
   end
 
   def accepted_jobs
-    collaborating_jobs.merge(Collaborator.accepted)
+    collaborating_jobs.merge(Collaborator.with_state(:participant))
   end
 
   def accept_job(job)
-    add_collaborators(job, :job, :accepted_at)
+    add_collaborator(:accept, job: job)
   end
 
   def participant_jobs
-    collaborating_jobs.merge(Collaborator.participant)
+    collaborating_jobs.merge(Collaborator.with_state(:participant))
   end
 
   def default_collaborating_jobs
@@ -85,10 +85,9 @@ class User < ActiveRecord::Base
 
   def find_collaborating_jobs(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
 
-    if state
-      collaborating_jobs.merge(Collaborator.send(state)).limit(opts[:limit])
+    if opts[:state]
+      collaborating_jobs.merge(Collaborator.with_state(opts[:state])).limit(opts[:limit])
     else
       default_collaborating_jobs
     end

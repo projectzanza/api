@@ -60,10 +60,9 @@ RSpec.describe Payment, type: :model do
     it 'should raise a payment exception if the charge is not successful' do
       card_token = StripeMock.generate_card_token
       @job.award_to_user(@user)
+      create(:estimate, user: @user, job: @job).accept
       card = @job.user.add_card(card_token)
-      @estimate = create(:estimate, user: @user, job: @job)
-      @estimate.accept
-      @job.update_attributes!(payment_card_id: card['id'])
+      @job.update!(payment_card_id: card['id'])
 
       StripeMock.prepare_card_error(:card_declined)
       expect { Payment.complete(@job) }.to raise_error(Zanza::PaymentException)

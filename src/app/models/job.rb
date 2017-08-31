@@ -29,36 +29,48 @@ class Job < ApplicationRecord
     STATES[:open]
   end
 
-  def invite_users(users)
-    add_collaborators(users, :user, :invited_at)
+  def invite_user(user)
+    add_collaborator(:invite, user: user)
   end
 
   def invited_users
-    collaborating_users.merge(Collaborator.invited)
+    collaborating_users.merge(Collaborator.with_state(:invited))
   end
 
-  def register_interested_users(users)
-    add_collaborators(users, :user, :interested_at)
+  def register_interested_user(user)
+    add_collaborator(:interested, user: user)
+  end
+
+  def can_register_interested_user(user)
+    !collaborators.find_by(user: user) || collaborators.find_by(user: user).can_interested?
   end
 
   def interested_users
-    collaborating_users.merge(Collaborator.interested)
+    collaborating_users.merge(Collaborator.with_state(:interested))
   end
 
   def prospective_users
-    collaborating_users.merge(Collaborator.prospective)
+    collaborating_users.merge(Collaborator.with_state(:prospective))
   end
 
   def award_to_user(user)
-    add_collaborators(user, :user, :awarded_at)
+    add_collaborator(:award, user: user)
   end
 
   def awarded_user
-    collaborating_users.merge(Collaborator.awarded).limit(1)
+    collaborating_users.merge(Collaborator.with_state(:awarded)).first
+  end
+
+  def awarded_users
+    collaborating_users.merge(Collaborator.with_state(:awarded))
+  end
+
+  def accepted_by(user)
+    add_collaborator(:accept, user: user)
   end
 
   def participant_users
-    collaborating_users.merge(Collaborator.participant)
+    collaborating_users.merge(Collaborator.with_state(:participant))
   end
 
   def reject_user(user)
@@ -73,16 +85,14 @@ class Job < ApplicationRecord
     invited_users.limit(5)
                  .union_all(interested_users.limit(5))
                  .union_all(prospective_users.limit(5))
-                 .union_all(awarded_user)
+                 .union_all(awarded_users)
                  .union_all(participant_users.limit(5))
   end
 
   def find_collaborating_users(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
-
-    if state
-      collaborating_users.merge(Collaborator.send(state)).limit(opts[:limit])
+    if opts[:state]
+      collaborating_users.merge(Collaborator.with_state(opts[:state])).limit(opts[:limit])
     else
       default_collaborating_users
     end

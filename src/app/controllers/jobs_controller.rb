@@ -62,7 +62,7 @@ class JobsController < ApplicationController
   # POST /jobs/:id/register_interest
   def register_interest
     @job = Job.find(params[:id])
-    @job.register_interested_users(current_user)
+    @job.register_interested_user(current_user)
     current_user.reload
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
@@ -71,7 +71,7 @@ class JobsController < ApplicationController
   # POST /jobs/:id/accept
   def accept
     @job = Job.find(params[:id])
-    current_user.accept_job(@job)
+    @job.accepted_by(current_user)
     current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }

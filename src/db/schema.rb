@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170823165934) do
+ActiveRecord::Schema.define(version: 20170830095728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,8 @@ ActiveRecord::Schema.define(version: 20170823165934) do
     t.datetime "interested_at"
     t.datetime "awarded_at"
     t.datetime "accepted_at"
+    t.string   "state",         default: "init", null: false
+    t.datetime "rejected_at"
     t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
     t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree

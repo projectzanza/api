@@ -45,30 +45,30 @@ RSpec.describe Job, type: :model do
     it 'does not error on duplicate invited users' do
       job = create(:job)
 
-      job.invite_users(create(:user))
-      expect(job.invite_users(create(:user))).to be_truthy
+      job.invite_user(create(:user))
+      expect(job.invite_user(create(:user))).to be_truthy
     end
 
-    it 'does not record the second instance of duplicate invited users' do
+    it 'is not able to invite the same user twice' do
       job = create(:job)
       user = create(:user)
-      2.times { job.invite_users(user) }
-      expect(job.invited_users.count).to eq(1)
+      job.invite_user(user)
+      expect { job.invite_user(user) }.to raise_error ActiveRecord::RecordNotSaved
     end
   end
 
   describe 'interested_users' do
     it 'does not error on duplicate interested_users' do
       job = create(:job)
-      job.register_interested_users(create(:user))
-      expect(job.register_interested_users(create(:user))).to be_truthy
+      job.register_interested_user(create(:user))
+      expect(job.register_interested_user(create(:user))).to be_truthy
     end
 
     it 'does not record the second instance of duplicate interested users' do
       job = create(:job)
       user = create(:user)
-      2.times { job.register_interested_users(user) }
-      expect(job.interested_users.count).to eq(1)
+      job.register_interested_user(user)
+      expect { job.register_interested_user(user) }.to raise_error ActiveRecord::RecordNotSaved
     end
   end
 
@@ -77,11 +77,11 @@ RSpec.describe Job, type: :model do
       job = create(:job)
       consultant = create(:user)
 
-      job.register_interested_users(consultant)
-      job.invite_users(consultant)
+      job.register_interested_user(consultant)
+      job.invite_user(consultant)
 
       expect(job.collaborating_users.count).to eq(1)
-      expect(job.prospective_users.count).to eq(1)
+      expect(job.collaborators.where(state: :prospective).count).to eq(1)
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe Job, type: :model do
 
       job.award_to_user(consultant)
 
-      expect(job.awarded_user.first).to eq(consultant)
+      expect(job.awarded_user).to eq(consultant)
     end
 
     it 'should only allow awarding of the job to one user at a time' do
@@ -104,14 +104,37 @@ RSpec.describe Job, type: :model do
       expect { job.award_to_user(consultant2) }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it 'should allow collaborator actions after awarding a job to a user' do
+    it 'should allow collaborator actions with other users after awarding a job to a user' do
       job = create(:job)
       consultant1 = create(:user)
       consultant2 = create(:user)
 
       job.award_to_user(consultant1)
-      job.invite_users(consultant2)
+      job.invite_user(consultant2)
       expect(job.invited_users).to include(consultant2)
+      expect(job.invited_users.count).to eq 1
+    end
+  end
+
+  describe 'awarded_user' do
+    it 'should return the user that has been awarded the job' do
+      job = create(:job)
+      user = create(:user)
+      job.award_to_user(user)
+
+      expect(job.awarded_user).to eq user
+    end
+  end
+
+  describe 'awarded_estimate' do
+    it 'should return the awarded estimate of the awarded user' do
+      job = create(:job)
+      user = create(:user)
+      job.award_to_user(user)
+      estimate = create(:estimate, user: user, job: job)
+      estimate.accept
+
+      expect(job.awarded_estimate).to eq estimate
     end
   end
 
@@ -162,18 +185,18 @@ RSpec.describe Job, type: :model do
     end
 
     it 'returns collaboration state as "interested" when a user is invited to a project' do
-      @job.register_interested_users(@user)
+      @job.register_interested_user(@user)
       expect(collaboration_state_json).to eq 'interested'
     end
 
     it 'returns collaboration state as "invited" when a user is invited to a project' do
-      @job.invite_users(@user)
+      @job.invite_user(@user)
       expect(collaboration_state_json).to eq 'invited'
     end
 
     it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
-      @job.register_interested_users(@user)
-      @job.invite_users(@user)
+      @job.register_interested_user(@user)
+      @job.invite_user(@user)
       expect(collaboration_state_json).to eq 'prospective'
     end
 
@@ -184,7 +207,7 @@ RSpec.describe Job, type: :model do
 
     it 'returns collaboration state as "participant" when a user is awarded and accepts the project' do
       @job.award_to_user(@user)
-      @user.accept_job(@job)
+      @job.accepted_by(@user)
       expect(collaboration_state_json).to eq 'participant'
     end
 

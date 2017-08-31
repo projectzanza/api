@@ -7,13 +7,13 @@ class EstimatesController < ApplicationController
   def create
     @job = Job.find(params[:job_id])
     @estimate = Estimate.create(estimate_create_params.merge(user_id: current_user.id))
-    @job.add_collaborators(current_user, :user, :interested_at)
+    @job.add_collaborator(:interested, user: current_user) if @job.can_register_interested_user(current_user)
 
     render json: { data: @estimate }
   end
 
   def update
-    @estimate.update_attributes!(estimate_update_params)
+    @estimate.update!(estimate_update_params)
     render json: { data: @estimate.reload }
   end
 
