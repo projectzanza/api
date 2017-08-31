@@ -148,18 +148,6 @@ RSpec.describe Job, type: :model do
       @job.verify(user: @user)
       expect(@job.verified_at).to be_truthy
     end
-
-    it 'should raise an exception if the user is not the owner of the job' do
-      consultant = create(:user)
-      expect { @job.verify(user: consultant) }.to raise_error Zanza::AuthorizationException
-    end
-
-    it 'should verify the scopes belonging to a job if scopes param set' do
-      @job.verify(user: @user, scopes: true)
-      verified = @job.scopes.collect(&:verified_at)
-      expect(verified.length).to eq(verified.compact.length)
-      expect(verified.first).to be_truthy
-    end
   end
 
   describe 'state' do
@@ -169,8 +157,8 @@ RSpec.describe Job, type: :model do
 
     it 'should return complete state if the job has been verified' do
       job = create(:job)
-      job.verify(user: job.user)
-      expect(job.state).to eq('completed')
+      job.verify
+      expect(job.state).to eq('verified')
     end
   end
 

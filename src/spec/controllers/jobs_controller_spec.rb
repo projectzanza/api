@@ -266,24 +266,6 @@ RSpec.describe JobsController, type: :controller do
       expect(data['verified_at']).to be_truthy
     end
 
-    it 'should verify all attached scopes if the scope flag is true' do
-      job = create(:job, user: @user, scope_count: 3)
-      consultant = create(:user)
-      job.award_to_user(consultant)
-
-      allow(Payment).to receive(:complete).and_return(true)
-      post :verify,
-           params: {
-             id: job.id,
-             scopes: true
-           }
-
-      expect(response).to have_http_status(200)
-      scope_states = job.scopes.collect { |s| !s.verified_at.nil? }
-      expect(scope_states.uniq.length).to eq(1)
-      expect(scope_states.uniq.first).to be_truthy
-    end
-
     it 'should only allow the client to verify the job' do
       job = create(:job, user: @user)
       consultant = create(:user)

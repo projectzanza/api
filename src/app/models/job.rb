@@ -17,16 +17,23 @@ class Job < ApplicationRecord
   validates :proposed_end_at, in_future: true, on: :create
   validate :proposed_end_at_after_proposed_start_at
 
-  STATES = {
-    open: 'open',
-    closed: 'closed',
-    complete: 'completed'
-  }.freeze
+  state_machine :state, initial: :open do
+    before_transition any => any do |job, transition|
+      case transition.event
+      when :verify
+        job.verified_at = Time.zone.now
+      when :complete
+        job.completed_at = Time.zone.now
+      end
+    end
 
-  def state
-    return STATES[:closed] if closed_at
-    return STATES[:complete] if verified_at
-    STATES[:open]
+    event :verify do
+      transition any => :verified
+    end
+
+    event :complete do
+      transition open: :completed
+    end
   end
 
   def invite_user(user)
@@ -96,15 +103,6 @@ class Job < ApplicationRecord
     else
       default_collaborating_users
     end
-  end
-
-  def verify(options)
-    unless options[:user] == user
-      raise Zanza::AuthorizationException,
-            'User does not have permission to verify job'
-    end
-    update_attributes(verified_at: Time.zone.now)
-    scopes.each { |s| s.verify!(options[:user]) } if options[:scopes]
   end
 
   def as_json(options)
