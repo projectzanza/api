@@ -2,7 +2,8 @@ User.create([
               {
                 name: 'dev dev',
                 email: 'dev@zanza.com',
-                summary: 'dev bio',
+                headline: 'Dev dev dev, security, security, security',
+                summary: 'summary of the summary of a summary of a summary',
                 tag_list: %w[ruby javascript docker grunt webpack java apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -63,6 +64,43 @@ User.create([
                 per_diem: { min: 400, max: 900 }
               }
             ])
+
+Position.create([
+                  {
+                    title: 'Queen of pop',
+                    summary: 'singing about stuff n stuff',
+                    company: 'Swift Inc',
+                    start_at: Time.zone.now - 1.years,
+                    end_at: Time.zone.now - 4.months,
+                    user: User.find_by(email: 'taylor.swift@zanza.com')
+                  },
+                  {
+                    title: 'Country and western',
+                    summary: 'just singing a few songs',
+                    company: 'canada',
+                    start_at: Time.zone.now - 4.months,
+                    end_at: Time.zone.now - 1.months,
+                    user: User.find_by(email: 'taylor.swift@zanza.com')
+                  }
+                ])
+Position.create([
+                  {
+                    title: 'Security consultant',
+                    summary: 'consultant for security, exactly what is says on the tin',
+                    company: 'The Company',
+                    start_at: Time.zone.now - 1.years,
+                    end_at: Time.zone.now - 4.months,
+                    user: User.find_by(email: 'dev@zanza.com')
+                  },
+                  {
+                    title: 'Overseer of Light',
+                    summary: 'staring at the eclipse',
+                    company: 'The White House',
+                    start_at: Time.zone.now - 4.months,
+                    end_at: Time.zone.now - 1.months,
+                    user: User.find_by(email: 'dev@zanza.com')
+                  }
+                ])
 
 job = Job.create(title: 'Ruby development',
                  text: 'Develop ruby to save the world.
