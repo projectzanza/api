@@ -15,7 +15,11 @@ Rails.application.routes.draw do
         get :match
       end
     end
+
+    resources :positions, only: %i[index]
   end
+
+  resources :positions, only: %i[create update destroy]
 
   # /jobs
   resources :jobs do

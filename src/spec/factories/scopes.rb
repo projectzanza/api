@@ -1,10 +1,10 @@
 FactoryGirl.define do
   sequence :scope_title do |n|
-    "title-#{n}"
+    "scope title-#{n}"
   end
 
   sequence :scope_description do |n|
-    "description-#{n}"
+    "scope description-#{n}"
   end
 
   factory :scope do

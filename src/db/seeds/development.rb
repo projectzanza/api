@@ -2,7 +2,7 @@ User.create([
               {
                 name: 'dev dev',
                 email: 'dev@zanza.com',
-                bio: 'dev bio',
+                summary: 'dev bio',
                 tag_list: %w[ruby javascript docker grunt webpack java apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -11,7 +11,7 @@ User.create([
               {
                 name: 'Sophia Smith',
                 email: 'sophia.smith@zanza.com',
-                bio: 'Sophias bio',
+                summary: 'Sophias bio',
                 tag_list: %w[ruby javascript docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -20,7 +20,7 @@ User.create([
               {
                 name: 'Aiden Jones',
                 email: 'aiden.jones@zanza.com',
-                bio: 'Aidens bio',
+                summary: 'Aidens bio',
                 tag_list: %w[ruby javascript docker grunt apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -29,7 +29,7 @@ User.create([
               {
                 name: 'Emma Williams',
                 email: 'emma.williams@zanza.com',
-                bio: 'Emmas bio',
+                summary: 'Emmas bio',
                 tag_list: %w[ruby javascript docker],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -38,7 +38,7 @@ User.create([
               {
                 name: 'Jackson Taylor',
                 email: 'jackson.taylorh@zanza.com',
-                bio: 'Jacksons bio',
+                summary: 'Jacksons bio',
                 tag_list: %w[docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -47,7 +47,7 @@ User.create([
               {
                 name: 'Liam Neeson',
                 email: 'liam.neeson@zanza.com',
-                bio: 'Liams bio',
+                summary: 'Liams bio',
                 tag_list: %w[docker grunt webpack ruby apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -56,7 +56,7 @@ User.create([
               {
                 name: 'Taylor Swift',
                 email: 'taylor.swift@zanza.com',
-                bio: 'Taylors bio',
+                summary: 'Taylors bio',
                 tag_list: %w[security physical],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -83,8 +83,8 @@ job = Job.create(title: 'Ruby development',
                      description: 'its a 2 step job only'
                    )
                  ])
-job.add_collaborator(:invite, user: (User.find_by(email: 'aiden.jones@zanza.com')))
-job.add_collaborator(:invite, user: (User.find_by(email: 'emma.williams@zanza.com')))
+job.add_collaborator(:invite, user: User.find_by(email: 'aiden.jones@zanza.com'))
+job.add_collaborator(:invite, user: User.find_by(email: 'emma.williams@zanza.com'))
 job.add_collaborator(:interested, user: User.find_by(email: 'jackson.taylorh@zanza.com'))
 job.add_collaborator(:interested, user: User.find_by(email: 'sophia.smith@zanza.com'))
 

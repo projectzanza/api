@@ -1,4 +1,6 @@
 class Scope < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :job
 
   validates :state, presence: true
