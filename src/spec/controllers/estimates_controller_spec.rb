@@ -38,6 +38,8 @@ RSpec.describe EstimatesController, type: :controller do
       post :create,
            params: estimate
 
+      expect(response).to have_http_status(:ok)
+
       estimate2 = attributes_for(:estimate, job_id: @job.id)
       post :create,
            params: estimate2

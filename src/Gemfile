@@ -29,6 +29,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'devise_token_auth'
 gem 'rack-cors'
 gem 'rocketchat'
+gem 'state_machines-activerecord'
 gem 'stripe'
 gem 'tzinfo-data'
 

@@ -86,9 +86,10 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('completed')
     end
 
-    it 'should let the awarded consultant complete a scope' do
+    it 'should let the awarded consultant who accepted the job, complete a scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
+      @job.update_collaborator(:accept, user: consultant)
 
       login_user(consultant)
 
@@ -103,7 +104,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let other users complete the scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       login_user
 
@@ -134,7 +135,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let the awarded user verify the scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       login_user(consultant)
 
@@ -183,18 +184,9 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('rejected')
     end
 
-    it 'should not let the job owner reject an open scope' do
-      post :reject,
-           params: {
-             id: @scope.id
-           }
-
-      expect(response).to have_http_status(:forbidden)
-    end
-
     it 'should not the let the awarded consultant reject a scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       post :complete,
            params: {

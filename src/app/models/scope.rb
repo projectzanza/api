@@ -1,47 +1,36 @@
 class Scope < ApplicationRecord
   belongs_to :job
 
-  STATES = {
-    completed: 'completed',
-    verified: 'verified',
-    rejected: 'rejected',
-    open: 'open'
-  }.freeze
+  validates :state, presence: true
 
-  def complete!(by_user)
-    update_attributes!(completed_at: Time.zone.now, rejected_at: nil) if can_complete!(by_user)
+  def initialize(*)
+    super
   end
 
-  def verify!(by_user)
-    update_attributes!(verified_at: Time.zone.now, rejected_at: nil) if can_verify!(by_user)
-  end
+  state_machine :state, initial: :open do
+    before_transition any => any do |scope, transition|
+      case transition.event
+      when :complete
+        scope.completed_at = Time.zone.now
+      when :verify
+        scope.verified_at = Time.zone.now
+      when :reject
+        scope.rejected_at = Time.zone.now
+      end
+    end
 
-  def reject!(by_user)
-    raise Zanza::ForbiddenException if state == STATES[:open]
-    update_attributes!(rejected_at: Time.zone.now, verified_at: nil) if can_reject!(by_user)
-  end
+    event :complete do
+      transition open: :completed,
+                 rejected: :completed
+    end
 
-  def can_complete!(user)
-    raise Zanza::AuthorizationException, 'User does not have permission to complete scope' unless
-      [job.user, job.awarded_user.first].include? user
-    true
-  end
+    event :verify do
+      transition any => :verified
+    end
 
-  def can_verify!(user)
-    raise Zanza::AuthorizationException, 'User does not have permission to verify scope' unless user == job.user
-    true
-  end
-
-  def can_reject!(user)
-    raise Zanza::AuthorizationException, 'User does not have permission to verify scope' unless user == job.user
-    true
-  end
-
-  def state
-    return STATES[:verified] if verified_at
-    return STATES[:rejected] if rejected_at
-    return STATES[:completed] if completed_at
-    STATES[:open]
+    event :reject do
+      transition any => :rejected
+    end
   end
 
   def as_json(options)

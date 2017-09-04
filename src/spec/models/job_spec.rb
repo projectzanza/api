@@ -45,30 +45,30 @@ RSpec.describe Job, type: :model do
     it 'does not error on duplicate invited users' do
       job = create(:job)
 
-      job.invite_users(create(:user))
-      expect(job.invite_users(create(:user))).to be_truthy
+      job.add_collaborator(:invite, user: create(:user))
+      expect(job.add_collaborator(:invite, user: create(:user))).to be_truthy
     end
 
-    it 'does not record the second instance of duplicate invited users' do
+    it 'is not able to invite the same user twice' do
       job = create(:job)
       user = create(:user)
-      2.times { job.invite_users(user) }
-      expect(job.invited_users.count).to eq(1)
+      job.add_collaborator(:invite, user: user)
+      expect { job.add_collaborator(:invite, user: user) }.to raise_error ActiveRecord::RecordNotSaved
     end
   end
 
   describe 'interested_users' do
     it 'does not error on duplicate interested_users' do
       job = create(:job)
-      job.register_interested_users(create(:user))
-      expect(job.register_interested_users(create(:user))).to be_truthy
+      job.add_collaborator(:interested, user: create(:user))
+      expect(job.add_collaborator(:interested, user: create(:user))).to be_truthy
     end
 
     it 'does not record the second instance of duplicate interested users' do
       job = create(:job)
       user = create(:user)
-      2.times { job.register_interested_users(user) }
-      expect(job.interested_users.count).to eq(1)
+      job.add_collaborator(:interested, user: user)
+      expect { job.add_collaborator(:interested, user: user) }.to raise_error ActiveRecord::RecordNotSaved
     end
   end
 
@@ -77,22 +77,22 @@ RSpec.describe Job, type: :model do
       job = create(:job)
       consultant = create(:user)
 
-      job.register_interested_users(consultant)
-      job.invite_users(consultant)
+      job.add_collaborator(:interested, user: consultant)
+      job.update_collaborator(:invite, user: consultant)
 
       expect(job.collaborating_users.count).to eq(1)
-      expect(job.prospective_users.count).to eq(1)
+      expect(job.collaborators.where(state: :prospective).count).to eq(1)
     end
   end
 
-  describe 'award_to_user' do
+  describe 'update_collaborator(:award, user: user)' do
     it 'should award a job to a user' do
       job = create(:job)
       consultant = create(:user)
 
-      job.award_to_user(consultant)
+      job.update_collaborator(:award, user: consultant)
 
-      expect(job.awarded_user.first).to eq(consultant)
+      expect(job.awarded_user).to eq(consultant)
     end
 
     it 'should only allow awarding of the job to one user at a time' do
@@ -100,18 +100,41 @@ RSpec.describe Job, type: :model do
       consultant = create(:user)
       consultant2 = create(:user)
 
-      job.award_to_user(consultant)
-      expect { job.award_to_user(consultant2) }.to raise_error(ActiveRecord::RecordInvalid)
+      job.update_collaborator(:award, user: consultant)
+      expect { job.update_collaborator(:award, user: consultant2) }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it 'should allow collaborator actions after awarding a job to a user' do
+    it 'should allow collaborator actions with other users after awarding a job to a user' do
       job = create(:job)
       consultant1 = create(:user)
       consultant2 = create(:user)
 
-      job.award_to_user(consultant1)
-      job.invite_users(consultant2)
+      job.update_collaborator(:award, user: consultant1)
+      job.update_collaborator(:invite, user: consultant2)
       expect(job.invited_users).to include(consultant2)
+      expect(job.invited_users.count).to eq 1
+    end
+  end
+
+  describe 'awarded_user' do
+    it 'should return the user that has been awarded the job' do
+      job = create(:job)
+      user = create(:user)
+      job.update_collaborator(:award, user: user)
+
+      expect(job.awarded_user).to eq user
+    end
+  end
+
+  describe 'awarded_estimate' do
+    it 'should return the awarded estimate of the awarded user' do
+      job = create(:job)
+      consultant = create(:user)
+      job.update_collaborator(:award, user: consultant)
+      estimate = create(:estimate, user: consultant, job: job)
+      estimate.accept
+
+      expect(job.awarded_estimate).to eq estimate
     end
   end
 
@@ -125,18 +148,6 @@ RSpec.describe Job, type: :model do
       @job.verify(user: @user)
       expect(@job.verified_at).to be_truthy
     end
-
-    it 'should raise an exception if the user is not the owner of the job' do
-      consultant = create(:user)
-      expect { @job.verify(user: consultant) }.to raise_error Zanza::AuthorizationException
-    end
-
-    it 'should verify the scopes belonging to a job if scopes param set' do
-      @job.verify(user: @user, scopes: true)
-      verified = @job.scopes.collect(&:verified_at)
-      expect(verified.length).to eq(verified.compact.length)
-      expect(verified.first).to be_truthy
-    end
   end
 
   describe 'state' do
@@ -146,8 +157,8 @@ RSpec.describe Job, type: :model do
 
     it 'should return complete state if the job has been verified' do
       job = create(:job)
-      job.verify(user: job.user)
-      expect(job.state).to eq('completed')
+      job.verify
+      expect(job.state).to eq('verified')
     end
   end
 
@@ -162,30 +173,30 @@ RSpec.describe Job, type: :model do
     end
 
     it 'returns collaboration state as "interested" when a user is invited to a project' do
-      @job.register_interested_users(@user)
+      @job.add_collaborator(:interested, user: @user)
       expect(collaboration_state_json).to eq 'interested'
     end
 
     it 'returns collaboration state as "invited" when a user is invited to a project' do
-      @job.invite_users(@user)
+      @job.add_collaborator(:invite, user: @user)
       expect(collaboration_state_json).to eq 'invited'
     end
 
     it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
-      @job.register_interested_users(@user)
-      @job.invite_users(@user)
+      @job.add_collaborator(:interested, user: @user)
+      @job.add_collaborator(:invite, user: @user)
       expect(collaboration_state_json).to eq 'prospective'
     end
 
     it 'returns collaboration state as "awarded" when a user is awarded a project' do
-      @job.award_to_user(@user)
+      @job.add_collaborator(:award, user: @user)
       expect(collaboration_state_json).to eq 'awarded'
     end
 
-    it 'returns collaboration state as "participant" when a user is awarded and accepts the project' do
-      @job.award_to_user(@user)
-      @user.accept_job(@job)
-      expect(collaboration_state_json).to eq 'participant'
+    it 'returns collaboration state as "accepted" when a user is awarded and accepts the project' do
+      @job.add_collaborator(:award, user: @user)
+      @job.add_collaborator(:accept, user: @user)
+      expect(collaboration_state_json).to eq 'accepted'
     end
 
     it 'does not return collaboration_state if the user is not a collaborator' do

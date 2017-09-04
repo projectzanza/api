@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth'
 
+  # /users
   resources :users do
     member do
       post :invite
@@ -8,17 +9,20 @@ Rails.application.routes.draw do
       post :reject
     end
 
-    resources :jobs, only: %i[index match] do
+    # /users/:user_id/jobs
+    resources :jobs, only: %i[index] do
       collection do
         get :match
       end
     end
   end
 
+  # /jobs
   resources :jobs do
     member do
       post :register_interest
       post :accept
+      post :complete
       post :verify
     end
 
@@ -26,6 +30,7 @@ Rails.application.routes.draw do
       get :collaborating
     end
 
+    # /jobs/:job_id/users
     resources :users, only: %i[match show] do
       collection do
         get :match
@@ -33,10 +38,13 @@ Rails.application.routes.draw do
       end
     end
 
+    # /jobs/:job_id/estimates
     resources :estimates, only: [:create]
 
+    # /jobs/:job_id/scopes
     resources :scopes, only: %i[index create]
 
+    # /jobs/:job_id/payments
     resources :payments do
       collection do
         post :token

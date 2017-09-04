@@ -12,30 +12,30 @@ RSpec.describe User, type: :model do
     end
 
     it 'returns collaboration state as "interested" when a user is invited to a project' do
-      @user.register_interest_in_jobs(@job)
+      @user.add_collaborator(:interested, job: @job)
       expect(collaboration_state_json).to eq 'interested'
     end
 
     it 'returns collaboration state as "invited" when a user is invited to a project' do
-      @job.invite_users(@user)
+      @job.add_collaborator(:invite, user: @user)
       expect(collaboration_state_json).to eq 'invited'
     end
 
     it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
-      @user.register_interest_in_jobs(@job)
-      @job.invite_users(@user)
+      @user.add_collaborator(:interested, job: @job)
+      @job.add_collaborator(:invite, user: @user)
       expect(collaboration_state_json).to eq 'prospective'
     end
 
     it 'returns collaboration state as "awarded" when a user is awarded a project' do
-      @job.award_to_user(@user)
+      @job.update_collaborator(:award, user: @user)
       expect(collaboration_state_json).to eq 'awarded'
     end
 
-    it 'returns collaboration state as "participant" when a user is awarded and accepts the project' do
-      @job.award_to_user(@user)
-      @user.accept_job(@job)
-      expect(collaboration_state_json).to eq 'participant'
+    it 'returns collaboration state as "accepted" when a user is awarded and accepts the project' do
+      @job.update_collaborator(:award, user: @user)
+      @user.update_collaborator(:accept, job: @job)
+      expect(collaboration_state_json).to eq 'accepted'
     end
 
     it 'does not return collaboration_state if the user is not a collaborator' do
@@ -57,11 +57,11 @@ RSpec.describe User, type: :model do
       create(:job, user: user)
 
       j2 = create(:job, user: user)
-      j2.award_to_user(consultant)
+      j2.update_collaborator(:award, user: consultant)
 
       j3 = create(:job, user: user)
-      j3.award_to_user(consultant)
-      consultant.accept_job(j3)
+      j3.update_collaborator(:award, user: consultant)
+      consultant.update_collaborator(:accept, job: j3)
 
       jobs = consultant.awarded_jobs
       expect(jobs.count).to eq(1)

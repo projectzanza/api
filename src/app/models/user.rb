@@ -39,40 +39,24 @@ class User < ActiveRecord::Base
   validates :email, presence: true
   validates :rc_password, presence: true
 
-  def invite_to_jobs(jobs)
-    add_collaborators(jobs, :job, :invited_at)
-  end
-
   def invited_to_jobs
-    collaborating_jobs.merge(Collaborator.invited)
-  end
-
-  def register_interest_in_jobs(jobs)
-    add_collaborators(jobs, :job, :interested_at)
+    collaborating_jobs.where(collaborators: { state: 'invited' })
   end
 
   def interested_in_jobs
-    collaborating_jobs.merge(Collaborator.interested)
+    collaborating_jobs.merge(Collaborator.with_state(:interested))
   end
 
   def prospective_jobs
-    collaborating_jobs.merge(Collaborator.prospective)
+    collaborating_jobs.where(collaborators: { state: 'prospective' })
   end
 
   def awarded_jobs
-    collaborating_jobs.merge(Collaborator.awarded)
+    collaborating_jobs.where(collaborators: { state: 'awarded' })
   end
 
   def accepted_jobs
-    collaborating_jobs.merge(Collaborator.accepted)
-  end
-
-  def accept_job(job)
-    add_collaborators(job, :job, :accepted_at)
-  end
-
-  def participant_jobs
-    collaborating_jobs.merge(Collaborator.participant)
+    collaborating_jobs.where(collaborators: { state: 'accepted' })
   end
 
   def default_collaborating_jobs
@@ -80,15 +64,14 @@ class User < ActiveRecord::Base
                    .union_all(interested_in_jobs.limit(5))
                    .union_all(prospective_jobs.limit(5))
                    .union_all(awarded_jobs.limit(5))
-                   .union_all(participant_jobs.limit(5))
+                   .union_all(accepted_jobs.limit(5))
   end
 
   def find_collaborating_jobs(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
 
-    if state
-      collaborating_jobs.merge(Collaborator.send(state)).limit(opts[:limit])
+    if opts[:state]
+      collaborating_jobs.merge(Collaborator.with_state(opts[:state])).limit(opts[:limit])
     else
       default_collaborating_jobs
     end

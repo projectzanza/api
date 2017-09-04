@@ -187,7 +187,7 @@ RSpec.describe JobsController, type: :controller do
   describe 'post#accept' do
     it 'should accept the job for the user then return all accepted jobs for that user' do
       job = create(:job)
-      job.award_to_user(@user)
+      job.update_collaborator(:award, user: @user)
 
       post :accept,
            params: { id: job.id }
@@ -207,20 +207,20 @@ RSpec.describe JobsController, type: :controller do
   end
 
   describe 'get#collaborating' do
-    it 'without a filter, it should return max 5 jobs from each "interested,invited,prospective,awarded,participant"' do
+    it 'without a filter, it should return max 5 jobs from each "interested,invited,prospective,awarded,accepted"' do
       6.times { create(:job) }
-      6.times { @user.register_interest_in_jobs(create(:job)) }
-      6.times { create(:job).invite_users(@user) }
+      6.times { @user.add_collaborator(:interested, job: create(:job)) }
+      6.times { create(:job).add_collaborator(:invite, user: @user) }
       6.times do
         job = create(:job)
-        job.invite_users(@user)
-        @user.register_interest_in_jobs(job)
+        job.add_collaborator(:invite, user: @user)
+        @user.add_collaborator(:interested, job: job)
       end
-      6.times { create(:job).award_to_user(@user) }
+      6.times { create(:job).update_collaborator(:award, user: @user) }
       6.times do
         job = create(:job)
-        job.award_to_user(@user)
-        @user.accept_job(job)
+        job.update_collaborator(:award, user: @user)
+        @user.update_collaborator(:accept, job: job)
       end
 
       get :collaborating
@@ -233,12 +233,12 @@ RSpec.describe JobsController, type: :controller do
       expect(states.count('invited')).to eq(5)
       expect(states.count('prospective')).to eq(5)
       expect(states.count('awarded')).to eq(5)
-      expect(states.count('participant')).to eq(5)
+      expect(states.count('accepted')).to eq(5)
     end
 
     it 'should return only the filter requested when supplied' do
       6.times { create(:job) }
-      6.times { @user.register_interest_in_jobs(create(:job)) }
+      6.times { @user.add_collaborator(:interested, job: create(:job)) }
 
       get :collaborating,
           params: {
@@ -252,42 +252,41 @@ RSpec.describe JobsController, type: :controller do
     end
   end
 
+  describe 'post#complete' do
+    it 'should set the job state as complete' do
+      job = create(:job, user: @user)
+      consultant = create(:user)
+      job.update_collaborator(:award, user: consultant)
+      job.update_collaborator(:accept, user: consultant)
+
+      post :complete,
+           params: { id: job.id }
+
+      expect(response).to have_http_status(200)
+      expect(data['state']).to eq 'completed'
+      expect(data['completed_at']).to be_truthy
+    end
+  end
+
   describe 'post#verify' do
     it 'should set the job state as verified' do
       job = create(:job, user: @user)
       consultant = create(:user)
-      job.award_to_user(consultant)
+      job.update_collaborator(:award, user: consultant)
 
       allow(Payment).to receive(:complete).and_return(true)
       post :verify,
            params: { id: job.id }
 
       expect(response).to have_http_status(200)
+      expect(data['state']).to eq 'verified'
       expect(data['verified_at']).to be_truthy
-    end
-
-    it 'should verify all attached scopes if the scope flag is true' do
-      job = create(:job, user: @user, scope_count: 3)
-      consultant = create(:user)
-      job.award_to_user(consultant)
-
-      allow(Payment).to receive(:complete).and_return(true)
-      post :verify,
-           params: {
-             id: job.id,
-             scopes: true
-           }
-
-      expect(response).to have_http_status(200)
-      scope_states = job.scopes.collect { |s| !s.verified_at.nil? }
-      expect(scope_states.uniq.length).to eq(1)
-      expect(scope_states.uniq.first).to be_truthy
     end
 
     it 'should only allow the client to verify the job' do
       job = create(:job, user: @user)
       consultant = create(:user)
-      job.award_to_user(consultant)
+      job.update_collaborator(:award, user: consultant)
 
       login_user(consultant)
 

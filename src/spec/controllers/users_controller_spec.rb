@@ -61,7 +61,7 @@ RSpec.describe UsersController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data.first['id']).to eq(consultant.id)
+      expect(data['id']).to eq(consultant.id)
     end
 
     it 'should return an error if the owner is not the user inviting consultants to a job' do
@@ -111,21 +111,22 @@ RSpec.describe UsersController, type: :controller do
            }
 
       expect(response).to have_http_status(:ok)
-      expect(data['meta']).to eq({})
+      expect(data['meta']['job']['collaboration_state']).to eq('rejected')
     end
   end
 
   describe 'get#collaborating' do
-    it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,participant"' do
+    it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,accepted"' do
       6.times { create(:user) }
-      6.times { create(:user).register_interest_in_jobs(@job) }
-      6.times { @job.invite_users(create(:user)) }
+      6.times { create(:user).update_collaborator(:interested, job: @job) }
+      6.times { @job.update_collaborator(:invite, user: create(:user)) }
       6.times do
         user = create(:user)
-        @job.invite_users(user)
-        user.register_interest_in_jobs(@job)
+        @job.update_collaborator(:invite, user: user)
+        user.update_collaborator(:interested, job: @job)
       end
-      @job.award_to_user(create(:user))
+      @job.update_collaborator(:invite, user: create(:user))
+      @job.update_collaborator(:award, user: create(:user))
 
       get :collaborating,
           params: {
@@ -140,12 +141,12 @@ RSpec.describe UsersController, type: :controller do
       expect(states.count('invited')).to eq(5)
       expect(states.count('prospective')).to eq(5)
       expect(states.count('awarded')).to eq(1)
-      expect(states.count('participant')).to eq(0)
+      expect(states.count('accepted')).to eq(0)
     end
 
     it 'should only return the filter requested when supplied' do
       6.times { create(:user) }
-      6.times { @job.invite_users(create(:user)) }
+      6.times { @job.add_collaborator(:invite, user: create(:user)) }
 
       get :collaborating,
           params: {

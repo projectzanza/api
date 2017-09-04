@@ -17,84 +17,76 @@ class Job < ApplicationRecord
   validates :proposed_end_at, in_future: true, on: :create
   validate :proposed_end_at_after_proposed_start_at
 
-  STATES = {
-    open: 'open',
-    closed: 'closed',
-    complete: 'completed'
-  }.freeze
+  state_machine :state, initial: :open do
+    before_transition any => any do |job, transition|
+      case transition.event
+      when :verify
+        job.verified_at = Time.zone.now
+      when :complete
+        job.completed_at = Time.zone.now
+      end
+    end
 
-  def state
-    return STATES[:closed] if closed_at
-    return STATES[:complete] if verified_at
-    STATES[:open]
-  end
+    event :verify do
+      transition any => :verified
+    end
 
-  def invite_users(users)
-    add_collaborators(users, :user, :invited_at)
+    event :complete do
+      transition open: :completed
+    end
   end
 
   def invited_users
-    collaborating_users.merge(Collaborator.invited)
-  end
-
-  def register_interested_users(users)
-    add_collaborators(users, :user, :interested_at)
+    collaborating_users.where(collaborators: { state: ['invited', 'prospective'] })
   end
 
   def interested_users
-    collaborating_users.merge(Collaborator.interested)
+    collaborating_users.where(collaborators: { state: 'interested' })
   end
 
   def prospective_users
-    collaborating_users.merge(Collaborator.prospective)
-  end
-
-  def award_to_user(user)
-    add_collaborators(user, :user, :awarded_at)
+    collaborating_users.where(collaborators: { state: 'prospective' })
   end
 
   def awarded_user
-    collaborating_users.merge(Collaborator.awarded).limit(1)
+    collaborating_users.find_by(collaborators: { state: 'awarded' })
   end
 
-  def participant_users
-    collaborating_users.merge(Collaborator.participant)
+  def awarded_users
+    collaborating_users.where(collaborators: { state: 'awarded' })
   end
 
-  def reject_user(user)
-    collaborators.find_by(user: user).reject
+  def accepted_users
+    collaborating_users.where(collaborators: { state: 'accepted' })
+  end
+
+  def accepted_user
+    collaborating_users.find_by(collaborators: { state: 'accepted' })
   end
 
   def awarded_estimate
-    estimates.where(user: awarded_user).find { |estimate| estimate.state == Estimate::STATES[:accepted] }
+    estimates.where(user: awarded_user).find { |estimate| estimate.state == 'accepted' }
   end
 
   def default_collaborating_users
     invited_users.limit(5)
                  .union_all(interested_users.limit(5))
                  .union_all(prospective_users.limit(5))
-                 .union_all(awarded_user)
-                 .union_all(participant_users.limit(5))
+                 .union_all(awarded_users)
+                 .union_all(accepted_users.limit(5))
+  end
+
+  def matching_users
+    interested_users.union_all(User.tagged_with(tag_list)) - default_collaborating_users
   end
 
   def find_collaborating_users(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
-    state = opts[:state] && Collaborator::STATES[opts[:state].to_sym] ? opts[:state] : nil
-
-    if state
-      collaborating_users.merge(Collaborator.send(state)).limit(opts[:limit])
+    if opts[:state]
+      collaborating_users.merge(Collaborator.with_state(opts[:state])).limit(opts[:limit])
     else
       default_collaborating_users
     end
-  end
-
-  def verify(options)
-    unless options[:user] == user
-      raise Zanza::AuthorizationException,
-            'User does not have permission to verify job'
-    end
-    update_attributes(verified_at: Time.zone.now)
-    scopes.each { |s| s.verify!(options[:user]) } if options[:scopes]
   end
 
   def as_json(options)

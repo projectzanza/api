@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170823165934) do
+ActiveRecord::Schema.define(version: 20170831152905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,8 @@ ActiveRecord::Schema.define(version: 20170823165934) do
     t.datetime "interested_at"
     t.datetime "awarded_at"
     t.datetime "accepted_at"
+    t.string   "state",         null: false
+    t.datetime "rejected_at"
     t.index ["job_id"], name: "index_collaborators_on_job_id", using: :btree
     t.index ["user_id", "job_id"], name: "index_collaborators_on_user_id_and_job_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_collaborators_on_user_id", using: :btree
@@ -44,13 +46,14 @@ ActiveRecord::Schema.define(version: 20170823165934) do
     t.datetime "accepted_at"
     t.datetime "rejected_at"
     t.datetime "deleted_at"
+    t.string   "state",                             null: false
     t.index ["deleted_at"], name: "index_estimates_on_deleted_at", using: :btree
   end
 
   create_table "jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "title"
     t.string   "text"
-    t.string   "state"
+    t.string   "state",                            null: false
     t.string   "user_id",                          null: false
     t.datetime "closed_at"
     t.datetime "created_at",                       null: false
@@ -62,6 +65,7 @@ ActiveRecord::Schema.define(version: 20170823165934) do
     t.boolean  "allow_contact",     default: true
     t.datetime "verified_at"
     t.string   "payment_card_id"
+    t.datetime "completed_at"
   end
 
   create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -102,6 +106,7 @@ ActiveRecord::Schema.define(version: 20170823165934) do
     t.datetime "rejected_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "state",        null: false
     t.index ["job_id"], name: "index_scopes_on_job_id", using: :btree
   end
 
