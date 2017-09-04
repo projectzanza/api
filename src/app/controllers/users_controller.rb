@@ -23,7 +23,7 @@ class UsersController < ApplicationController
       if params[:filter]
         User.filter(params[:filter])
       else
-        User.tagged_with(@job.tag_list)
+        @job.matching_users
       end
     render json: { data: users.as_json(job: @job) }
   end
@@ -41,17 +41,16 @@ class UsersController < ApplicationController
   def invite
     @user = User.find(params[:id])
     @job = current_user.jobs.find(params[:job_id])
-    @job.invite_user(@user)
-    @job.reload
+    @job.add_collaborator(:invite, user: @user)
 
-    render json: { data: @job.invited_users.as_json(job: @job) }
+    render json: { data: @user.as_json(job: @job) }
   end
 
   #  POST /users/:id/award
   def award
     @user = User.find(params[:id])
     @job = current_user.jobs.find(params[:job_id])
-    @job.award_to_user(@user)
+    @job.update_collaborator(:award, user: @user)
 
     render json: { data: @user.as_json(job: @job.reload) }
   end
@@ -60,7 +59,7 @@ class UsersController < ApplicationController
   def reject
     @user = User.find(params[:id])
     @job = current_user.jobs.find(params[:job_id])
-    @job.reject_user(@user)
+    @job.update_collaborator(:reject, user: @user)
 
     render json: { data: @user.as_json(job: @job.reload) }
   end

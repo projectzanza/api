@@ -36,52 +36,28 @@ class Job < ApplicationRecord
     end
   end
 
-  def invite_user(user)
-    add_collaborator(:invite, user: user)
-  end
-
   def invited_users
-    collaborating_users.merge(Collaborator.with_state(:invited))
-  end
-
-  def register_interested_user(user)
-    add_collaborator(:interested, user: user)
-  end
-
-  def can_register_interested_user(user)
-    !collaborators.find_by(user: user) || collaborators.find_by(user: user).can_interested?
+    collaborating_users.where(collaborators: { state: ['invited', 'prospective'] })
   end
 
   def interested_users
-    collaborating_users.merge(Collaborator.with_state(:interested))
+    collaborating_users.where(collaborators: { state: 'interested' })
   end
 
   def prospective_users
-    collaborating_users.merge(Collaborator.with_state(:prospective))
-  end
-
-  def award_to_user(user)
-    add_collaborator(:award, user: user)
+    collaborating_users.where(collaborators: { state: 'prospective' })
   end
 
   def awarded_user
-    collaborating_users.merge(Collaborator.with_state(:awarded)).first
+    collaborating_users.find_by(collaborators: { state: 'awarded' })
   end
 
   def awarded_users
-    collaborating_users.merge(Collaborator.with_state(:awarded))
+    collaborating_users.where(collaborators: { state: 'awarded' })
   end
 
-  def accepted_by(user)
-    add_collaborator(:accept, user: user)
-  end
-
-  def participant_users
-    collaborating_users.merge(Collaborator.with_state(:participant))
-  end
-
-  def reject_user(user)
-    collaborators.find_by(user: user).reject
+  def accepted_users
+    collaborating_users.where(collaborators: { state: 'accepted' })
   end
 
   def awarded_estimate
@@ -93,7 +69,11 @@ class Job < ApplicationRecord
                  .union_all(interested_users.limit(5))
                  .union_all(prospective_users.limit(5))
                  .union_all(awarded_users)
-                 .union_all(participant_users.limit(5))
+                 .union_all(accepted_users.limit(5))
+  end
+
+  def matching_users
+    interested_users.union_all(User.tagged_with(tag_list)) - default_collaborating_users
   end
 
   def find_collaborating_users(options = {})

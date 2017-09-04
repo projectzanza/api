@@ -34,12 +34,12 @@ RSpec.describe Payment, type: :model do
     end
 
     it 'should raise an error if there is no estimate' do
-      @job.award_to_user(@user)
+      @job.update_collaborator(:award, user: @user)
       expect { Payment.complete(@job) }.to raise_error(Zanza::PaymentPreConditionsNotMet)
     end
 
     it 'should raise an error if the payment token is not available' do
-      @job.award_to_user(@user)
+      @job.update_collaborator(:award, user: @user)
       @estimate = create(:estimate, user: @user, job: @job)
       @estimate.accept
 
@@ -48,7 +48,7 @@ RSpec.describe Payment, type: :model do
 
     it 'should save the charge response, when all valid conditions are met' do
       @estimate = create(:estimate, user: @user, job: @job)
-      @job.award_to_user(@user)
+      @job.update_collaborator(:award, user: @user)
       @estimate.accept
       card_token = StripeMock.generate_card_token
       card = @job.user.add_card(card_token)
@@ -59,7 +59,7 @@ RSpec.describe Payment, type: :model do
 
     it 'should raise a payment exception if the charge is not successful' do
       card_token = StripeMock.generate_card_token
-      @job.award_to_user(@user)
+      @job.update_collaborator(:award, user: @user)
       create(:estimate, user: @user, job: @job).accept
       card = @job.user.add_card(card_token)
       @job.update!(payment_card_id: card['id'])

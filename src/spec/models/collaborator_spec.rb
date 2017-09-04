@@ -72,14 +72,20 @@ RSpec.describe Collaborator, type: :model do
       expect(@collaborator.state).to eq('awarded')
     end
 
-    it 'should allow transition from awarded to participant when contractor accepts the awarded job' do
+    it 'should allow transition from rejected to awarded when contractor is awarded' do
+      @collaborator.reject
+      @collaborator.award
+      expect(@collaborator.state).to eq('awarded')
+    end
+
+    it 'should allow transition from awarded to accepted when contractor accepts the awarded job' do
       @collaborator.award
       @collaborator.accept
-      expect(@collaborator.state).to eq('participant')
+      expect(@collaborator.state).to eq('accepted')
       expect(@collaborator.accepted_at).to be_truthy
     end
 
-    it 'should not allow transition from invited to participant' do
+    it 'should not allow transition from invited to accepted' do
       @collaborator.invite
       expect(@collaborator.can_accept?).to be_falsey
       expect(@collaborator.accept).to be_falsey

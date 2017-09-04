@@ -39,16 +39,8 @@ class User < ActiveRecord::Base
   validates :email, presence: true
   validates :rc_password, presence: true
 
-  def invite_to_job(job)
-    add_collaborator(:invite, job: job)
-  end
-
   def invited_to_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:invited))
-  end
-
-  def register_interest_in_job(job)
-    add_collaborator(:interested, job: job)
+    collaborating_jobs.where(collaborators: { state: 'invited' })
   end
 
   def interested_in_jobs
@@ -56,23 +48,15 @@ class User < ActiveRecord::Base
   end
 
   def prospective_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:prospective))
+    collaborating_jobs.where(collaborators: { state: 'prospective' })
   end
 
   def awarded_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:awarded))
+    collaborating_jobs.where(collaborators: { state: 'awarded' })
   end
 
   def accepted_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:participant))
-  end
-
-  def accept_job(job)
-    add_collaborator(:accept, job: job)
-  end
-
-  def participant_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:participant))
+    collaborating_jobs.where(collaborators: { state: 'accepted' })
   end
 
   def default_collaborating_jobs
@@ -80,7 +64,7 @@ class User < ActiveRecord::Base
                    .union_all(interested_in_jobs.limit(5))
                    .union_all(prospective_jobs.limit(5))
                    .union_all(awarded_jobs.limit(5))
-                   .union_all(participant_jobs.limit(5))
+                   .union_all(accepted_jobs.limit(5))
   end
 
   def find_collaborating_jobs(options = {})

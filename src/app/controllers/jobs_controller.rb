@@ -62,7 +62,7 @@ class JobsController < ApplicationController
   # POST /jobs/:id/register_interest
   def register_interest
     @job = Job.find(params[:id])
-    @job.register_interested_user(current_user)
+    @job.add_collaborator(:interested, user: current_user)
     current_user.reload
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
@@ -71,16 +71,24 @@ class JobsController < ApplicationController
   # POST /jobs/:id/accept
   def accept
     @job = Job.find(params[:id])
-    @job.accepted_by(current_user)
+    @job.update_collaborator(:accept, user: current_user)
     current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }
   end
 
+  # POST /jobs/:id/complete
+  def complete
+    @job = Job.find(params[:id])
+    @job.complete
+
+    render json: { data: @job.reload }
+  end
+
   # POST /jobs/:id/verify
   def verify
     Payment.complete(@job)
-    @job.verify(scopes: params[:scopes], user: current_user)
+    @job.verify
 
     render json: { data: @job.reload }
   end

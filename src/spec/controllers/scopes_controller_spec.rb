@@ -88,7 +88,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should let the awarded consultant complete a scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       login_user(consultant)
 
@@ -103,7 +103,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let other users complete the scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       login_user
 
@@ -134,7 +134,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let the awarded user verify the scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       login_user(consultant)
 
@@ -185,7 +185,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not the let the awarded consultant reject a scope' do
       consultant = create(:user)
-      @job.award_to_user(consultant)
+      @job.update_collaborator(:award, user: consultant)
 
       post :complete,
            params: {

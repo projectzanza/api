@@ -36,11 +36,11 @@ class Collaborator < ApplicationRecord
     end
 
     event :award do
-      transition %i[init interested invited prospective] => :awarded
+      transition %i[init interested invited prospective rejected] => :awarded
     end
 
     event :accept do
-      transition awarded: :participant
+      transition awarded: :accepted
     end
 
     event :reject do
@@ -50,6 +50,6 @@ class Collaborator < ApplicationRecord
 
   def one_awarded_user_per_job
     errors.add(:state, 'can only award to one user at a time') if
-      Collaborator.where(job: job, state: :awarded).count > 1
+      state == 'awarded' && Collaborator.where(job: job, state: :awarded).count > 1
   end
 end
