@@ -86,9 +86,10 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('completed')
     end
 
-    it 'should let the awarded consultant complete a scope' do
+    it 'should let the awarded consultant who accepted the job, complete a scope' do
       consultant = create(:user)
       @job.update_collaborator(:award, user: consultant)
+      @job.update_collaborator(:accept, user: consultant)
 
       login_user(consultant)
 

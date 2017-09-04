@@ -28,7 +28,7 @@ class ScopesController < ApplicationController
   # POST /scopes/:id/complete
   def complete
     @scope = Scope.find(params[:id])
-    raise Zanza::AuthorizationException unless [@scope.job.user, @scope.job.awarded_user].include? current_user
+    raise Zanza::AuthorizationException unless [@scope.job.user, @scope.job.accepted_user].include? current_user
     @scope.complete
 
     render json: { data: @scope.job.scopes }

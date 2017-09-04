@@ -60,6 +60,10 @@ class Job < ApplicationRecord
     collaborating_users.where(collaborators: { state: 'accepted' })
   end
 
+  def accepted_user
+    collaborating_users.find_by(collaborators: { state: 'accepted' })
+  end
+
   def awarded_estimate
     estimates.where(user: awarded_user).find { |estimate| estimate.state == 'accepted' }
   end
