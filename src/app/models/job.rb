@@ -37,7 +37,7 @@ class Job < ApplicationRecord
   end
 
   def invited_users
-    collaborating_users.where(collaborators: { state: ['invited', 'prospective'] })
+    collaborating_users.where(collaborators: { state: %w[invited prospective] })
   end
 
   def interested_users

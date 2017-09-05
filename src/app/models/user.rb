@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   include HasCollaborator
 
   has_many :jobs
+  has_many :positions
   has_many :messages
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job

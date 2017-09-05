@@ -216,8 +216,8 @@ RSpec.describe ScopesController, type: :controller do
              params: { id: @scope.id }
 
       expect(response).to have_http_status(:ok)
-
       expect(@job.reload.scopes.count).to eq(1)
+      expect(@scope.reload.deleted_at).to be_truthy
     end
 
     it 'should not allow non owners to delete a scope' do

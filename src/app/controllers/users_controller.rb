@@ -75,9 +75,15 @@ class UsersController < ApplicationController
     @user = current_user
   end
 
-  # Only allow a trusted parameter "white list" through.
   def user_params
-    params.permit(:name, :email, :bio, per_diem: %i[min max], tag_list: []).to_h
+    params.permit(
+      :name,
+      :email,
+      :headline,
+      :summary,
+      per_diem: %i[min max],
+      tag_list: []
+    ).to_h
   end
 
   def collaborating_filter_params

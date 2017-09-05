@@ -16,6 +16,8 @@ RSpec.describe UsersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(data['email']).to eq user[:email]
+      expect(data['headline']).to eq user[:headline]
+      expect(data['summary']).to eq user[:summary]
     end
 
     it 'should only allow a user to update their own information' do

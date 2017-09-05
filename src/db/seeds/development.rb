@@ -2,7 +2,8 @@ User.create([
               {
                 name: 'dev dev',
                 email: 'dev@zanza.com',
-                bio: 'dev bio',
+                headline: 'Dev dev dev, security, security, security',
+                summary: 'summary of the summary of a summary of a summary',
                 tag_list: %w[ruby javascript docker grunt webpack java apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -11,7 +12,7 @@ User.create([
               {
                 name: 'Sophia Smith',
                 email: 'sophia.smith@zanza.com',
-                bio: 'Sophias bio',
+                summary: 'Sophias bio',
                 tag_list: %w[ruby javascript docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -20,7 +21,7 @@ User.create([
               {
                 name: 'Aiden Jones',
                 email: 'aiden.jones@zanza.com',
-                bio: 'Aidens bio',
+                summary: 'Aidens bio',
                 tag_list: %w[ruby javascript docker grunt apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -29,7 +30,7 @@ User.create([
               {
                 name: 'Emma Williams',
                 email: 'emma.williams@zanza.com',
-                bio: 'Emmas bio',
+                summary: 'Emmas bio',
                 tag_list: %w[ruby javascript docker],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -38,7 +39,7 @@ User.create([
               {
                 name: 'Jackson Taylor',
                 email: 'jackson.taylorh@zanza.com',
-                bio: 'Jacksons bio',
+                summary: 'Jacksons bio',
                 tag_list: %w[docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -47,7 +48,7 @@ User.create([
               {
                 name: 'Liam Neeson',
                 email: 'liam.neeson@zanza.com',
-                bio: 'Liams bio',
+                summary: 'Liams bio',
                 tag_list: %w[docker grunt webpack ruby apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
@@ -56,13 +57,50 @@ User.create([
               {
                 name: 'Taylor Swift',
                 email: 'taylor.swift@zanza.com',
-                bio: 'Taylors bio',
+                summary: 'Taylors bio',
                 tag_list: %w[security physical],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
                 per_diem: { min: 400, max: 900 }
               }
             ])
+
+Position.create([
+                  {
+                    title: 'Queen of pop',
+                    summary: 'singing about stuff n stuff',
+                    company: 'Swift Inc',
+                    start_at: Time.zone.now - 1.years,
+                    end_at: Time.zone.now - 4.months,
+                    user: User.find_by(email: 'taylor.swift@zanza.com')
+                  },
+                  {
+                    title: 'Country and western',
+                    summary: 'just singing a few songs',
+                    company: 'canada',
+                    start_at: Time.zone.now - 4.months,
+                    end_at: Time.zone.now - 1.months,
+                    user: User.find_by(email: 'taylor.swift@zanza.com')
+                  }
+                ])
+Position.create([
+                  {
+                    title: 'Security consultant',
+                    summary: 'consultant for security, exactly what is says on the tin',
+                    company: 'The Company',
+                    start_at: Time.zone.now - 1.years,
+                    end_at: Time.zone.now - 4.months,
+                    user: User.find_by(email: 'dev@zanza.com')
+                  },
+                  {
+                    title: 'Overseer of Light',
+                    summary: 'staring at the eclipse',
+                    company: 'The White House',
+                    start_at: Time.zone.now - 4.months,
+                    end_at: Time.zone.now - 1.months,
+                    user: User.find_by(email: 'dev@zanza.com')
+                  }
+                ])
 
 job = Job.create(title: 'Ruby development',
                  text: 'Develop ruby to save the world.
@@ -83,8 +121,8 @@ job = Job.create(title: 'Ruby development',
                      description: 'its a 2 step job only'
                    )
                  ])
-job.add_collaborator(:invite, user: (User.find_by(email: 'aiden.jones@zanza.com')))
-job.add_collaborator(:invite, user: (User.find_by(email: 'emma.williams@zanza.com')))
+job.add_collaborator(:invite, user: User.find_by(email: 'aiden.jones@zanza.com'))
+job.add_collaborator(:invite, user: User.find_by(email: 'emma.williams@zanza.com'))
 job.add_collaborator(:interested, user: User.find_by(email: 'jackson.taylorh@zanza.com'))
 job.add_collaborator(:interested, user: User.find_by(email: 'sophia.smith@zanza.com'))
 
