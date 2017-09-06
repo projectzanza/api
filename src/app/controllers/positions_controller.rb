@@ -4,6 +4,7 @@ class PositionsController < ApplicationController
 
   # GET /positions
   def index
+    authorize! :list, Position
     positions = User.find(params[:user_id]).positions.all
 
     render json: { data: positions }
@@ -11,6 +12,7 @@ class PositionsController < ApplicationController
 
   # POST /positions
   def create
+    authorize! :create, Position
     position = Position.new(position_params)
     current_user.positions << position
     position.save!
@@ -20,6 +22,8 @@ class PositionsController < ApplicationController
 
   # PATCH/PUT /positions/1
   def update
+    authorize! :update, @position
+
     @position.update!(position_params)
 
     render json: { data: @position }
@@ -27,6 +31,8 @@ class PositionsController < ApplicationController
 
   # DELETE /positions/1
   def destroy
+    authorize! :destroy, @position
+
     @position.destroy
     render json: { success: true }
   end

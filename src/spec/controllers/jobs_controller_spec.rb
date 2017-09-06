@@ -38,6 +38,15 @@ RSpec.describe JobsController, type: :controller do
 
       expect(data['id']).to eq job.id
     end
+
+    it 'should return a job belonging to another user' do
+      job = create(:job)
+
+      get :show,
+          params: { id: job.id }
+
+      expect(data['id']).to eq job.id
+    end
   end
 
   describe 'post#create' do
@@ -182,11 +191,20 @@ RSpec.describe JobsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(data.first['id']).to eq(job.id)
     end
+
+    it 'should not allow the job owner to register an interest' do
+      job = create(:job, user: @user)
+
+      post :register_interest,
+           params: { id: job.id }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
   end
 
   describe 'post#accept' do
     it 'should accept the job for the user then return all accepted jobs for that user' do
-      job = create(:job)
+      job = create(:job, user: create(:user))
       job.update_collaborator(:award, user: @user)
 
       post :accept,
@@ -197,7 +215,7 @@ RSpec.describe JobsController, type: :controller do
     end
 
     it 'should only allow acceptance of jobs the user has been awarded' do
-      job = create(:job)
+      job = create(:job, user: create(:user))
 
       post :accept,
            params: { id: job.id }
@@ -254,10 +272,9 @@ RSpec.describe JobsController, type: :controller do
 
   describe 'post#complete' do
     it 'should set the job state as complete' do
-      job = create(:job, user: @user)
-      consultant = create(:user)
-      job.update_collaborator(:award, user: consultant)
-      job.update_collaborator(:accept, user: consultant)
+      job = create(:job, user: create(:user))
+      job.update_collaborator(:award, user: @user)
+      job.update_collaborator(:accept, user: @user)
 
       post :complete,
            params: { id: job.id }
@@ -265,6 +282,15 @@ RSpec.describe JobsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(data['state']).to eq 'completed'
       expect(data['completed_at']).to be_truthy
+    end
+
+    it 'should not allow the owner to complete the job' do
+      job = create(:job, user: @user)
+
+      post :complete,
+           params: { id: job.id }
+
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

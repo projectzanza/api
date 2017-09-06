@@ -2,22 +2,29 @@ class UsersController < ApplicationController
   include Rescuable
 
   before_action :authenticate_user!
-  before_action :set_user, only: [:show]
+  before_action :set_user, only: %i[show award invite reject]
   before_action :set_authenticated_user, only: %i[update destroy]
 
   # GET /users/1
   def show
+    authorize! :read, User
+
     @job = Job.find(params[:job_id]) if params[:job_id]
+
     render json: { data: @user.as_json(job: @job) }
   end
 
   # PATCH/PUT /users/1
   def update
+    authorize! :update, @user
+
     render json: { data: @user.reload } if @user.update!(user_params)
   end
 
   # GET /jobs/:job_id/users/match
   def match
+    authorize! :list, User
+
     @job = Job.find(params[:job_id])
     users =
       if params[:filter]
@@ -25,21 +32,26 @@ class UsersController < ApplicationController
       else
         @job.matching_users
       end
+
     render json: { data: users.as_json(job: @job) }
   end
 
   # GET /jobs/:job_id/users/collaborating
   def collaborating
+    authorize! :list, User
+
     @job = Job.find(params[:job_id])
     @users = @job.find_collaborating_users(collaborating_filter_params)
     @users = @users.filter(params[:filter]) if params[:filter]
+
     render json: { data: @users.as_json(job: @job) }
   end
 
   # POST /users/:user_id/invite
   # client to choose list of users who they would like to work on a job
   def invite
-    @user = User.find(params[:id])
+    authorize! :invite, @user
+
     @job = current_user.jobs.find(params[:job_id])
     @job.add_collaborator(:invite, user: @user)
 
@@ -48,7 +60,8 @@ class UsersController < ApplicationController
 
   #  POST /users/:id/award
   def award
-    @user = User.find(params[:id])
+    authorize! :award, @user
+
     @job = current_user.jobs.find(params[:job_id])
     @job.update_collaborator(:award, user: @user)
 
@@ -57,7 +70,8 @@ class UsersController < ApplicationController
 
   # POST /users/:id/reject
   def reject
-    @user = User.find(params[:id])
+    authorize! :reject, @user
+
     @job = current_user.jobs.find(params[:job_id])
     @job.update_collaborator(:reject, user: @user)
 
