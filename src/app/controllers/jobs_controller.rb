@@ -2,11 +2,13 @@ class JobsController < ApplicationController
   include Rescuable
 
   before_action :authenticate_user!
-  before_action :set_job, only: [:show]
+  before_action :set_job, only: %i[show accept register_interest complete]
   before_action :set_authenticated_job, only: %i[update destroy verify]
 
   # GET /jobs
   def index
+    authorize! :list, Job
+
     @jobs =
       if params[:user_id]
         User.find(params[:user_id]).jobs
@@ -19,11 +21,15 @@ class JobsController < ApplicationController
 
   # GET /jobs/1
   def show
+    authorize! :read, @job
+
     render json: { data: @job.as_json(user: current_user) }
   end
 
   # POST /jobs
   def create
+    authorize! :create, Job
+
     @job = Job.new(job_params)
     Job.transaction do
       current_user.jobs << @job
@@ -35,16 +41,21 @@ class JobsController < ApplicationController
 
   # PATCH/PUT /jobs/1
   def update
+    authorize! :update, @job
+
     render json: { data: @job } if @job.update!(job_params)
   end
 
   # DELETE /jobs/1
   def destroy
+    authorize! :destroy, @job
     @job.destroy
   end
 
   # GET /users/:user_id/jobs/match
   def match
+    authorize! :list, Job
+
     @user = User.find(params[:user_id])
     @jobs = Job.where(allow_contact: true)
                .where.not(user_id: params[:user_id])
@@ -54,6 +65,8 @@ class JobsController < ApplicationController
 
   # GET /jobs/collaborating
   def collaborating
+    authorize! :list, Job
+
     @jobs = current_user.find_collaborating_jobs(collaborating_filter_params)
 
     render json: { data: @jobs.as_json(user: current_user) }
@@ -61,7 +74,8 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/register_interest
   def register_interest
-    @job = Job.find(params[:id])
+    authorize! :register_interest, @job
+
     @job.add_collaborator(:interested, user: current_user)
     current_user.reload
 
@@ -70,7 +84,8 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/accept
   def accept
-    @job = Job.find(params[:id])
+    authorize! :accept, @job
+
     @job.update_collaborator(:accept, user: current_user)
     current_user.reload
 
@@ -79,7 +94,8 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/complete
   def complete
-    @job = Job.find(params[:id])
+    authorize! :complete, @job
+
     @job.complete
 
     render json: { data: @job.reload }
@@ -87,6 +103,8 @@ class JobsController < ApplicationController
 
   # POST /jobs/:id/verify
   def verify
+    authorize! :verify, @job
+
     Payment.complete(@job)
     @job.verify
 

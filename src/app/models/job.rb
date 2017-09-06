@@ -5,7 +5,6 @@ class Job < ApplicationRecord
   include HasCollaborator
 
   belongs_to :user
-  has_many :messages
   has_many :collaborators
   has_many :collaborating_users, through: :collaborators, source: :user
   has_many :estimates

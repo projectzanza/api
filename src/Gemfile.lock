@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    access-granted (1.2.0)
     actioncable (5.0.5)
       actionpack (= 5.0.5)
       nio4r (>= 1.2, < 3.0)
@@ -240,6 +241,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  access-granted (~> 1.2.0)
   active_record_union
   acts-as-taggable-on (~> 4.0)
   acts_as_paranoid

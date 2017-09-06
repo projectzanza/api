@@ -1,5 +1,5 @@
 AllCops:
-  Excludes:
+  Exclude:
     - db/schema.rb
     - db/migrate/20170331102531_acts_as_taggable_on_migration.acts_as_taggable_on_engine.rb
     - db/migrate/20170331102535_change_collation_for_tag_names.acts_as_taggable_on_engine.rb

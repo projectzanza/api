@@ -68,15 +68,6 @@ ActiveRecord::Schema.define(version: 20170904141241) do
     t.datetime "completed_at"
   end
 
-  create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string   "text"
-    t.string   "job_id",     null: false
-    t.string   "user_id",    null: false
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "payment_accounts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid  "user_id"
     t.jsonb "customer"
