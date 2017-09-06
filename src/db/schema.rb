@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170904141241) do
+ActiveRecord::Schema.define(version: 20170906151458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,22 @@ ActiveRecord::Schema.define(version: 20170904141241) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "reviews", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid     "user_id"
+    t.uuid     "job_id"
+    t.uuid     "subject_id"
+    t.integer  "ability"
+    t.integer  "communication"
+    t.integer  "speed"
+    t.integer  "overall"
+    t.text     "description"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["job_id"], name: "index_reviews_on_job_id", using: :btree
+    t.index ["subject_id"], name: "index_reviews_on_subject_id", using: :btree
+    t.index ["user_id"], name: "index_reviews_on_user_id", using: :btree
   end
 
   create_table "scopes", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|

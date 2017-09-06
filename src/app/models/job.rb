@@ -9,6 +9,7 @@ class Job < ApplicationRecord
   has_many :collaborating_users, through: :collaborators, source: :user
   has_many :estimates
   has_many :scopes
+  has_many :reviews
 
   validates :title, presence: true
   validates :user, presence: true

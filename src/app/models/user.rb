@@ -15,6 +15,8 @@ class User < ActiveRecord::Base
   has_many :collaborators
   has_many :collaborating_jobs, through: :collaborators, source: :job
   has_many :estimates
+  has_many :reviews, class_name: 'Review', foreign_key: :subject_id
+  has_many :written_reviews, class_name: 'Review', foreign_key: :user_id
   has_one :payment_account
 
   scope :filter, lambda { |string|
