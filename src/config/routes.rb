@@ -16,7 +16,11 @@ Rails.application.routes.draw do
       end
     end
 
+    # /users/:user_id/positions
     resources :positions, only: %i[index]
+
+    # /users/:user_id/reviews
+    resources :reviews, only: %i[index]
   end
 
   resources :positions, only: %i[create update destroy]
@@ -45,9 +49,6 @@ Rails.application.routes.draw do
     # /jobs/:job_id/estimates
     resources :estimates, only: [:create]
 
-    # /jobs/:job_id/scopes
-    resources :scopes, only: %i[index create]
-
     # /jobs/:job_id/payments
     resources :payments do
       collection do
@@ -55,6 +56,12 @@ Rails.application.routes.draw do
         post :complete
       end
     end
+
+    # /jobs/:user_id/reviews
+    resources :reviews, only: %i[index create]
+
+    # /jobs/:job_id/scopes
+    resources :scopes, only: %i[index create]
   end
 
   resources :estimates, only: %i[update create destroy] do
@@ -77,6 +84,8 @@ Rails.application.routes.draw do
       get :cards
     end
   end
+
+  resources :reviews, only: %i[index create update]
 
   resources :rocket_chat do
     collection do

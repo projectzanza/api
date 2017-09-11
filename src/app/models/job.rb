@@ -9,6 +9,7 @@ class Job < ApplicationRecord
   has_many :collaborating_users, through: :collaborators, source: :user
   has_many :estimates
   has_many :scopes
+  has_many :reviews
 
   validates :title, presence: true
   validates :user, presence: true
@@ -72,7 +73,7 @@ class Job < ApplicationRecord
                  .union_all(interested_users.limit(5))
                  .union_all(prospective_users.limit(5))
                  .union_all(awarded_users)
-                 .union_all(accepted_users.limit(5))
+                 .union_all(accepted_users)
   end
 
   def matching_users

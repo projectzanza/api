@@ -321,14 +321,20 @@ Job.create([{
               proposed_start_at: Time.zone.now + 10.day,
               proposed_end_at: Time.zone.now + 13.day,
               allow_contact: true
-            },
-            {
-              title: 'Docker, ruby and javascript development',
-              text: 'Huge multi million euro platform',
-              user: User.find_by(email: 'taylor.swift@zanza.com'),
-              per_diem: { min: 100, max: 1000 },
-              tag_list: %w[ruby javascript docker grunt webpack java apache],
-              proposed_start_at: Time.zone.now + 10.day,
-              proposed_end_at: Time.zone.now + 13.day,
-              allow_contact: true
             }])
+
+job = Job.create(
+  title: 'Accepted by Dev - Docker, ruby and javascript development',
+  text: 'Huge multi million euro platform',
+  user: User.find_by(email: 'taylor.swift@zanza.com'),
+  per_diem: { min: 100, max: 1000 },
+  tag_list: %w[ruby javascript docker grunt webpack java apache],
+  proposed_start_at: Time.zone.now + 10.day,
+  proposed_end_at: Time.zone.now + 13.day,
+  allow_contact: true
+)
+job.add_collaborator(:award, user: User.find_by(email: 'dev@zanza.com'))
+job.add_collaborator(:accept, user: User.find_by(email: 'dev@zanza.com'))
+job.verify
+
+

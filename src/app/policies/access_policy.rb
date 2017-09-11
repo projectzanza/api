@@ -13,6 +13,7 @@ class AccessPolicy
       position_policy
       scope_policy
       user_policy
+      review_policy
     end
   end
 end
@@ -61,5 +62,16 @@ def user_policy
   end
   can %i[invite award reject], User do |user, current_user|
     user != current_user
+  end
+end
+
+def review_policy
+  can :list, Review
+  can :create, Review do |review, user|
+    [review.job.accepted_user, review.job.user].include?(user) &&
+      review.job.state == 'verified'
+  end
+  can :update, Review do |review, user|
+    review.user = user
   end
 end
