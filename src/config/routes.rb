@@ -85,7 +85,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :reviews, only: %i[index create]
+  resources :reviews, only: %i[index create update]
 
   resources :rocket_chat do
     collection do

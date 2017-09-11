@@ -18,5 +18,10 @@ RSpec.describe Review, type: :model do
       expect(@user.written_reviews).to include(review)
     end
 
+    it 'should only a user create one review per job' do
+      first_review = create(:review)
+      expect{ create(:review, user: first_review.user, job: first_review.job) }
+        .to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 end

@@ -18,7 +18,8 @@ RSpec.describe ReviewsController, type: :controller do
       @job.verify
 
       post :create,
-           params: attributes_for(:review).merge(
+           params: attributes_for(
+             :review,
              job_id: @job.id,
              subject_id: @consultant.id
            )
@@ -34,7 +35,8 @@ RSpec.describe ReviewsController, type: :controller do
       login_user(@consultant)
 
       post :create,
-           params: attributes_for(:review).merge(
+           params: attributes_for(
+             :review,
              job_id: @job.id,
              subject_id: @user.id
            )
@@ -49,22 +51,36 @@ RSpec.describe ReviewsController, type: :controller do
       @job.complete
 
       post :create,
-           params: attributes_for(:review).merge(
+           params: attributes_for(
+             :review,
              job_id: @job.id,
              subject_id: @consultant.id
            )
 
       expect(response).to have_http_status(:unauthorized)
+      expect(@job.reviews.count).to eq 0
     end
 
     it 'should only allow the client or consultant to write a review in a job' do
       login_user
 
       post :create,
-           params: attributes_for(:review).merge(
+           params: attributes_for(
+             :review,
              job_id: @job.id,
              subject_id: @consultant.id
            )
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(@job.reviews.count).to eq 0
+    end
+
+    it 'should return an error if trying to create multiple reviews for a job' do
+      create(:review, user: @user, job: @job, subject_id: @consultant)
+      new_review = attributes_for(:review, job_id: @job, subject_id: @consultant)
+
+      post :create,
+           params: new_review
 
       expect(response).to have_http_status(:unauthorized)
     end
@@ -94,6 +110,31 @@ RSpec.describe ReviewsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(data.length).to eq 2
 
+    end
+  end
+
+  describe 'put#update' do
+    it 'should allow the review owner to update the review' do
+      review = create(:review, user: @user, subject: @consultant, job: @job)
+      new_review = attributes_for(:review)
+
+      put :update,
+          params: new_review.merge(id: review.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(data['description']).to eq(new_review[:description])
+    end
+
+    it 'should not allow anyone but the review owner to update the review' do
+      review = create(:review, user: @user, subject: @consultant, job: @job)
+      new_review = attributes_for(:review)
+
+      login_user
+
+      put :update,
+          params: new_review.merge(id: review.id)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

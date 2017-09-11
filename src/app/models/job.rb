@@ -73,7 +73,7 @@ class Job < ApplicationRecord
                  .union_all(interested_users.limit(5))
                  .union_all(prospective_users.limit(5))
                  .union_all(awarded_users)
-                 .union_all(accepted_users.limit(5))
+                 .union_all(accepted_users)
   end
 
   def matching_users

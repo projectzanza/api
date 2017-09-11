@@ -71,4 +71,7 @@ def review_policy
     [review.job.accepted_user, review.job.user].include?(user) &&
       review.job.state == 'verified'
   end
+  can :update, Review do |review, user|
+    review.user = user
+  end
 end
