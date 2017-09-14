@@ -24,19 +24,46 @@ RSpec.describe Job, type: :service do
   end
 
   describe 'event' do
+    before(:each) do
+      @job = create(:job)
+      @user = create(:user)
+    end
+
     it 'will update the collaborator with the supplied event' do
-      job = create(:job)
-      user = create(:user)
-      CollaboratorService.new(job, user).event = :interested
-      expect(Collaborator.find_by(job: job, user: user).state).to eq 'interested'
+      CollaboratorService.new(@job, @user).event = :interested
+      expect(Collaborator.find_by(job: @job, user: @user).state).to eq 'interested'
     end
 
     it 'will update existing collaborators with the correct event' do
-      job = create(:job)
-      user = create(:user)
-      CollaboratorService.new(job, user).event = :interested
-      CollaboratorService.new(job, user).event = :award
-      expect(Collaborator.find_by(job: job, user: user).state).to eq 'awarded'
+      CollaboratorService.new(@job, @user).event = :interested
+      CollaboratorService.new(@job, @user).event = :award
+      expect(Collaborator.find_by(job: @job, user: @user).state).to eq 'awarded'
+    end
+
+    it 'will send an email to the client when a consultant has marked themselves as interested' do
+      CollaboratorService.new(@job, @user).event = :interested
+      expect(ActionMailer::Base.deliveries.last.to).to include @job.user.email
+    end
+
+    it 'will send an email to the client when a consultant has accepted a job' do
+      CollaboratorService.new(@job, @user).event = :award
+      CollaboratorService.new(@job, @user).event = :accept
+      expect(ActionMailer::Base.deliveries.last.to).to include @job.user.email
+    end
+
+    it 'will send an email to the consultant when the client invites the consultant' do
+      CollaboratorService.new(@job, @user).event = :invite
+      expect(ActionMailer::Base.deliveries.last.to).to include @user.email
+    end
+
+    it 'will send an email to the consultant when the client awards the consultant' do
+      CollaboratorService.new(@job, @user).event = :award
+      expect(ActionMailer::Base.deliveries.last.to).to include @user.email
+    end
+
+    it 'will send an email to the consultant when the client rejects the consultant' do
+      CollaboratorService.new(@job, @user).event = :reject
+      expect(ActionMailer::Base.deliveries.last.to).to include @user.email
     end
   end
 end

@@ -11,6 +11,12 @@ class CollaboratorService
 
   def event=(new_state)
     @collaborator.send("#{new_state}!")
+    case new_state
+    when :interested, :accept
+      CollaboratorMailer.client_email(@collaborator).deliver_now
+    when :invite, :award, :reject
+      CollaboratorMailer.consultant_email(@collaborator).deliver_now
+    end
   end
 
   def transition?(new_state)
