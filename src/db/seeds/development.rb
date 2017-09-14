@@ -336,5 +336,3 @@ job = Job.create(
 job.add_collaborator(:award, user: User.find_by(email: 'dev@zanza.com'))
 job.add_collaborator(:accept, user: User.find_by(email: 'dev@zanza.com'))
 job.verify
-
-

@@ -110,7 +110,6 @@ RSpec.describe ReviewsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(data.length).to eq 2
-
     end
   end
 
@@ -138,5 +137,4 @@ RSpec.describe ReviewsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
-
 end

@@ -301,7 +301,9 @@ RSpec.describe JobsController, type: :controller do
     it 'should set the job state as verified' do
       job = create(:job, user: @user)
       consultant = create(:user)
-      create(:collaborator, user: consultant, job: job).award
+      collab = create(:collaborator, user: consultant, job: job)
+      collab.award
+      collab.accept
 
       allow(Payment).to receive(:complete).and_return(true)
       post :verify,

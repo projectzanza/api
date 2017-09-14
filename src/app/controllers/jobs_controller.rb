@@ -95,7 +95,7 @@ class JobsController < ApplicationController
   def complete
     authorize! :complete, @job
 
-    @job.complete
+    JobService.new(@job).complete
 
     render json: { data: @job.reload }
   end
@@ -105,7 +105,7 @@ class JobsController < ApplicationController
     authorize! :verify, @job
 
     Payment.complete(@job)
-    @job.verify
+    JobService.new(@job).verify
 
     render json: { data: @job.reload }
   end

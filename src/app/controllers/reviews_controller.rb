@@ -62,5 +62,4 @@ class ReviewsController < ApplicationController
       :overall
     ).to_h
   end
-
 end

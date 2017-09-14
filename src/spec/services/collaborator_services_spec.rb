@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Job, type: :service do
   describe 'initialize' do
     it 'will raise an error if job or user is nil' do
-      expect{ CollaboratorService.new(create(:job), nil) }.to raise_error ArgumentError
-      expect{ CollaboratorService.new(nil, create(:user)) }.to raise_error ArgumentError
+      expect { CollaboratorService.new(create(:job), nil) }.to raise_error ArgumentError
+      expect { CollaboratorService.new(nil, create(:user)) }.to raise_error ArgumentError
     end
 
     it 'will create a new collaborator for every user/job combination' do
