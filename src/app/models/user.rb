@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
   acts_as_taggable
 
   include DeviseTokenAuth::Concerns::User
-  include HasCollaborator
 
   has_many :jobs
   has_many :positions
@@ -46,7 +45,7 @@ class User < ActiveRecord::Base
   end
 
   def interested_in_jobs
-    collaborating_jobs.merge(Collaborator.with_state(:interested))
+    collaborating_jobs.where(collaborators: { state: 'interested' })
   end
 
   def prospective_jobs

@@ -2,8 +2,6 @@ class Job < ApplicationRecord
   acts_as_paranoid
   acts_as_taggable
 
-  include HasCollaborator
-
   belongs_to :user
   has_many :collaborators
   has_many :collaborating_users, through: :collaborators, source: :user

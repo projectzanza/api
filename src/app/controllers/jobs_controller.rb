@@ -76,8 +76,7 @@ class JobsController < ApplicationController
   def register_interest
     authorize! :register_interest, @job
 
-    @job.add_collaborator(:interested, user: current_user)
-    current_user.reload
+    CollaboratorService.new(@job, current_user).event = :interested
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
   end
@@ -86,7 +85,7 @@ class JobsController < ApplicationController
   def accept
     authorize! :accept, @job
 
-    @job.update_collaborator(:accept, user: current_user)
+    CollaboratorService.new(@job, current_user).event = :accept
     current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }

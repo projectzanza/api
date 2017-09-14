@@ -88,8 +88,9 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should let the awarded consultant who accepted the job, complete a scope' do
       consultant = create(:user)
-      @job.update_collaborator(:award, user: consultant)
-      @job.update_collaborator(:accept, user: consultant)
+      collab = create(:collaborator, user: consultant, job: @job)
+      collab.award
+      collab.accept
 
       login_user(consultant)
 
@@ -104,7 +105,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let other users complete the scope' do
       consultant = create(:user)
-      @job.update_collaborator(:award, user: consultant)
+      create(:collaborator, user: consultant, job: @job).award
 
       login_user
 
@@ -135,7 +136,7 @@ RSpec.describe ScopesController, type: :controller do
 
     it 'should not let the awarded user verify the scope' do
       consultant = create(:user)
-      @job.update_collaborator(:award, user: consultant)
+      create(:collaborator, user: consultant, job: @job).award
 
       login_user(consultant)
 
@@ -184,9 +185,11 @@ RSpec.describe ScopesController, type: :controller do
       expect(data.first['state']).to eq('rejected')
     end
 
+    # TODO: fix test
     it 'should not the let the awarded consultant reject a scope' do
       consultant = create(:user)
-      @job.update_collaborator(:award, user: consultant)
+      CollaboratorService.new(@job, consultant).event = :award
+      # @job.update_collaborator(:award, user: consultant)
 
       post :complete,
            params: {

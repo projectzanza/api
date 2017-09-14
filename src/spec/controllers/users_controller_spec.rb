@@ -120,15 +120,15 @@ RSpec.describe UsersController, type: :controller do
   describe 'get#collaborating' do
     it 'should without a filter, return max 5 jobs of "interested,invited,prospective,awarded,accepted"' do
       6.times { create(:user) }
-      6.times { create(:user).update_collaborator(:interested, job: @job) }
-      6.times { @job.update_collaborator(:invite, user: create(:user)) }
+      6.times { create(:collaborator, job: @job, user: create(:user)).interested }
+      6.times { create(:collaborator, job: @job, user: create(:user)).invite }
       6.times do
-        user = create(:user)
-        @job.update_collaborator(:invite, user: user)
-        user.update_collaborator(:interested, job: @job)
+        collab = create(:collaborator, job: @job, user: create(:user))
+        collab.invite
+        collab.interested
       end
-      @job.update_collaborator(:invite, user: create(:user))
-      @job.update_collaborator(:award, user: create(:user))
+      create(:collaborator, job: @job, user: create(:user)).invite
+      create(:collaborator, job: @job, user: create(:user)).award
 
       get :collaborating,
           params: {
@@ -148,7 +148,7 @@ RSpec.describe UsersController, type: :controller do
 
     it 'should only return the filter requested when supplied' do
       6.times { create(:user) }
-      6.times { @job.add_collaborator(:invite, user: create(:user)) }
+      6.times { create(:collaborator, job: @job, user: create(:user)).invite }
 
       get :collaborating,
           params: {

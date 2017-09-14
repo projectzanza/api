@@ -205,7 +205,7 @@ RSpec.describe JobsController, type: :controller do
   describe 'post#accept' do
     it 'should accept the job for the user then return all accepted jobs for that user' do
       job = create(:job, user: create(:user))
-      job.update_collaborator(:award, user: @user)
+      create(:collaborator, user: @user, job: job).award
 
       post :accept,
            params: { id: job.id }
@@ -227,18 +227,20 @@ RSpec.describe JobsController, type: :controller do
   describe 'get#collaborating' do
     it 'without a filter, it should return max 5 jobs from each "interested,invited,prospective,awarded,accepted"' do
       6.times { create(:job) }
-      6.times { @user.add_collaborator(:interested, job: create(:job)) }
-      6.times { create(:job).add_collaborator(:invite, user: @user) }
+      6.times { create(:collaborator, user: @user, job: create(:job)).interested }
+      6.times { create(:collaborator, user: @user, job: create(:job)).invite }
       6.times do
         job = create(:job)
-        job.add_collaborator(:invite, user: @user)
-        @user.add_collaborator(:interested, job: job)
+        collab = create(:collaborator, user: @user, job: job)
+        collab.invite
+        collab.interested
       end
-      6.times { create(:job).update_collaborator(:award, user: @user) }
+      6.times { create(:collaborator, job: create(:job), user: @user).award }
       6.times do
         job = create(:job)
-        job.update_collaborator(:award, user: @user)
-        @user.update_collaborator(:accept, job: job)
+        collab = create(:collaborator, user: @user, job: job)
+        collab.award
+        collab.accept
       end
 
       get :collaborating
@@ -256,7 +258,7 @@ RSpec.describe JobsController, type: :controller do
 
     it 'should return only the filter requested when supplied' do
       6.times { create(:job) }
-      6.times { @user.add_collaborator(:interested, job: create(:job)) }
+      6.times { create(:collaborator, user: @user, job: create(:job)).interested }
 
       get :collaborating,
           params: {
@@ -273,8 +275,9 @@ RSpec.describe JobsController, type: :controller do
   describe 'post#complete' do
     it 'should set the job state as complete' do
       job = create(:job, user: create(:user))
-      job.update_collaborator(:award, user: @user)
-      job.update_collaborator(:accept, user: @user)
+      collab = create(:collaborator, user: @user, job: job)
+      collab.award
+      collab.accept
 
       post :complete,
            params: { id: job.id }
@@ -298,7 +301,7 @@ RSpec.describe JobsController, type: :controller do
     it 'should set the job state as verified' do
       job = create(:job, user: @user)
       consultant = create(:user)
-      job.update_collaborator(:award, user: consultant)
+      create(:collaborator, user: consultant, job: job).award
 
       allow(Payment).to receive(:complete).and_return(true)
       post :verify,
@@ -312,7 +315,7 @@ RSpec.describe JobsController, type: :controller do
     it 'should only allow the client to verify the job' do
       job = create(:job, user: @user)
       consultant = create(:user)
-      job.update_collaborator(:award, user: consultant)
+      create(:collaborator, user: consultant, job: job).award
 
       login_user(consultant)
 

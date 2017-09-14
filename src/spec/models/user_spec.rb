@@ -11,31 +11,9 @@ RSpec.describe User, type: :model do
       JSON.parse(@user.to_json(job: @job))['meta']['job']['collaboration_state']
     end
 
-    it 'returns collaboration state as "interested" when a user is invited to a project' do
-      @user.add_collaborator(:interested, job: @job)
+    it 'returns collaboration of the user to the job' do
+      create(:collaborator, user: @user, job: @job).interested
       expect(collaboration_state_json).to eq 'interested'
-    end
-
-    it 'returns collaboration state as "invited" when a user is invited to a project' do
-      @job.add_collaborator(:invite, user: @user)
-      expect(collaboration_state_json).to eq 'invited'
-    end
-
-    it 'returns collaboration state as "prospective" when a user is interested and invited to a project' do
-      @user.add_collaborator(:interested, job: @job)
-      @job.add_collaborator(:invite, user: @user)
-      expect(collaboration_state_json).to eq 'prospective'
-    end
-
-    it 'returns collaboration state as "awarded" when a user is awarded a project' do
-      @job.update_collaborator(:award, user: @user)
-      expect(collaboration_state_json).to eq 'awarded'
-    end
-
-    it 'returns collaboration state as "accepted" when a user is awarded and accepts the project' do
-      @job.update_collaborator(:award, user: @user)
-      @user.update_collaborator(:accept, job: @job)
-      expect(collaboration_state_json).to eq 'accepted'
     end
 
     it 'does not return collaboration_state if the user is not a collaborator' do
@@ -44,28 +22,21 @@ RSpec.describe User, type: :model do
 
     it 'should show the estimate in the meta of the user' do
       create(:estimate, job: @job, user: @user)
-      @user.collaborators.create(job: @job, interested_at: Time.zone.now)
-
+      create(:collaborator, user: @user, job: @job).interested
       expect(JSON.parse(@user.to_json(job: @job))['meta']['job']['estimates'].length).to eq 1
     end
   end
 
   describe 'awarded_jobs' do
-    it 'returns all jobs which are awarded but not accepted' do
-      user = create(:user)
+    it 'returns all jobs which are awarded' do
       consultant = create(:user)
-      create(:job, user: user)
-
-      j2 = create(:job, user: user)
-      j2.update_collaborator(:award, user: consultant)
-
-      j3 = create(:job, user: user)
-      j3.update_collaborator(:award, user: consultant)
-      consultant.update_collaborator(:accept, job: j3)
+      create(:collaborator, user: consultant, job: create(:job)).interested
+      create(:collaborator, user: consultant, job: create(:job)).award
+      create(:collaborator, user: consultant, job: create(:job)).award
+      create(:collaborator, user: consultant, job: create(:job)).accept
 
       jobs = consultant.awarded_jobs
-      expect(jobs.count).to eq(1)
-      expect(jobs.first.id).to eq(j2.id)
+      expect(jobs.count).to eq(2)
     end
   end
 
