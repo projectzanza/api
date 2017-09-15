@@ -48,7 +48,10 @@ RSpec.describe Payment, type: :model do
 
     it 'should save the charge response, when all valid conditions are met' do
       @estimate = create(:estimate, user: @user, job: @job)
-      create(:collaborator, job: @job, user: @user).award
+      collab = create(:collaborator, job: @job, user: @user)
+      collab.award
+      collab.accept
+
       @estimate.accept
       card_token = StripeMock.generate_card_token
       card = @job.user.add_card(card_token)
@@ -59,7 +62,10 @@ RSpec.describe Payment, type: :model do
 
     it 'should raise a payment exception if the charge is not successful' do
       card_token = StripeMock.generate_card_token
-      create(:collaborator, job: @job, user: @user).award
+      collab = create(:collaborator, job: @job, user: @user)
+      collab.award
+      collab.accept
+
       create(:estimate, user: @user, job: @job).accept
       card = @job.user.add_card(card_token)
       @job.update!(payment_card_id: card['id'])

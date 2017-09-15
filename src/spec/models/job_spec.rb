@@ -54,7 +54,10 @@ RSpec.describe Job, type: :model do
     it 'should return the awarded estimate of the awarded user' do
       job = create(:job)
       consultant = create(:user)
-      create(:collaborator, job: job, user: consultant).award
+      collab = create(:collaborator, job: job, user: consultant)
+      collab.award
+      collab.accept
+
       estimate = create(:estimate, user: consultant, job: job)
       estimate.accept
 

@@ -35,7 +35,7 @@ class Job < ApplicationRecord
   end
 
   def invited_users
-    collaborating_users.where(collaborators: { state: %w[invited prospective] })
+    collaborating_users.where(collaborators: { state: 'invited' })
   end
 
   def interested_users
@@ -63,7 +63,7 @@ class Job < ApplicationRecord
   end
 
   def awarded_estimate
-    estimates.where(user: awarded_user).find { |estimate| estimate.state == 'accepted' }
+    estimates.where(user: accepted_user).find { |estimate| estimate.state == 'accepted' }
   end
 
   def default_collaborating_users
