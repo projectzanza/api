@@ -26,10 +26,30 @@ RSpec.describe Collaborator, type: :model do
       expect(@collaborator.invited_at).to be_truthy
     end
 
+    it 'can invite multiple collaborators to the same job' do
+      collaborator2 = create(:collaborator, job: @collaborator.job, user: create(:user))
+      expect(collaborator2.invite).to be_truthy
+    end
+
+    it 'cannot invite the same collaborator twice to the same job' do
+      @collaborator.invite
+      expect(@collaborator.invite).to be_falsey
+    end
+
     it 'should allow transition from init to interested' do
       @collaborator.interested
       expect(@collaborator.state).to eq('interested')
       expect(@collaborator.interested_at).to be_truthy
+    end
+
+    it 'should allow multiple collaborators to be interested in the same job' do
+      collaborator2 = create(:collaborator, job: @collaborator.job, user: create(:user))
+      expect(collaborator2.interested).to be_truthy
+    end
+
+    it 'should not mark the same collaborator interested twice' do
+      @collaborator.interested
+      expect(@collaborator.interested).to be_falsey
     end
 
     it 'should allow transition from invited to prospective when contractor is interested' do

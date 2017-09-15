@@ -53,7 +53,7 @@ class UsersController < ApplicationController
     authorize! :invite, @user
 
     @job = current_user.jobs.find(params[:job_id])
-    @job.add_collaborator(:invite, user: @user)
+    CollaboratorService.new(@job, @user).event = :invite
 
     render json: { data: @user.as_json(job: @job) }
   end
@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     authorize! :award, @user
 
     @job = current_user.jobs.find(params[:job_id])
-    @job.update_collaborator(:award, user: @user)
+    CollaboratorService.new(@job, @user).event = :award
 
     render json: { data: @user.as_json(job: @job.reload) }
   end
@@ -73,7 +73,7 @@ class UsersController < ApplicationController
     authorize! :reject, @user
 
     @job = current_user.jobs.find(params[:job_id])
-    @job.update_collaborator(:reject, user: @user)
+    CollaboratorService.new(@job, @user).event = :reject
 
     render json: { data: @user.as_json(job: @job.reload) }
   end

@@ -6,7 +6,6 @@ module HasCollaborator
     value = entity.values.first
     collab = collaborators.find_or_initialize_by(type => value)
     collab.send(state.to_s + '!')
-    collab.save!
   rescue StateMachines::InvalidTransition => e
     raise ActiveRecord::RecordNotSaved, e
   end

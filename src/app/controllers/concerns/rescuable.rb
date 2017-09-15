@@ -7,6 +7,7 @@ module Rescuable
     rescue_from ActiveRecord::RecordNotSaved, with: :render_invalid
     rescue_from ActiveRecord::StatementInvalid, with: :render_invalid
     rescue_from AccessGranted::AccessDenied, with: :render_unauthorized
+    rescue_from StateMachines::InvalidTransition, with: :render_invalid
     rescue_from Zanza::AuthorizationException, with: :render_unauthorized
     rescue_from Zanza::ForbiddenException, with: :render_forbidden
     rescue_from Zanza::PaymentException, with: :render_payment_unsuccessful

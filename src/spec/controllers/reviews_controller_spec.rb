@@ -10,8 +10,9 @@ RSpec.describe ReviewsController, type: :controller do
 
   describe 'post#create' do
     before(:each) do
-      @job.add_collaborator(:award, user: @consultant)
-      @job.update_collaborator(:accept, user: @consultant)
+      collab = create(:collaborator, job: @job, user: @consultant)
+      collab.award
+      collab.accept
     end
 
     it 'should associate a review with a user and a job' do
@@ -109,7 +110,6 @@ RSpec.describe ReviewsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(data.length).to eq 2
-
     end
   end
 
@@ -137,5 +137,4 @@ RSpec.describe ReviewsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
-
 end

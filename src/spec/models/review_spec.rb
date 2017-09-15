@@ -20,7 +20,7 @@ RSpec.describe Review, type: :model do
 
     it 'should only a user create one review per job' do
       first_review = create(:review)
-      expect{ create(:review, user: first_review.user, job: first_review.job) }
+      expect { create(:review, user: first_review.user, job: first_review.job) }
         .to raise_error(ActiveRecord::RecordInvalid)
     end
   end
