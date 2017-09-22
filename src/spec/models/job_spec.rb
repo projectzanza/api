@@ -85,12 +85,14 @@ RSpec.describe Job, type: :model do
     it 'should return completed state if the job has been completed' do
       job = create(:job)
       job.complete
+      expect(job.reload.completed_at).to be_truthy
       expect(job.state).to eq('completed')
     end
 
     it 'should return verified state if the job has been verified' do
       job = create(:job)
       job.verify
+      expect(job.reload.verified_at).to be_truthy
       expect(job.state).to eq('verified')
     end
   end

@@ -92,7 +92,6 @@ class Job < ApplicationRecord
     options.delete(:user)
     super(options).merge(
       tag_list: tag_list,
-      state: state,
       meta: meta
     )
   end

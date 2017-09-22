@@ -121,10 +121,10 @@ job = Job.create(title: 'Ruby development',
                      description: 'its a 2 step job only'
                    )
                  ])
-job.add_collaborator(:invite, user: User.find_by(email: 'aiden.jones@zanza.com'))
-job.add_collaborator(:invite, user: User.find_by(email: 'emma.williams@zanza.com'))
-job.add_collaborator(:interested, user: User.find_by(email: 'jackson.taylorh@zanza.com'))
-job.add_collaborator(:interested, user: User.find_by(email: 'sophia.smith@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'aiden.jones@zanza.com')).invite
+Collaborator.create(job: job, user: User.find_by(email: 'emma.williams@zanza.com')).invite
+Collaborator.create(job: job, user: User.find_by(email: 'jackson.taylorh@zanza.com')).interested
+Collaborator.create(job: job, user: User.find_by(email: 'sophia.smith@zanza.com')).interested
 
 Estimate.create(
   days: 2,
@@ -164,8 +164,8 @@ job = Job.create(title: 'Docker project',
                  proposed_end_at: Time.zone.now + 3.day,
                  allow_contact: true)
 
-job.add_collaborator(:interested, user: User.find_by(email: 'jackson.taylorh@zanza.com'))
-job.add_collaborator(:interested, user: User.find_by(email: 'sophia.smith@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'jackson.taylorh@zanza.com')).interested
+Collaborator.create(job: job, user: User.find_by(email: 'sophia.smith@zanza.com')).interested
 
 Estimate.create(
   days: 4,
@@ -185,9 +185,8 @@ job = Job.create(title: 'Javascript fluff',
                  proposed_start_at: Time.zone.now + 1.day,
                  proposed_end_at: Time.zone.now + 3.day,
                  allow_contact: true)
-
-job.add_collaborator(:interested, user: User.find_by(email: 'jackson.taylorh@zanza.com'))
-job.add_collaborator(:interested, user: User.find_by(email: 'sophia.smith@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'jackson.taylorh@zanza.com')).interested
+Collaborator.create(job: job, user: User.find_by(email: 'sophia.smith@zanza.com')).interested
 
 Estimate.create(
   days: 2,
@@ -207,7 +206,7 @@ job = Job.create(title: 'Apache Security Consulting',
                  proposed_start_at: Time.zone.now + 10.day,
                  proposed_end_at: Time.zone.now + 13.day,
                  allow_contact: true)
-job.add_collaborator(:invite, user: User.find_by(email: 'dev@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'dev@zanza.com')).invite
 
 job = Job.create(title: 'Bank physical security review',
                  text: 'physical review of security for unicorns
@@ -229,8 +228,7 @@ has scopes. invited and awarded to dev@zanza.com',
                    )
                  ])
 
-job.update_collaborator(:invite, user: User.find_by(email: 'dev@zanza.com'))
-job.update_collaborator(:award, user: User.find_by(email: 'dev@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'dev@zanza.com')).award
 
 Estimate.create(
   days: 4,
@@ -250,7 +248,7 @@ job = Job.create(title: 'Flash development',
                  proposed_start_at: Time.zone.now + 10.day,
                  proposed_end_at: Time.zone.now + 13.day,
                  allow_contact: true)
-job.add_collaborator(:interested, user: User.find_by(email: 'dev@zanza.com'))
+Collaborator.create(job: job, user: User.find_by(email: 'dev@zanza.com')).interested
 
 Job.create([{
              title: 'develop securely',
@@ -333,6 +331,7 @@ job = Job.create(
   proposed_end_at: Time.zone.now + 13.day,
   allow_contact: true
 )
-job.add_collaborator(:award, user: User.find_by(email: 'dev@zanza.com'))
-job.add_collaborator(:accept, user: User.find_by(email: 'dev@zanza.com'))
+collab = Collaborator.create(job: job, user: User.find_by(email: 'dev@zanza.com'))
+collab.award
+collab.accept
 job.verify

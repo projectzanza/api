@@ -97,7 +97,7 @@ class JobsController < ApplicationController
 
     JobService.new(@job).complete
 
-    render json: { data: @job.reload }
+    render json: { data: @job.reload.as_json(user: current_user) }
   end
 
   # POST /jobs/:id/verify
@@ -107,7 +107,7 @@ class JobsController < ApplicationController
     Payment.complete(@job)
     JobService.new(@job).verify
 
-    render json: { data: @job.reload }
+    render json: { data: @job.reload.as_json(user: current_user) }
   end
 
   private
