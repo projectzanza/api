@@ -92,4 +92,6 @@ Rails.application.routes.draw do
       post :login
     end
   end
+
+  resources :status, only: :index
 end
