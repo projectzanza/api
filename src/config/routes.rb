@@ -94,4 +94,5 @@ Rails.application.routes.draw do
   end
 
   resources :status, only: :index
+  resources :uploads, only: :create
 end
