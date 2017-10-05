@@ -20,6 +20,33 @@ curl 127.0.0.1:3000
 ./scripts/clean-docker.sh
 ```
 
+### Set up environment variables
+`./src/.env.example` should be copied to `./src/.env.development` and it's values filled in.
+
+The environment variables are picked up based on the RAILS_ENV value
+
+
+### Set up S3 Bucket for development
+For now, until mocked, an S3 bucket is required to upload profile images
+It CORS config should be set to
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+<CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedMethod>HEAD</AllowedMethod>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
+    <ExposeHeader>Access-Control-Allow-Origin</ExposeHeader>
+    <AllowedHeader>*</AllowedHeader>
+</CORSRule>
+</CORSConfiguration>
+```
+
+The bucket name should be set in .env.development as `S3_BUCKET`
 
 ### To access the api container console
 ```
@@ -31,11 +58,11 @@ rake spec
 # or reset the DB at any time
 rake db:reset
 
-# start the server, will not seed data into the DB on first run
-startup-dev.sh
-
 # seed data
 rake db:seed
+
+# start the server, will not seed data into the DB
+startup-dev.sh
 ```
 
 ### Seed data
@@ -57,7 +84,7 @@ In production, stmp settings will be set via ENV variables
 Use your favourite tool, `postman` is a chrome extension that will post data easily
 Try posting: 
 ```
-127.0.0.1:3000/auth?email=test@zanza.com&password=123123123&password_confirmation=123123123
+127.0.0.1:3000/auth?email=dev@zanza.com&password=123123123&password_confirmation=123123123
 ```
 
 Then goto `http://127.0.0.1:7080` to see the confirmation email
