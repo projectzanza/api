@@ -17,8 +17,9 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     authorize! :update, @user
+    @user.update!(user_params)
 
-    render json: { data: @user.reload } if @user.update!(user_params)
+    render json: { data: @user.reload }
   end
 
   # GET /jobs/:job_id/users/match
@@ -95,6 +96,7 @@ class UsersController < ApplicationController
       :email,
       :headline,
       :summary,
+      :avatar_upload_url,
       per_diem: %i[min max],
       tag_list: []
     ).to_h

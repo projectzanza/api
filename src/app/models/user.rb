@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 
   acts_as_paranoid
   acts_as_taggable
+  has_attached_file :avatar,
+                    default_url: '/assets/images/defaults/:style/avatar.png'
 
   include DeviseTokenAuth::Concerns::User
 
@@ -39,6 +41,15 @@ class User < ActiveRecord::Base
   validates :nickname, presence: true
   validates :email, presence: true
   validates :rc_password, presence: true
+
+  validates_attachment :avatar,
+                       content_type: { content_type: %w(image/jpeg image/gif image/png) },
+                       size: { in: 0..10.megabytes }
+
+  def avatar_upload_url=(url_value)
+    self.avatar = URI.parse(url_value)
+    super url_value
+  end
 
   def invited_to_jobs
     collaborating_jobs.where(collaborators: { state: 'invited' })
@@ -117,7 +128,12 @@ class User < ActiveRecord::Base
   def as_json(options = {})
     meta = meta_as_json(options)
     options.delete(:job)
-    super(options).merge(tag_list: tag_list, meta: meta)
+    options.merge!(only: [:id, :created_at, :deleted_at, :email, :headline, :name, :nickname, :per_diem, :summary, :uid, :updated_at])
+    super(options).merge(
+      avatar_url: avatar.url,
+      tag_list: tag_list,
+      meta: meta
+    )
   end
 
   def meta_as_json(options)
