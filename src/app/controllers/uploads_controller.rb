@@ -1,5 +1,4 @@
 class UploadsController < ApplicationController
-
   def create
     @upload_url_service = GenerateUploadUrlService.new(params[:filename])
     @upload_url_service.call

@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   validates :rc_password, presence: true
 
   validates_attachment :avatar,
-                       content_type: { content_type: %w(image/jpeg image/gif image/png) },
+                       content_type: { content_type: %w[image/jpeg image/gif image/png] },
                        size: { in: 0..10.megabytes }
 
   def avatar_upload_url=(url_value)
@@ -128,7 +128,7 @@ class User < ActiveRecord::Base
   def as_json(options = {})
     meta = meta_as_json(options)
     options.delete(:job)
-    options.merge!(only: [:id, :created_at, :deleted_at, :email, :headline, :name, :nickname, :per_diem, :summary, :uid, :updated_at])
+    options[:only] = %i[id created_at deleted_at email headline name nickname per_diem summary uid updated_at]
     super(options).merge(
       avatar_url: avatar.url,
       tag_list: tag_list,

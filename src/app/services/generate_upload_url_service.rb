@@ -1,12 +1,13 @@
 class GenerateUploadUrlService
   attr_reader :filename, :content_type, :signed_post
 
-  SIGNED_POST_KEYS = [:url, :fields].freeze
+  SIGNED_POST_KEYS = %i[url fields].freeze
 
   def initialize(filename)
     @filename = filename
+    raise ArgumentError, 'missing or invalid filename' unless @filename =~ /.+\..+/
     @content_type = MIME::Types.type_for(filename).first.content_type
-    @signed_post = {}
+    @signed_post = nil
   end
 
   def call
@@ -16,7 +17,7 @@ class GenerateUploadUrlService
       key: "uploads/#{SecureRandom.uuid}/#{filename}",
       success_action_status: '201',
       acl: 'public-read',
-      content_type: 'image/png',
+      content_type: 'image/png'
     )
     SIGNED_POST_KEYS.each { |key| @signed_post[key] = post.send(key) }
     true
