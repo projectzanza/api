@@ -1,3 +1,8 @@
+# TODO: convert paperclip to background processing
+# https://github.com/thoughtbot/paperclip/pull/2261
+# it will mean the frontend polling for a new image too
+# use a processing flag in the DB
+
 Paperclip::Attachment.default_options.merge!(
   url:                  ':s3_domain_url',
   path:                 ':class/:attachment/:id/:style/:filename',
