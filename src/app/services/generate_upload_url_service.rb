@@ -7,7 +7,7 @@ class GenerateUploadUrlService
     @filename = filename
     raise ArgumentError, 'missing or invalid filename' unless @filename =~ /.+\..+/
     @content_type = MIME::Types.type_for(filename).first.content_type
-    @signed_post = nil
+    @signed_post = {}
   end
 
   def call
