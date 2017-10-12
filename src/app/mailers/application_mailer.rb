@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'notifications@matchme.consulting'
+  # default from is set in environment config
   layout 'mailer'
 end
