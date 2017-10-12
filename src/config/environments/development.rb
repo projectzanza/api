@@ -33,7 +33,13 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: '0.0.0.0', port: 3000 }
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { address: 'mail_server', port: 7025 }
+  config.action_mailer.smtp_settings = {
+    address: 'mail_server',
+    port: 7025
+  }
+  config.action_mailer.default_options = {
+    from: 'notifications@matchme.consulting'
+  }
 
   config.logger = Logger.new(STDOUT)
   # Print deprecation notices to the Rails logger.
