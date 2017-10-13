@@ -1,7 +1,7 @@
 Devise.setup do |config|
   # The e-mail address that mail will appear to be sent from
   # If absent, mail is sent from "please-change-me-at-config-initializers-devise@example.com"
-  config.mailer_sender = 'support@zanza.com'
+  config.mailer_sender = Rails.application.config.action_mailer.default_options[:from]
 
   # If using rails-api, you may want to tell devise to not use ActionDispatch::Flash
   # middleware b/c rails-api does not include it.
