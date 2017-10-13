@@ -1,6 +1,7 @@
 .idea
 src/.env.development
 src/.env.test
+src/.env.production
 src/spec/examples.txt
 src/coverage
 data/db/*
