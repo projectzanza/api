@@ -47,5 +47,6 @@ DeviseTokenAuth.setup do |config|
   # config.enable_standard_devise_support = false
 
   raise 'APP_URL is missing for devise redirect' unless ENV['APP_URL']
-  config.default_confirm_success_url = ENV['APP_URL']
+  raise 'APP_CONFIRMED_PATH is missing for devise redirect' unless ENV['APP_CONFIRMED_PATH']
+  config.default_confirm_success_url = "#{ENV['APP_URL']}#{ENV['APP_CONFIRMED_PATH']}"
 end
