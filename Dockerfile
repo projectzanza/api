@@ -24,5 +24,5 @@ RUN apk add --update \
 COPY ./scripts/container /usr/local/bin
 COPY ./src .
 
-EXPOSE 3000 1234
+EXPOSE 3000
 CMD /usr/local/bin/startup-dev.sh
