@@ -3,16 +3,23 @@ require 'logger'
 module Zanza
   module RocketChat
     class << self
-      attr_accessor :rocketchat_url, :admin_username, :admin_password, :app_url
+      attr_accessor :rocketchat_url, :admin_username, :admin_password, :app_url, :iframe,
+                    :smtp_protocol, :smtp_host, :smtp_port, :smtp_username, :smtp_password, :from_email
     end
 
     def self.settings
       {
-        'Accounts_iframe_enabled' => true,
-        'Iframe_Integration_send_enable' => true,
-        'Iframe_Integration_send_target_origin' => @app_url,
-        'Iframe_Integration_receive_enable' => true,
-        'Iframe_Integration_receive_origin' => @app_url
+        'Accounts_iframe_enabled' => @iframe,
+        'Iframe_Integration_send_enable' => @iframe,
+        'Iframe_Integration_send_target_origin' => @iframe && @app_url,
+        'Iframe_Integration_receive_enable' => @iframe,
+        'Iframe_Integration_receive_origin' => @iframe && @app_url,
+        'SMTP_Protocol' => @smtp_protocol,
+        'SMTP_Host' => @smtp_host,
+        'SMTP_Port' => @smtp_port,
+        'SMTP_Username' => @smtp_username,
+        'SMTP_Password' => @smtp_password,
+        'From_Email' => @from_email
       }
     end
 
