@@ -19,7 +19,6 @@ services:
 
   rocketchat:
       image: rocketchat/rocket.chat:latest
-      restart: unless-stopped
       volumes:
         - ./data/uploads:/app/uploads
       environment:
