@@ -2,8 +2,14 @@ class UsersController < ApplicationController
   include Rescuable
 
   before_action :authenticate_user!
-  before_action :set_user, only: %i[show award invite reject]
+  before_action :set_user, only: %i[show award invite reject certify decertify]
   before_action :set_authenticated_user, only: %i[update destroy]
+
+  def index
+    authorize! :list, User
+
+    render json: { data: User.all }
+  end
 
   # GET /users/1
   def show
@@ -77,6 +83,20 @@ class UsersController < ApplicationController
     CollaboratorService.new(@job, @user).event = :reject
 
     render json: { data: @user.as_json(job: @job.reload) }
+  end
+
+  # POST /users/:id/certify
+  def certify
+    authorize! :certify, @user
+    @user.update!(certified: true)
+    render json: { data: @user.as_json }
+  end
+
+  # POST /users/:id/decertify
+  def decertify
+    authorize! :decertify, @user
+    @user.update!(certified: false)
+    render json: { data: @user.as_json }
   end
 
   private

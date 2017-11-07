@@ -6,6 +6,18 @@ RSpec.describe UsersController, type: :controller do
     @job = create(:job, user: @user)
   end
 
+  describe 'get#index' do
+    it 'should return all users in the system' do
+      3.times { create(:user) }
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      # include the logged in user in the count
+      expect(data.length).to eq 4
+    end
+  end
+
   describe 'put#update' do
     it 'should return updated user information is successful' do
       user = attributes_for(:user)
@@ -160,6 +172,54 @@ RSpec.describe UsersController, type: :controller do
       expect(data.length).to eq(3)
       states = data.map { |job| job['meta']['job']['collaboration_state'] }
       expect(states.count('invited')).to eq(3)
+    end
+  end
+
+  describe 'post#certify' do
+    before(:each) do
+      @admin = create(:user, admin: true)
+      @user = create(:user)
+    end
+
+    it 'should set the certified flag to true' do
+      login_user(@admin)
+
+      post :certify,
+           params: { id: @user.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['certified']).to eq true
+    end
+
+    it 'should block non admin users from certifying a user' do
+      post :certify,
+           params: { id: @user.id }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'post#decertify' do
+    before(:each) do
+      @admin = create(:user, admin: true)
+      @user = create(:user, certified: true)
+    end
+
+    it 'should set the certified flag to false' do
+      login_user(@admin)
+
+      post :decertify,
+           params: { id: @user.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['certified']).to eq false
+    end
+
+    it 'should block non admin users from certifying a user' do
+      post :decertify,
+           params: { id: @user.id }
+
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end
