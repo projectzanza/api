@@ -63,6 +63,10 @@ def user_policy
   can %i[invite award reject], User do |user, current_user|
     user != current_user
   end
+
+  can %i[certify decertify], User do |_, current_user|
+    current_user.admin?
+  end
 end
 
 def review_policy

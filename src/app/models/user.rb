@@ -128,7 +128,12 @@ class User < ActiveRecord::Base
   def as_json(options = {})
     meta = meta_as_json(options)
     options.delete(:job)
-    options[:only] = %i[id created_at deleted_at email headline name nickname per_diem summary uid updated_at]
+    options[:only] = %i[
+      id created_at deleted_at email
+      headline name nickname per_diem
+      summary uid updated_at
+      certified admin
+    ]
     super(options).merge(
       avatar_url: avatar.url,
       tag_list: tag_list,

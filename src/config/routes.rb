@@ -7,6 +7,8 @@ Rails.application.routes.draw do
       post :invite
       post :award
       post :reject
+      post :certify
+      post :decertify
     end
 
     # /users/:user_id/jobs
