@@ -188,7 +188,7 @@ RSpec.describe ScopesController, type: :controller do
     # TODO: fix test
     it 'should not the let the awarded consultant reject a scope' do
       consultant = create(:user)
-      CollaboratorService.new(@job, consultant).event = :award
+      CollaboratorStateService.new(@job, consultant).call(:award)
       # @job.update_collaborator(:award, user: consultant)
 
       post :complete,

@@ -50,6 +50,10 @@ RSpec.describe JobsController, type: :controller do
   end
 
   describe 'post#create' do
+    before(:each) do
+      allow_any_instance_of(JobCreateService).to receive(:create_chat_room).and_return(double(id: '123'))
+    end
+
     it 'should create a job' do
       job_attr = attributes_for(:job)
 
@@ -182,6 +186,10 @@ RSpec.describe JobsController, type: :controller do
   end
 
   describe 'post#register_interest' do
+    before(:each) do
+      allow_any_instance_of(CollaboratorStateService).to receive(:invite_collaborator_to_chat).and_return(true)
+    end
+
     it 'should register a user as interested in a job' do
       job = create(:job)
 

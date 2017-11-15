@@ -10,8 +10,8 @@ class EstimatesController < ApplicationController
 
     @job = Job.find(params[:job_id])
     @estimate = Estimate.create(estimate_create_params.merge(user_id: current_user.id))
-    cs = CollaboratorService.new(@job, current_user)
-    cs.event = :interested if cs.transition? :interested
+    cs = CollaboratorStateService.new(@job, current_user)
+    cs.call(:interested) if cs.transition? :interested
 
     render json: { data: @estimate }
   end
