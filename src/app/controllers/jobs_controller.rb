@@ -30,13 +30,10 @@ class JobsController < ApplicationController
   def create
     authorize! :create, Job
 
-    @job = Job.new(job_params)
-    Job.transaction do
-      current_user.jobs << @job
-      @job.save!
-    end
+    job_create_service = JobCreateService.new(current_user, job_params)
+    job_create_service.call
 
-    render json: { data: @job }, status: :created, location: @job
+    render json: { data: job_create_service.job }, status: :created, location: job_create_service.job
   end
 
   # PATCH/PUT /jobs/1
@@ -76,7 +73,7 @@ class JobsController < ApplicationController
   def register_interest
     authorize! :register_interest, @job
 
-    CollaboratorService.new(@job, current_user).event = :interested
+    CollaboratorStateService.new(@job, current_user).call(:interested)
 
     render json: { data: current_user.interested_in_jobs.as_json(user: current_user) }
   end
@@ -85,7 +82,7 @@ class JobsController < ApplicationController
   def accept
     authorize! :accept, @job
 
-    CollaboratorService.new(@job, current_user).event = :accept
+    CollaboratorStateService.new(@job, current_user).call(:accept)
     current_user.reload
 
     render json: { data: current_user.accepted_jobs.as_json(user: current_user) }

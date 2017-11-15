@@ -54,10 +54,10 @@ module Zanza
     end
 
     # rubocop can't decide on GuardClause, reports an error either way
-    # rubocop:disable Style/GuardClause
     def self.create_user_unless_exists(user)
-      unless admin_session.users.info(username: user.nickname)
-        admin_session.users.create(
+      chat_user = admin_session.users.info(username: user.nickname)
+      unless chat_user
+        chat_user = admin_session.users.create(
           user.nickname,
           user.email,
           user.name,
@@ -66,6 +66,7 @@ module Zanza
           send_welcome_email: false
         )
       end
+      chat_user
     end
     # rubocop:enable Style/GuardClause
 
@@ -75,6 +76,11 @@ module Zanza
     rescue ::RocketChat::StatusError => e
       Rails.logger.error "Error logging in user to rocketchat #{e}"
       nil
+    end
+
+    def self.chat_title(job)
+      title = job.title.tr(' ', '-')
+      "#{title.gsub(/[^0-9A-Za-z\-]/, '')[0..20]}-#{job.id[0..5]}"
     end
   end
 end

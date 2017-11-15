@@ -18,6 +18,20 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe 'get#show' do
+    it 'should return a user' do
+      user = create(:user)
+
+      get :show,
+          params: {
+            id: user.id
+          }
+
+      expect(response).to have_http_status(:ok)
+      expect(data['id']).to eq user.id
+    end
+  end
+
   describe 'put#update' do
     it 'should return updated user information is successful' do
       user = attributes_for(:user)
@@ -65,6 +79,10 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'post#invite' do
+    before(:each) do
+      allow_any_instance_of(CollaboratorStateService).to receive(:invite_collaborator_to_chat).and_return(true)
+    end
+
     it 'should mark the user as invited to a job' do
       consultant = create(:user)
 
@@ -109,6 +127,10 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'post#reject' do
+    before(:each) do
+      allow_any_instance_of(CollaboratorStateService).to receive(:kick_collaborator_from_chat).and_return(true)
+    end
+
     it 'should remove a user from being a collaborator of invited or awarded' do
       consultant = create(:user)
 
