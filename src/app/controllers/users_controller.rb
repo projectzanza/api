@@ -33,14 +33,10 @@ class UsersController < ApplicationController
     authorize! :list, User
 
     @job = Job.find(params[:job_id])
-    users =
-      if params[:filter]
-        User.filter(params[:filter])
-      else
-        @job.matching_users
-      end
+    ums = UserMatchingService.new(@job, consultant_filter_params)
+    ums.call
 
-    render json: { data: users.as_json(job: @job) }
+    render json: { data: ums.users.as_json(job: @job) }
   end
 
   # GET /jobs/:job_id/users/collaborating
@@ -126,6 +122,16 @@ class UsersController < ApplicationController
     params.permit(
       :state,
       :limit
+    ).to_h
+  end
+
+  def consultant_filter_params
+    params.permit(
+      :country,
+      :city,
+      :onsite,
+      :name,
+      :save
     ).to_h
   end
 end

@@ -74,10 +74,6 @@ class Job < ApplicationRecord
                  .union_all(accepted_users)
   end
 
-  def matching_users
-    interested_users.union_all(User.tagged_with(tag_list)) - default_collaborating_users
-  end
-
   def find_collaborating_users(options = {})
     opts = HashWithIndifferentAccess.new(limit: 20).merge(options)
     if opts[:state]
