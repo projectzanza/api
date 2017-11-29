@@ -112,6 +112,9 @@ class UsersController < ApplicationController
       :email,
       :headline,
       :summary,
+      :country,
+      :city,
+      :onsite,
       :avatar_upload_url,
       per_diem: %i[min max],
       tag_list: []

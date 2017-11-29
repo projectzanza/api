@@ -37,6 +37,10 @@ class User < ActiveRecord::Base
     self.rc_password ||= SecureRandom.hex
   end
 
+  before_validation do
+    city.downcase! if city
+  end
+
   validates :name, presence: true
   validates :nickname, presence: true
   validates :email, presence: true
@@ -130,6 +134,7 @@ class User < ActiveRecord::Base
     options.delete(:job)
     options[:only] = %i[
       id created_at deleted_at email
+      country city onsite
       headline name nickname per_diem
       summary uid updated_at
       certified admin

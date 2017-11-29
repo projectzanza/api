@@ -7,7 +7,10 @@ User.create([
                 tag_list: %w[ruby javascript docker grunt webpack java apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 500 }
+                per_diem: { min: 400, max: 500 },
+                country: 'IE',
+                city: 'dublin',
+                onsite: true
               },
               {
                 name: 'Sophia Smith',
@@ -16,7 +19,10 @@ User.create([
                 tag_list: %w[ruby javascript docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 1000 }
+                per_diem: { min: 400, max: 1000 },
+                country: 'IE',
+                city: 'dublin',
+                onsite: true
               },
               {
                 name: 'Aiden Jones',
@@ -25,7 +31,10 @@ User.create([
                 tag_list: %w[ruby javascript docker grunt apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 200, max: 500 }
+                per_diem: { min: 200, max: 500 },
+                country: 'IE',
+                city: 'dublin',
+                onsite: true
               },
               {
                 name: 'Emma Williams',
@@ -34,7 +43,10 @@ User.create([
                 tag_list: %w[ruby javascript docker],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 600 }
+                per_diem: { min: 400, max: 600 },
+                country: 'IE',
+                city: 'dublin',
+                onsite: true
               },
               {
                 name: 'Jackson Taylor',
@@ -43,7 +55,10 @@ User.create([
                 tag_list: %w[docker grunt webpack],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 900 }
+                per_diem: { min: 400, max: 900 },
+                country: 'AU',
+                city: 'melbourne',
+                onsite: true
               },
               {
                 name: 'Liam Neeson',
@@ -52,7 +67,10 @@ User.create([
                 tag_list: %w[docker grunt webpack ruby apache],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 900 }
+                per_diem: { min: 400, max: 900 },
+                country: 'AU',
+                city: 'melbourne',
+                onsite: true
               },
               {
                 name: 'Taylor Swift',
@@ -61,7 +79,10 @@ User.create([
                 tag_list: %w[security physical],
                 password: '123123123',
                 confirmed_at: Time.zone.now,
-                per_diem: { min: 400, max: 900 }
+                per_diem: { min: 400, max: 900 },
+                country: 'AU',
+                city: 'melbourne',
+                onsite: true
               }
             ])
 User.all.each do |user|

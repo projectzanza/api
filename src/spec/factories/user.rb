@@ -10,5 +10,8 @@ FactoryGirl.define do
     password_confirmation '123123123'
     headline 'headline'
     summary 'summary'
+    country 'IE'
+    city 'dublin'
+    onsite true
   end
 end

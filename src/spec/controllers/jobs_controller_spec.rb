@@ -99,7 +99,7 @@ RSpec.describe JobsController, type: :controller do
       expect(data['per_diem']['max']).to eq new_job_attr[:per_diem][:max].to_s
       expect(data['consultant_filter']['country']).to eq new_job_attr[:consultant_filter][:country].to_s
       expect(data['consultant_filter']['city']).to eq new_job_attr[:consultant_filter][:city].to_s
-      expect(data['consultant_filter']['onsite']).to eq new_job_attr[:consultant_filter][:onsite].to_s
+      expect(data['consultant_filter']['onsite']).to eq new_job_attr[:consultant_filter][:onsite]
     end
 
     it 'should return an error if trying to update another users job' do
