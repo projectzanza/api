@@ -27,6 +27,14 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'before_validations' do
+    it 'should set the city value to downcase' do
+      user = create(:user)
+      user.update(city: 'Dublin')
+      expect(user.city).to eq 'dublin'
+    end
+  end
+
   describe 'awarded_jobs' do
     it 'returns all jobs which are awarded' do
       consultant = create(:user)

@@ -24,6 +24,13 @@ FactoryGirl.define do
     end
     proposed_start_at { Time.zone.now + 1.hour }
     proposed_end_at { Time.zone.now + 1.day }
+    consultant_filter do
+      {
+        country: 'Ireland',
+        city: 'Dublin',
+        onsite: false
+      }
+    end
 
     trait :is_closed do
       closed_at { Time.zone.now }

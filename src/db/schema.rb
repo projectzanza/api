@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109102511) do
+ActiveRecord::Schema.define(version: 20171129164048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20171109102511) do
     t.string   "payment_card_id"
     t.datetime "completed_at"
     t.string   "chat_room_id"
+    t.jsonb    "consultant_filter"
   end
 
   create_table "payment_accounts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -157,13 +158,13 @@ ActiveRecord::Schema.define(version: 20171109102511) do
   end
 
   create_table "users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string   "provider",               default: "email", null: false
-    t.string   "uid",                    default: "",      null: false
-    t.string   "encrypted_password",     default: "",      null: false
+    t.string   "provider",                         default: "email", null: false
+    t.string   "uid",                              default: "",      null: false
+    t.string   "encrypted_password",               default: "",      null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,       null: false
+    t.integer  "sign_in_count",                    default: 0,       null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -177,8 +178,8 @@ ActiveRecord::Schema.define(version: 20171109102511) do
     t.string   "image"
     t.string   "email"
     t.json     "tokens"
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.datetime "deleted_at"
     t.text     "summary"
     t.jsonb    "per_diem"
@@ -194,6 +195,9 @@ ActiveRecord::Schema.define(version: 20171109102511) do
     t.boolean  "admin"
     t.boolean  "certified"
     t.string   "chat_id"
+    t.string   "country",                limit: 2
+    t.string   "city"
+    t.boolean  "onsite"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
