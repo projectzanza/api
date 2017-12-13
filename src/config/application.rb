@@ -52,5 +52,9 @@ module App
     config.after_initialize do
       Zanza::RocketChat.update_settings
     end
+
+    config.x.stripe.url = ENV['STRIPE_URL']
+    config.x.stripe.client_id = ENV['STRIPE_CLIENT_ID']
+    config.x.stripe.api_key = ENV['STRIPE_API_KEY']
   end
 end

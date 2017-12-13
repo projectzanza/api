@@ -12,6 +12,7 @@ module Rescuable
     rescue_from Zanza::ForbiddenException, with: :render_forbidden
     rescue_from Zanza::PaymentException, with: :render_payment_unsuccessful
     rescue_from Zanza::PaymentPreConditionsNotMet, with: :render_payment_preconditions_not_met
+    rescue_from Zanza::CallbackException, with: :render_redirect_to_app
   end
 
   def render_not_found(exception)
@@ -37,5 +38,9 @@ module Rescuable
 
   def render_payment_preconditions_not_met(exception)
     render json: { error: exception.message }, status: :unprocessable_entity
+  end
+
+  def render_redirect_to_app
+    redirect_to ENV['APP_URL']
   end
 end

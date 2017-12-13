@@ -55,6 +55,17 @@ class User < ActiveRecord::Base
     super url_value
   end
 
+  def stripe_state_token=(value)
+    self.stripe_state_token_updated_at = Time.zone.now
+    super(value)
+  end
+
+  def self.find_by_stripe_state_token(token)
+    User.where('stripe_state_token_updated_at > ?', 1.hour.ago)
+        .where.not(stripe_state_token: [nil, ''])
+        .find_by(stripe_state_token: token)
+  end
+
   def invited_to_jobs
     collaborating_jobs.where(collaborators: { state: 'invited' })
   end

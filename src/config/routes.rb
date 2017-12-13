@@ -3,6 +3,13 @@ Rails.application.routes.draw do
                               at: 'auth',
                               controllers: { registrations: 'registrations' }
 
+  resources :omniauth do
+    collection do
+      get :stripe
+      get :stripe_callback
+    end
+  end
+
   # /users
   resources :users do
     member do

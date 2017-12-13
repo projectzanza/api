@@ -156,4 +156,30 @@ RSpec.describe User, type: :model do
       expect(@user.card?('123123123123')).to be_falsey
     end
   end
+
+  describe 'stripe_state_token' do
+    it 'should set the stripe_state_token_updated_at when the token is set' do
+      user = create(:user)
+      token = SecureRandom.hex
+      user.update(stripe_state_token: token)
+      expect(user.stripe_state_token).to eq token
+      expect(user.stripe_state_token_updated_at).to be_truthy
+    end
+  end
+
+  describe 'find_by_stripe_state_token' do
+    before(:each) do
+      @user = create(:user)
+      @token = SecureRandom.hex
+    end
+
+    it 'should find a single user with stripe state token' do
+      @user.update(stripe_state_token: @token)
+      expect(User.find_by_stripe_state_token(@token)).to eq(@user)
+    end
+
+    it 'should not find any users with a nil or empty token' do
+      expect(User.find_by_stripe_state_token(nil)).to be_falsey
+    end
+  end
 end
